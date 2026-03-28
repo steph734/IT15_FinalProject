@@ -2,10 +2,9 @@
 @using RealEstate.Models
 @{
     ViewData["Title"] = "Properties";
-    var priceLabels = PropertiesIndexViewModel.PriceRangeLabels;
     var ph = Currency.PhilippinePeso;
     var loc = Model.Location?.Trim() ?? "";
-    var pr = string.IsNullOrWhiteSpace(Model.PriceRange) ? "any" : Model.PriceRange!;
+    var maxPx = Model.MaxPrice;
 }
 
 <div class="site-page py-4 py-lg-5">
@@ -25,30 +24,21 @@
                 <form method="get" asp-controller="Properties" asp-action="Index" class="row g-3 align-items-end">
                     <div class="col-md-6 col-lg-5">
                         <label class="form-label small fw-semibold text-site-muted" for="filterLocation">Location</label>
-                        <select class="form-select rounded-3" id="filterLocation" name="location">
-                            @foreach (var (value, label) in PropertiesIndexViewModel.SearchLocations)
-                            {
-                                var sel = string.Equals(loc, value, StringComparison.OrdinalIgnoreCase);
-                                <option value="@value" selected="@(sel ? "selected" : null)">@label</option>
-                            }
-                        </select>
+                        <input type="text" class="form-control rounded-3" id="filterLocation" name="location" value="@loc"
+                               placeholder="Neighborhood, city, or keyword" autocomplete="off" />
                     </div>
                     <div class="col-md-6 col-lg-5">
-                        <label class="form-label small fw-semibold text-site-muted" for="filterPrice">Price</label>
-                        <select class="form-select rounded-3" id="filterPrice" name="priceRange">
-                            @foreach (var kv in priceLabels)
-                            {
-                                var sel = pr.Equals(kv.Key, StringComparison.OrdinalIgnoreCase);
-                                <option value="@kv.Key" selected="@(sel ? "selected" : null)">@kv.Value</option>
-                            }
-                        </select>
+                        <label class="form-label small fw-semibold text-site-muted" for="filterMaxPrice">Max price (PHP)</label>
+                        <input type="number" class="form-control rounded-3" id="filterMaxPrice" name="maxPrice" min="0" step="1000"
+                               inputmode="numeric" value="@(maxPx?.ToString(System.Globalization.CultureInfo.InvariantCulture))"
+                               placeholder="Sale total or monthly rent cap" />
                     </div>
                     <div class="col-md-12 col-lg-2">
                         <button type="submit" class="btn btn-site-primary text-white w-100 rounded-3 py-2 fw-semibold">Apply</button>
                     </div>
                 </form>
                 <p class="small text-site-muted mb-0 mt-3">
-                    Price bands apply to sale totals for purchases and monthly rent for rentals.
+                    Location matches any part of the listing address. Max price applies to sale totals or monthly rent.
                 </p>
             </div>
         </div>
@@ -96,6 +86,85 @@
                     </div>
                 }
             </div>
+            <nav class="mt-4" aria-label="Properties pagination">
+                @{ 
+                    var totalPages = (int)Math.Ceiling(Model.TotalCount / (double)Model.PageSize);
+                    var startItem = Math.Min(((Model.Page - 1) * Model.PageSize) + 1, Model.TotalCount == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1);
+                    var endItem = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
+                }
+
+                <div class="d-flex flex-column gap-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-site-muted small">Showing <strong>@startItem</strong>–<strong>@endItem</strong> of <strong>@Model.TotalCount</strong> properties</div>
+
+                        <form method="get" asp-controller="Properties" asp-action="Index" class="d-flex align-items-center">
+                            <input type="hidden" name="location" value="@(Model.Location ?? string.Empty)" />
+                            <input type="hidden" name="priceRange" value="@(Model.PriceRange ?? string.Empty)" />
+                            <input type="hidden" name="maxPrice" value="@(Model.MaxPrice?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty)" />
+                            <label class="me-2 small text-site-muted mb-0">Per page</label>
+                            <select name="pageSize" class="form-select form-select-sm" style="width:80px;" onchange="this.form.submit()">
+                                @{ var options = new[] {5, 9, 12}; }
+                                @foreach (var opt in options)
+                                {
+                                    <option value="@opt" selected="@(opt == Model.PageSize ? "selected" : null)">@opt</option>
+                                }
+                            </select>
+                            <input type="hidden" name="page" value="1" />
+                        </form>
+                    </div>
+
+                    @if (totalPages > 1)
+                    {
+                        <div class="d-flex justify-content-center">
+                            <ul class="pagination mb-0">
+                                <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
+                                    <a class="page-link rounded-pill px-3" href="@Url.Action("Index", new { location = Model.Location, priceRange = Model.PriceRange, maxPrice = Model.MaxPrice, page = Model.Page - 1, pageSize = Model.PageSize })" aria-label="Previous">
+                                        <span aria-hidden="true">‹</span>
+                                    </a>
+                                </li>
+
+                                @* show up to 4 page buttons centered around current page when possible *@
+                                @{
+                                    var maxButtons = 4;
+                                    var first = Math.Max(1, Model.Page - maxButtons / 2);
+                                    var last = Math.Min(totalPages, first + maxButtons - 1);
+                                    if (last - first + 1 < maxButtons)
+                                        first = Math.Max(1, last - maxButtons + 1);
+                                }
+
+                                @if (first > 1)
+                                {
+                                    <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { location = Model.Location, priceRange = Model.PriceRange, maxPrice = Model.MaxPrice, page = 1, pageSize = Model.PageSize })">1</a></li>
+                                    @if (first > 2)
+                                    {
+                                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                                    }
+                                }
+
+                                @for (int i = first; i <= last; i++)
+                                {
+                                    <li class="page-item @(i == Model.Page ? "active" : "")" aria-current="@(i == Model.Page ? "page" : null)"><a class="page-link" href="@Url.Action("Index", new { location = Model.Location, priceRange = Model.PriceRange, maxPrice = Model.MaxPrice, page = i, pageSize = Model.PageSize })">@i</a></li>
+                                }
+
+                                @if (last < totalPages)
+                                {
+                                    @if (last < totalPages - 1)
+                                    {
+                                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                                    }
+                                    <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { location = Model.Location, priceRange = Model.PriceRange, maxPrice = Model.MaxPrice, page = totalPages, pageSize = Model.PageSize })">@totalPages</a></li>
+                                }
+
+                                <li class="page-item @(Model.Page >= totalPages ? "disabled" : "")">
+                                    <a class="page-link rounded-pill px-3" href="@Url.Action("Index", new { location = Model.Location, priceRange = Model.PriceRange, maxPrice = Model.MaxPrice, page = Model.Page + 1, pageSize = Model.PageSize })" aria-label="Next">
+                                        <span aria-hidden="true">›</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </nav>
         }
     </div>
 </div>

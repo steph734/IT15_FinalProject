@@ -13,14 +13,27 @@ public class PropertiesController : Controller
         _catalog = catalog;
     }
 
-    public IActionResult Index(string? location, string? priceRange)
+    public IActionResult Index(string? location, string? priceRange, decimal? maxPrice, int page = 1, int pageSize = 5)
     {
         priceRange = string.IsNullOrWhiteSpace(priceRange) ? "any" : priceRange;
+
+        var filtered = _catalog.Filter(location, priceRange, maxPrice);
+        var total = filtered.Count;
+
+        page = Math.Max(1, page);
+        pageSize = Math.Clamp(pageSize, 1, 50);
+
+        var paged = filtered.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
         var vm = new PropertiesIndexViewModel
         {
             Location = location,
             PriceRange = priceRange,
-            Properties = _catalog.Filter(location, priceRange)
+            MaxPrice = maxPrice,
+            Properties = paged,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = total
         };
         return View(vm);
     }

@@ -5,7 +5,20 @@ public class PropertiesIndexViewModel
     public IReadOnlyList<Property> Properties { get; set; } = Array.Empty<Property>();
 
     public string? Location { get; set; }
+
     public string? PriceRange { get; set; }
+
+    /// <summary>
+    /// When set, listings at or below this amount: total sale price (buy) or monthly rent (rent).
+    /// </summary>
+    public decimal? MaxPrice { get; set; }
+
+    // Pagination
+    public int Page { get; set; } = 1;
+
+    public int PageSize { get; set; } = 5;
+
+    public int TotalCount { get; set; }
 
     /// <summary>Location filter values (matched as substring against listing address).</summary>
     public static IReadOnlyList<(string Value, string Label)> SearchLocations { get; } =

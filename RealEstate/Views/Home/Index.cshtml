@@ -24,28 +24,35 @@
         <div id="rent" class="container position-relative z-1 pb-5 pb-lg-6 scroll-landing-section">
             <div class="landing-search card border-0 shadow-lg rounded-4 mx-auto">
                 <div class="card-body p-3 p-md-4">
-                    <form class="row g-3 align-items-end" method="get" asp-controller="Properties" asp-action="Index">
-                        <div class="col-md-6 col-lg-4">
-                            <label class="form-label small text-uppercase fw-semibold text-secondary mb-1" for="searchLocation">Location</label>
-                            <select class="form-select rounded-3 border-0 bg-light py-3" id="searchLocation" name="location">
-                                @foreach (var (value, label) in PropertiesIndexViewModel.SearchLocations)
-                                {
-                                    <option value="@value">@label</option>
-                                }
-                            </select>
+                    <form method="get" asp-controller="Properties" asp-action="Index">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-6 col-lg-4">
+                                <label class="form-label small text-uppercase fw-semibold text-secondary mb-1" for="searchLocation">Location</label>
+                                <input type="text"
+                                       class="form-control rounded-3 border-0 bg-light py-3"
+                                       id="searchLocation"
+                                       name="location"
+                                       value=""
+                                       placeholder="e.g. Makati, BGC, Cebu"
+                                       autocomplete="off" />
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <label class="form-label small text-uppercase fw-semibold text-secondary mb-1" for="searchMaxPrice">Price</label>
+                                <input type="number"
+                                       class="form-control rounded-3 border-0 bg-light py-3"
+                                       id="searchMaxPrice"
+                                       name="maxPrice"
+                                       min="0"
+                                       step="1000"
+                                       inputmode="numeric"
+                                       placeholder="Desired price range" />
+                            </div>
+                            <div class="col-md-12 col-lg-4">
+                                <label class="form-label small text-uppercase fw-semibold text-secondary mb-1 user-select-none opacity-0" for="searchSubmit" aria-hidden="true">Search</label>
+                                <button type="submit" class="btn btn-landing-primary text-white w-100 rounded-3 py-3 fw-semibold" id="searchSubmit">Search properties</button>
+                            </div>
                         </div>
-                        <div class="col-md-6 col-lg-4">
-                            <label class="form-label small text-uppercase fw-semibold text-secondary mb-1" for="searchPrice">Price</label>
-                            <select class="form-select rounded-3 border-0 bg-light py-3" id="searchPrice" name="priceRange">
-                                @foreach (var kv in PropertiesIndexViewModel.PriceRangeLabels)
-                                {
-                                    <option value="@kv.Key">@kv.Value</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-md-12 col-lg-4">
-                            <button type="submit" class="btn btn-landing-primary text-white w-100 rounded-3 py-3 fw-semibold">Search properties</button>
-                        </div>
+                        <p class="small text-secondary mb-0 mt-2 ps-1">Buy: max total price · Rent: max monthly rent</p>
                     </form>
                 </div>
             </div>

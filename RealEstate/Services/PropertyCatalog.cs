@@ -207,6 +207,142 @@ public class PropertyCatalog
                     "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80"
                 ]
             }
+            ,
+            new Property
+            {
+                Id = 10,
+                Title = "BGC High-Rise 1BR",
+                Location = "Bonifacio Global City, Taguig",
+                Sqft = 50,
+                Price = 9_500_000m,
+                ListingType = PropertyListingType.Buy,
+                AgentId = 1,
+                Description = "One-bedroom high-rise with amenity deck view and quick access to retail and transit.",
+                ImageUrls =
+                [
+                    "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80"
+                ]
+            },
+            new Property
+            {
+                Id = 11,
+                Title = "Makati Serviced Studio",
+                Location = "Makati CBD, Makati",
+                Sqft = 30,
+                Price = 28_000m,
+                ListingType = PropertyListingType.Rent,
+                AgentId = 3,
+                Description = "Compact studio ideal for single professionals, close to offices and nightlife.",
+                ImageUrls =
+                [
+                    "https://images.unsplash.com/photo-1505691723518-36a5f9985b4c?auto=format&fit=crop&w=1200&q=80"
+                ]
+            },
+            new Property
+            {
+                Id = 12,
+                Title = "Quezon City Family Home",
+                Location = "Teacher's Village, Quezon City",
+                Sqft = 210,
+                Price = 32_000_000m,
+                ListingType = PropertyListingType.Buy,
+                AgentId = 1,
+                Description = "Four-bedroom family house with garden and garage. Quiet street near schools.",
+                ImageUrls =
+                [
+                    "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1200&q=80"
+                ]
+            },
+            new Property
+            {
+                Id = 13,
+                Title = "Cebu Seaview Condo",
+                Location = "Cebu City",
+                Sqft = 85,
+                Price = 11_500_000m,
+                ListingType = PropertyListingType.Buy,
+                AgentId = 2,
+                Description = "Panoramic sea views, three-bedroom unit with modern finishes and concierge service.",
+                ImageUrls =
+                [
+                    "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80"
+                ]
+            },
+            new Property
+            {
+                Id = 14,
+                Title = "Davao Affordable Studio",
+                Location = "Davao City",
+                Sqft = 28,
+                Price = 8_500m,
+                ListingType = PropertyListingType.Rent,
+                AgentId = 2,
+                Description = "Budget-friendly studio near universities and transit with shared amenities.",
+                ImageUrls =
+                [
+                    "https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1200&q=80"
+                ]
+            },
+            new Property
+            {
+                Id = 15,
+                Title = "Ortigas Luxury 3BR",
+                Location = "Ortigas Center, Pasig",
+                Sqft = 160,
+                Price = 42_000_000m,
+                ListingType = PropertyListingType.Buy,
+                AgentId = 1,
+                Description = "Spacious three-bedroom in a premium tower with pool and function rooms.",
+                ImageUrls =
+                [
+                    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80"
+                ]
+            },
+            new Property
+            {
+                Id = 16,
+                Title = "Pasig Riverview 2BR",
+                Location = "Ortigas, Pasig",
+                Sqft = 75,
+                Price = 24_000m,
+                ListingType = PropertyListingType.Rent,
+                AgentId = 3,
+                Description = "Two-bedroom unit with river views and nearby mall access. Ideal for small families.",
+                ImageUrls =
+                [
+                    "https://images.unsplash.com/photo-1505691723518-36a5f9985b4c?auto=format&fit=crop&w=1200&q=80"
+                ]
+            },
+            new Property
+            {
+                Id = 17,
+                Title = "Suburban House with Garden",
+                Location = "Alabang, Muntinlupa",
+                Sqft = 300,
+                Price = 55_000_000m,
+                ListingType = PropertyListingType.Buy,
+                AgentId = 1,
+                Description = "Large family home in gated community with landscaped garden and pool.",
+                ImageUrls =
+                [
+                    "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80"
+                ]
+            },
+            new Property
+            {
+                Id = 18,
+                Title = "Manila Studio Near University",
+                Location = "Tondo, Manila",
+                Sqft = 25,
+                Price = 6_500m,
+                ListingType = PropertyListingType.Rent,
+                AgentId = 3,
+                Description = "Simple studio suitable for students, close to public transport and universities.",
+                ImageUrls =
+                [
+                    "https://images.unsplash.com/photo-1505691723518-36a5f9985b4c?auto=format&fit=crop&w=1200&q=80"
+                ]
+            }
         ];
     }
 
@@ -218,7 +354,7 @@ public class PropertyCatalog
 
     public Property? GetProperty(int id) => _properties.FirstOrDefault(p => p.Id == id);
 
-    public IReadOnlyList<Property> Filter(string? location, string? priceRange)
+    public IReadOnlyList<Property> Filter(string? location, string? priceRange, decimal? maxPrice = null)
     {
         IEnumerable<Property> q = _properties;
 
@@ -228,8 +364,12 @@ public class PropertyCatalog
             q = q.Where(p => p.Location.Contains(loc, StringComparison.OrdinalIgnoreCase));
         }
 
-        if (!string.IsNullOrWhiteSpace(priceRange) && !priceRange.Equals("any", StringComparison.OrdinalIgnoreCase))
+        if (maxPrice is { } cap && cap > 0m)
+            q = q.Where(p => p.Price <= cap);
+        else if (!string.IsNullOrWhiteSpace(priceRange) && !priceRange.Equals("any", StringComparison.OrdinalIgnoreCase))
+        {
             q = q.Where(p => MatchesPriceRange(p, priceRange));
+        }
 
         return q.ToList();
     }
