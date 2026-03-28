@@ -1,0 +1,157 @@
+@model RealEstate.Models.PropertyDetailsViewModel
+@using RealEstate.Models
+@{
+    ViewData["Title"] = Model.Property.Title;
+    var p = Model.Property;
+    var ph = Currency.PhilippinePeso;
+    var priceDisplay = p.ListingType == PropertyListingType.Buy
+        ? p.Price.ToString("C0", ph)
+        : $"{p.Price.ToString("C0", ph)}/mo";
+}
+
+<div class="site-page py-4 py-lg-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb small mb-0">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index">Properties</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@p.Title</li>
+            </ol>
+        </nav>
+
+        @if (TempData["TransactionError"] is string err)
+        {
+            <div class="alert alert-warning rounded-3 border-0 shadow-sm" role="alert">@err</div>
+        }
+
+        <div class="row g-4 g-lg-5">
+            <div class="col-lg-7">
+                <div id="propertyCarousel" class="carousel slide rounded-4 overflow-hidden shadow-sm" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        @for (var i = 0; i < p.ImageUrls.Count; i++)
+                        {
+                            <button type="button" data-bs-target="#propertyCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : null)" aria-current="@(i == 0 ? "true" : null)" aria-label="Slide @(i + 1)"></button>
+                        }
+                    </div>
+                    <div class="carousel-inner">
+                        @for (var i = 0; i < p.ImageUrls.Count; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : null)">
+                                <div class="ratio ratio-16x9">
+                                    <img src="@p.ImageUrls[i]" class="d-block w-100 object-fit-cover" alt="@p.Title — photo @(i + 1)" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+                <div class="row g-2 mt-2">
+                    @foreach (var url in p.ImageUrls)
+                    {
+                        <div class="col-3">
+                            <div class="ratio ratio-4x3 rounded-3 overflow-hidden border">
+                                <img src="@url" alt="" class="object-fit-cover w-100 h-100" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                    <span class="badge rounded-pill @(p.ListingType == PropertyListingType.Buy ? "text-bg-primary" : "text-bg-success")">@p.ListingType</span>
+                    <span class="small text-site-muted">@p.Sqft.ToString("N0") sqm</span>
+                </div>
+                <h1 class="h2 fw-bold text-site-dark mb-2">@p.Title</h1>
+                <p class="d-flex align-items-center gap-2 text-site-muted mb-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="text-site flex-shrink-0" aria-hidden="true"><path d="M12 21s7-4.35 7-10a7 7 0 1 0-14 0c0 5.65 7 10 7 10z" stroke="currentColor" stroke-width="2" /></svg>
+                    @p.Location
+                </p>
+                <p class="display-6 fw-bold text-site mb-4">@priceDisplay</p>
+
+                <div class="site-prose text-site-muted mb-4">
+                    <p class="mb-0">@p.Description</p>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row gap-2 mb-4">
+                    <button type="button" class="btn btn-site-primary text-white rounded-pill px-4" data-bs-toggle="collapse" data-bs-target="#scheduleViewing" aria-expanded="false" aria-controls="scheduleViewing">Schedule viewing</button>
+                    @if (Model.Agent is { } agent)
+                    {
+                        <a class="btn btn-outline-site rounded-pill px-4" asp-controller="Home" asp-action="Contact" asp-route-agentId="@agent.Id" asp-route-propertyId="@p.Id">Contact agent</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-site rounded-pill px-4" asp-controller="Home" asp-action="Contact" asp-route-propertyId="@p.Id">Contact agent</a>
+                    }
+                </div>
+
+                <div class="collapse @(!ViewData.ModelState.IsValid ? "show" : null)" id="scheduleViewing">
+                    <div class="card border-0 bg-site-soft rounded-4">
+                        <div class="card-body p-4">
+                            <h2 class="h6 fw-bold text-site-dark mb-3">Request a viewing</h2>
+                            <p class="small text-site-muted mb-3">After you submit, the system will approve your schedule and take you to the next step: your details and payment information (demo).</p>
+                            <form asp-action="ScheduleViewing" method="post" novalidate>
+                                <input type="hidden" asp-for="Schedule.PropertyId" />
+                                <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label small" asp-for="Schedule.Name"></label>
+                                        <input class="form-control rounded-3" asp-for="Schedule.Name" autocomplete="name" />
+                                        <span asp-validation-for="Schedule.Name" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small" asp-for="Schedule.Email"></label>
+                                        <input class="form-control rounded-3" asp-for="Schedule.Email" autocomplete="email" />
+                                        <span asp-validation-for="Schedule.Email" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small" asp-for="Schedule.Phone"></label>
+                                        <input class="form-control rounded-3" asp-for="Schedule.Phone" autocomplete="tel" />
+                                        <span asp-validation-for="Schedule.Phone" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small" asp-for="Schedule.PreferredDate"></label>
+                                        <input class="form-control rounded-3" asp-for="Schedule.PreferredDate" type="date" />
+                                        <span asp-validation-for="Schedule.PreferredDate" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small" asp-for="Schedule.Notes"></label>
+                                        <textarea class="form-control rounded-3" asp-for="Schedule.Notes" rows="2" placeholder="Preferred time window or questions"></textarea>
+                                        <span asp-validation-for="Schedule.Notes" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-site-primary text-white rounded-3">Submit request</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.Agent is { } a)
+                {
+                    <div class="d-flex align-items-center gap-3 mt-4 p-3 rounded-4 border bg-white">
+                        <img src="@a.PhotoUrl" alt="" class="rounded-circle" width="64" height="64" style="object-fit:cover;" />
+                        <div>
+                            <p class="fw-semibold text-site-dark mb-0">@a.Name</p>
+                            <p class="small text-site-muted mb-0">@a.Title</p>
+                            <p class="small mb-0"><a href="mailto:@a.Email">@a.Email</a> · @a.Phone</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

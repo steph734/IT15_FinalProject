@@ -1,0 +1,75 @@
+@model RealEstate.Models.ContactViewModel
+@{
+    ViewData["Title"] = "Contact";
+}
+
+<div class="site-page py-4 py-lg-5">
+    <div class="container">
+        <div class="row g-4 g-lg-5">
+            <div class="col-lg-5">
+                <h1 class="h2 fw-bold text-site-dark mb-3">Get in touch</h1>
+                <p class="text-site-muted">Questions about a listing, a viewing, or working with TRUSTERS? Send us a message or visit our office.</p>
+
+                <div class="card border-0 bg-site-soft rounded-4 p-4 mt-4">
+                    <h2 class="h6 fw-bold text-site-dark mb-3">Company</h2>
+                    <p class="small text-site-muted mb-2"><strong class="text-site-dark">TRUSTERS Real Estate</strong></p>
+                    <p class="small text-site-muted mb-2">Unit 1804, One Corporate Centre<br />Julia Vargas Ave., Ortigas Center, Pasig City 1605</p>
+                    <p class="small text-site-muted mb-2"><strong>Phone</strong><br />+63 (2) 8812-4400</p>
+                    <p class="small text-site-muted mb-2"><strong>Email</strong><br /><a href="mailto:hello@trusters.com">hello@trusters.com</a></p>
+                    <p class="small text-site-muted mb-0"><strong>Hours</strong><br />Sat–Thu 9:00–18:00 · Fri 14:00–18:00</p>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                @if (TempData["ContactSuccess"] is string ok)
+                {
+                    <div class="alert alert-success rounded-3 border-0 shadow-sm" role="alert">@ok</div>
+                }
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <h2 class="h5 fw-bold text-site-dark mb-4">Inquiry form</h2>
+                        <form asp-action="Contact" method="post" novalidate>
+                            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+                            <input type="hidden" asp-for="AgentId" />
+                            <input type="hidden" asp-for="PropertyId" />
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small" asp-for="Name"></label>
+                                    <input class="form-control rounded-3" asp-for="Name" autocomplete="name" />
+                                    <span asp-validation-for="Name" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small" asp-for="Email"></label>
+                                    <input class="form-control rounded-3" asp-for="Email" autocomplete="email" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small" asp-for="Phone"></label>
+                                    <input class="form-control rounded-3" asp-for="Phone" autocomplete="tel" />
+                                    <span asp-validation-for="Phone" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small" asp-for="Subject"></label>
+                                    <input class="form-control rounded-3" asp-for="Subject" placeholder="e.g. Viewing request" />
+                                    <span asp-validation-for="Subject" class="text-danger small"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small" asp-for="Message"></label>
+                                    <textarea class="form-control rounded-3" asp-for="Message" rows="5" placeholder="How can we help?"></textarea>
+                                    <span asp-validation-for="Message" class="text-danger small"></span>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-site-primary text-white rounded-pill px-4">Send message</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

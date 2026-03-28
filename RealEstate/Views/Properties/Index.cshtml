@@ -1,0 +1,101 @@
+@model RealEstate.Models.PropertiesIndexViewModel
+@using RealEstate.Models
+@{
+    ViewData["Title"] = "Properties";
+    var priceLabels = PropertiesIndexViewModel.PriceRangeLabels;
+    var ph = Currency.PhilippinePeso;
+    var loc = Model.Location?.Trim() ?? "";
+    var pr = string.IsNullOrWhiteSpace(Model.PriceRange) ? "any" : Model.PriceRange!;
+}
+
+<div class="site-page py-4 py-lg-5">
+    <div class="container">
+        <div class="row g-4 align-items-end mb-4">
+            <div class="col-lg-8">
+                <h1 class="h2 fw-bold text-site-dark mb-2">All properties</h1>
+                <p class="text-site-muted mb-0">Sale and rental listings together—filter by location and price. Click a card for full details.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a class="btn btn-site-primary text-white rounded-pill px-4" asp-controller="Home" asp-action="Index">Back to home</a>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+                <form method="get" asp-controller="Properties" asp-action="Index" class="row g-3 align-items-end">
+                    <div class="col-md-6 col-lg-5">
+                        <label class="form-label small fw-semibold text-site-muted" for="filterLocation">Location</label>
+                        <select class="form-select rounded-3" id="filterLocation" name="location">
+                            @foreach (var (value, label) in PropertiesIndexViewModel.SearchLocations)
+                            {
+                                var sel = string.Equals(loc, value, StringComparison.OrdinalIgnoreCase);
+                                <option value="@value" selected="@(sel ? "selected" : null)">@label</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-lg-5">
+                        <label class="form-label small fw-semibold text-site-muted" for="filterPrice">Price</label>
+                        <select class="form-select rounded-3" id="filterPrice" name="priceRange">
+                            @foreach (var kv in priceLabels)
+                            {
+                                var sel = pr.Equals(kv.Key, StringComparison.OrdinalIgnoreCase);
+                                <option value="@kv.Key" selected="@(sel ? "selected" : null)">@kv.Value</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-12 col-lg-2">
+                        <button type="submit" class="btn btn-site-primary text-white w-100 rounded-3 py-2 fw-semibold">Apply</button>
+                    </div>
+                </form>
+                <p class="small text-site-muted mb-0 mt-3">
+                    Price bands apply to sale totals for purchases and monthly rent for rentals.
+                </p>
+            </div>
+        </div>
+
+        @if (Model.Properties.Count == 0)
+        {
+            <div class="alert alert-light border rounded-4">No properties match your filters. Try broadening location or price.</div>
+        }
+        else
+        {
+            <div class="row g-4">
+                @foreach (var p in Model.Properties)
+                {
+                    <div class="col-sm-6 col-xl-4">
+                        <article class="site-property-card h-100 bg-white rounded-4 border overflow-hidden shadow-sm">
+                            <a asp-action="Details" asp-route-id="@p.Id" class="text-decoration-none text-reset d-block">
+                                <div class="ratio ratio-4x3">
+                                    <img src="@p.ImageUrls[0]" alt="" class="object-fit-cover w-100 h-100" />
+                                </div>
+                                <div class="p-3 p-lg-4">
+                                    <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                        <h2 class="h6 fw-semibold text-site-dark mb-0">@p.Title</h2>
+                                        <span class="badge rounded-pill @(p.ListingType == PropertyListingType.Buy ? "text-bg-primary" : "text-bg-success")">@p.ListingType</span>
+                                    </div>
+                                    <p class="small text-site-muted d-flex align-items-center gap-1 mb-3">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="text-site flex-shrink-0" aria-hidden="true"><path d="M12 21s7-4.35 7-10a7 7 0 1 0-14 0c0 5.65 7 10 7 10z" stroke="currentColor" stroke-width="2" /></svg>
+                                        @p.Location
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center small">
+                                        <span class="text-site-muted">@p.Sqft.ToString("N0") sqm</span>
+                                        <span class="fw-bold text-site">
+                                            @if (p.ListingType == PropertyListingType.Buy)
+                                            {
+                                                @p.Price.ToString("C0", ph)
+                                            }
+                                            else
+                                            {
+                                                @($"{p.Price.ToString("C0", ph)}/mo")
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </article>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

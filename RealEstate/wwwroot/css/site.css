@@ -1,0 +1,307 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+/* Full landing page (Index — TRUSTERS) */
+.landing-body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  margin-bottom: 0;
+}
+
+.landing-page {
+  --landing-primary: #1e6bff;
+  --landing-primary-dark: #1558d6;
+  --landing-soft: #eef4ff;
+  --landing-dark: #14213d;
+  --landing-muted: #5c6578;
+  color: var(--landing-dark);
+}
+
+.landing-page .text-landing-dark {
+  color: var(--landing-dark) !important;
+}
+
+.landing-page .text-landing-muted {
+  color: var(--landing-muted) !important;
+}
+
+.landing-page .bg-landing-soft {
+  background-color: var(--landing-soft) !important;
+}
+
+.landing-page .btn-landing-primary {
+  --bs-btn-bg: var(--landing-primary);
+  --bs-btn-border-color: var(--landing-primary);
+  --bs-btn-hover-bg: var(--landing-primary-dark);
+  --bs-btn-hover-border-color: var(--landing-primary-dark);
+  --bs-btn-active-bg: var(--landing-primary-dark);
+  --bs-btn-active-border-color: var(--landing-primary-dark);
+  background-color: var(--landing-primary);
+  border-color: var(--landing-primary);
+}
+
+.landing-page .btn-outline-landing {
+  --bs-btn-color: var(--landing-primary);
+  --bs-btn-border-color: var(--landing-primary);
+  --bs-btn-hover-bg: var(--landing-primary);
+  --bs-btn-hover-border-color: var(--landing-primary);
+  --bs-btn-hover-color: #fff;
+}
+
+.landing-page .text-landing-primary {
+  color: var(--landing-primary) !important;
+}
+
+.landing-page .landing-logo-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: rgba(30, 107, 255, 0.12);
+  color: var(--landing-primary);
+}
+
+.landing-page .tracking-tight {
+  letter-spacing: -0.03em;
+}
+
+@media (min-width: 992px) {
+  .landing-page .py-lg-6 {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+}
+
+.landing-page .landing-hero {
+  position: relative;
+  padding-top: 2rem;
+  overflow: hidden;
+}
+
+.landing-page .landing-hero-bg {
+  position: absolute;
+  inset: 0;
+  background-color: #1a2744;
+  background-image: linear-gradient(180deg, rgba(20, 33, 61, 0.72) 0%, rgba(20, 33, 61, 0.55) 40%, rgba(20, 33, 61, 0.85) 100%),
+    var(--landing-hero-image);
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.landing-page .landing-hero .z-1 {
+  z-index: 1;
+}
+
+.landing-page .landing-hero-title {
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.landing-page .landing-hero-sub {
+  max-width: 640px;
+  line-height: 1.65;
+}
+
+@media (max-width: 575.98px) {
+  .landing-page .landing-hero-title {
+    font-size: calc(1.35rem + 2vw);
+  }
+}
+
+.landing-page .landing-search {
+  max-width: 920px;
+}
+
+.landing-page .landing-max-w {
+  max-width: 480px;
+}
+
+.landing-page .landing-section-title {
+  max-width: 640px;
+}
+
+.landing-page .landing-icon-dot {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 107, 255, 0.12);
+}
+
+.landing-page .landing-stat-number {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.landing-page .landing-collage {
+  min-height: 280px;
+}
+
+.landing-page .landing-collage-main img {
+  min-height: 280px;
+  max-height: 420px;
+  object-fit: cover;
+}
+
+@media (min-width: 992px) {
+  .landing-page .landing-collage-float {
+    position: absolute;
+    width: 52%;
+    max-width: 340px;
+    aspect-ratio: 4/3;
+    right: 0;
+    bottom: -1.5rem;
+    border: 4px solid #fff;
+  }
+}
+
+.landing-page .min-h-landing-testimonial {
+  min-height: 260px;
+}
+
+@media (min-width: 768px) {
+  .landing-page .min-h-landing-testimonial {
+    min-height: 100%;
+  }
+}
+
+.landing-page .landing-quote {
+  max-width: 52rem;
+}
+
+.landing-page .landing-arrow {
+  width: 2.75rem;
+  height: 2.75rem;
+  line-height: 1;
+}
+
+.landing-page .landing-stars {
+  letter-spacing: 0.08em;
+}
+
+.landing-page .landing-footer {
+  --bs-border-color: rgba(20, 33, 61, 0.08);
+}
+
+.landing-page .scroll-landing-section {
+  scroll-margin-top: 5.5rem;
+}
+
+/* Inner pages (Properties, Agents, Contact, etc.) */
+.site-inner-body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  margin-bottom: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: #14213d;
+}
+
+.site-inner-body .container-fluid {
+  flex: 1 0 auto;
+}
+
+.site-inner-body main {
+  flex: 1 0 auto;
+}
+
+.site-header .landing-logo-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  background: rgba(30, 107, 255, 0.12);
+  color: #1e6bff;
+}
+
+.site-inner-body .tracking-tight {
+  letter-spacing: -0.03em;
+}
+
+.text-site-dark {
+  color: #14213d !important;
+}
+
+.text-site-muted {
+  color: #5c6578 !important;
+}
+
+.text-site {
+  color: #1e6bff !important;
+}
+
+.bg-site-soft {
+  background-color: #eef4ff !important;
+}
+
+.btn-site-primary {
+  --bs-btn-bg: #1e6bff;
+  --bs-btn-border-color: #1e6bff;
+  --bs-btn-hover-bg: #1558d6;
+  --bs-btn-hover-border-color: #1558d6;
+  --bs-btn-active-bg: #1558d6;
+  --bs-btn-active-border-color: #1558d6;
+  background-color: #1e6bff;
+  border-color: #1e6bff;
+}
+
+.btn-outline-site {
+  --bs-btn-color: #1e6bff;
+  --bs-btn-border-color: #1e6bff;
+  --bs-btn-hover-bg: #1e6bff;
+  --bs-btn-hover-border-color: #1e6bff;
+  --bs-btn-hover-color: #fff;
+}
+
+.site-page .breadcrumb a {
+  color: #1e6bff;
+}
+
+.site-prose {
+  line-height: 1.65;
+}
+
+.min-h-agent-photo {
+  min-height: 220px;
+}
+
+@media (min-width: 1200px) {
+  .min-h-agent-photo {
+    min-height: 100%;
+  }
+}
+
+.site-property-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.site-property-card:hover {
+  box-shadow: 0 0.5rem 1.25rem rgba(20, 33, 61, 0.1) !important;
+  transform: translateY(-2px);
+}

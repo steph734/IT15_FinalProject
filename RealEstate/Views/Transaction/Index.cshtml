@@ -1,0 +1,148 @@
+@model RealEstate.Models.TransactionPageViewModel
+@using RealEstate.Models
+@{
+    ViewData["Title"] = "Complete transaction";
+    var ph = Currency.PhilippinePeso;
+}
+
+<div class="site-page py-4 py-lg-5">
+    <div class="container" style="max-width: 720px;">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb small mb-0">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Properties" asp-action="Index">Properties</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Properties" asp-action="Details" asp-route-id="@Model.PropertyId">@Model.PropertyTitle</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Transaction</li>
+            </ol>
+        </nav>
+
+        @if (Model.ShowSystemApproved)
+        {
+            <div class="alert alert-success border-0 rounded-4 shadow-sm d-flex gap-3 align-items-start" role="status">
+                <span class="fs-4" aria-hidden="true">✓</span>
+                <div>
+                    <strong class="d-block text-site-dark">Viewing approved</strong>
+                    <span class="small text-site-muted mb-0">Your schedule request has been approved by the system. Complete your details and initial payment information below to secure this listing (demo flow).</span>
+                </div>
+            </div>
+        }
+
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h1 class="h5 fw-bold text-site-dark mb-3">Property summary</h1>
+                <p class="mb-1 fw-semibold text-site-dark">@Model.PropertyTitle</p>
+                <p class="small text-site-muted mb-2">@Model.PropertyLocation</p>
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                    <span class="badge rounded-pill @(Model.ListingType == PropertyListingType.Buy ? "text-bg-primary" : "text-bg-success")">@Model.ListingType</span>
+                    <span class="fw-bold text-site">List price: @Model.ListPrice.ToString("C0", ph)@(Model.ListingType == PropertyListingType.Rent ? "/mo" : "")</span>
+                </div>
+                <p class="small text-site-muted mb-0">@Model.ChargeSummaryLine</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 mb-4 bg-site-soft">
+            <div class="card-body p-4">
+                <h2 class="h6 fw-bold text-site-dark mb-3">Amount due now</h2>
+                @if (Model.ListingType == PropertyListingType.Buy && Model.BuyEarnestMoney is { } earnest)
+                {
+                    <p class="mb-2 small text-site-muted">Earnest money</p>
+                    <p class="display-6 fw-bold text-site-dark mb-0">@earnest.ToString("C0", ph)</p>
+                }
+                else if (Model.ListingType == PropertyListingType.Rent && Model.RentAdvance is { } adv && Model.RentSecurityDeposit is { } sec)
+                {
+                    <ul class="list-unstyled small mb-2">
+                        <li class="d-flex justify-content-between"><span class="text-site-muted">Advance rent (1 month)</span> <span>@adv.ToString("C0", ph)</span></li>
+                        <li class="d-flex justify-content-between"><span class="text-site-muted">Security deposit (2 months)</span> <span>@sec.ToString("C0", ph)</span></li>
+                    </ul>
+                    <p class="display-6 fw-bold text-site-dark mb-0">@Model.TotalDue.ToString("C0", ph)</p>
+                }
+                else
+                {
+                    <p class="display-6 fw-bold text-site-dark mb-0">@Model.TotalDue.ToString("C0", ph)</p>
+                }
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-lg-5">
+                <h2 class="h5 fw-bold text-site-dark mb-4">Customer &amp; payment</h2>
+                <form asp-action="Index" method="post" novalidate>
+                    <input type="hidden" asp-for="Form.PropertyId" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <h3 class="h6 text-site-dark mb-3">Your information</h3>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small" asp-for="Form.FullName"></label>
+                            <input class="form-control rounded-3" asp-for="Form.FullName" autocomplete="name" />
+                            <span asp-validation-for="Form.FullName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small" asp-for="Form.Email"></label>
+                            <input class="form-control rounded-3" asp-for="Form.Email" autocomplete="email" />
+                            <span asp-validation-for="Form.Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small" asp-for="Form.Phone"></label>
+                            <input class="form-control rounded-3" asp-for="Form.Phone" autocomplete="tel" placeholder="+63" />
+                            <span asp-validation-for="Form.Phone" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small" asp-for="Form.AddressLine1"></label>
+                            <input class="form-control rounded-3" asp-for="Form.AddressLine1" autocomplete="street-address" />
+                            <span asp-validation-for="Form.AddressLine1" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small" asp-for="Form.City"></label>
+                            <input class="form-control rounded-3" asp-for="Form.City" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small" asp-for="Form.Province"></label>
+                            <input class="form-control rounded-3" asp-for="Form.Province" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small" asp-for="Form.PostalCode"></label>
+                            <input class="form-control rounded-3" asp-for="Form.PostalCode" />
+                        </div>
+                    </div>
+
+                    <h3 class="h6 text-site-dark mb-3">Payment details</h3>
+                    <p class="small text-site-muted mb-3">Demo only—no real charges. Choose how you would pay the amount due; add a reference after a real transfer.</p>
+                    <div class="row g-3 mb-3">
+                        <div class="col-12">
+                            <label class="form-label small" asp-for="Form.PaymentMethod"></label>
+                            <select class="form-select rounded-3" asp-for="Form.PaymentMethod">
+                                <option value="">Select payment method</option>
+                                <option value="BankTransfer">Bank transfer (BPI / BDO / UnionBank)</option>
+                                <option value="GCash">GCash</option>
+                                <option value="Maya">Maya</option>
+                                <option value="Card">Credit / debit card</option>
+                            </select>
+                            <span asp-validation-for="Form.PaymentMethod" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small" asp-for="Form.PaymentAccountName"></label>
+                            <input class="form-control rounded-3" asp-for="Form.PaymentAccountName" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small" asp-for="Form.PaymentReferenceNumber"></label>
+                            <input class="form-control rounded-3" asp-for="Form.PaymentReferenceNumber" placeholder="Ref # after payment" />
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" asp-for="Form.AcceptTerms" />
+                        <label class="form-check-label small" asp-for="Form.AcceptTerms"></label>
+                        <span asp-validation-for="Form.AcceptTerms" class="text-danger small d-block"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-site-primary text-white rounded-pill px-4">Submit transaction</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

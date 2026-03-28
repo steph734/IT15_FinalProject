@@ -1,0 +1,50 @@
+@model IReadOnlyList<RealEstate.Models.Agent>
+@{
+    ViewData["Title"] = "Agents";
+}
+
+<div class="site-page py-4 py-lg-5">
+    <div class="container">
+        <div class="row g-4 align-items-end mb-4">
+            <div class="col-lg-8">
+                <h1 class="h2 fw-bold text-site-dark mb-2">Our agents</h1>
+                <p class="text-site-muted mb-0">Meet the TRUSTERS team. Reach out directly by email or phone.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a class="btn btn-outline-site rounded-pill px-4" asp-controller="Home" asp-action="Contact">Contact office</a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var a in Model)
+            {
+                <div class="col-md-6 col-xl-4">
+                    <article class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                        <div class="row g-0">
+                            <div class="col-sm-5 col-md-12 col-xl-5">
+                                <div class="ratio ratio-1x1 h-100 min-h-agent-photo">
+                                    <img src="@a.PhotoUrl" alt="" class="object-fit-cover w-100 h-100" />
+                                </div>
+                            </div>
+                            <div class="col-sm-7 col-md-12 col-xl-7">
+                                <div class="card-body p-4 d-flex flex-column h-100">
+                                    <h2 class="h5 fw-bold text-site-dark mb-1">@a.Name</h2>
+                                    <p class="small text-site mb-3">@a.Title</p>
+                                    <p class="small text-site-muted flex-grow-1">@a.Bio</p>
+                                    <div class="mt-3 pt-3 border-top">
+                                        <p class="small mb-1"><strong>Email</strong><br /><a href="mailto:@a.Email">@a.Email</a></p>
+                                        <p class="small mb-0"><strong>Phone</strong><br />@a.Phone</p>
+                                    </div>
+                                    @{
+                                        var first = a.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? a.Name;
+                                    }
+                                    <a class="btn btn-site-primary text-white rounded-pill mt-3 align-self-start" asp-controller="Home" asp-action="Contact" asp-route-agentId="@a.Id">Contact @first</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    </div>
+</div>

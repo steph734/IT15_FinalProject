@@ -1,0 +1,79 @@
+@{
+    var isHomeLanding = ViewData["IsHomeLanding"] as bool? ?? false;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TRUSTERS</title>
+    <script type="importmap"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/RealEstate.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="@(isHomeLanding ? "landing-body" : "site-inner-body")">
+    @if (!isHomeLanding)
+    {
+        <header class="site-header border-bottom bg-white sticky-top">
+            <nav class="navbar navbar-expand-lg navbar-light py-3">
+                <div class="container">
+                    <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-site-dark fs-5 text-uppercase tracking-tight" asp-controller="Home" asp-action="Index">
+                        <span class="landing-logo-icon d-inline-flex align-items-center justify-content-center rounded-3" aria-hidden="true">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 21h18M5 21V8l7-5 7 5v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M9 21v-6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        TRUSTERS
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="siteNav">
+                        <ul class="navbar-nav ms-auto my-2 my-lg-0 gap-lg-1">
+                            <li class="nav-item"><a class="nav-link text-site-dark fw-medium px-lg-3" asp-controller="Home" asp-action="Index">Home</a></li>
+                            <li class="nav-item"><a class="nav-link text-site-muted fw-medium px-lg-3" asp-controller="Properties" asp-action="Index">Properties</a></li>
+                            <li class="nav-item"><a class="nav-link text-site-muted fw-medium px-lg-3" asp-controller="Agents" asp-action="Index">Agents</a></li>
+                            <li class="nav-item"><a class="nav-link text-site-muted fw-medium px-lg-3" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    }
+    <div class="@(isHomeLanding ? "" : "container-fluid px-0")">
+        <main role="main" class="@(isHomeLanding ? "pb-0" : "pb-4")">
+            @RenderBody()
+        </main>
+    </div>
+
+    @if (!isHomeLanding)
+    {
+        <footer class="site-footer border-top bg-site-soft mt-auto py-4">
+            <div class="container">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-6">
+                        <span class="fw-semibold text-site-dark text-uppercase small">TRUSTERS</span>
+                        <span class="text-site-muted small ms-2">&copy; @DateTime.UtcNow.Year</span>
+                    </div>
+                    <div class="col-md-6 text-md-end small">
+                        <a class="text-site-muted text-decoration-none me-3" asp-controller="Properties" asp-action="Index">Properties</a>
+                        <a class="text-site-muted text-decoration-none me-3" asp-controller="Agents" asp-action="Index">Agents</a>
+                        <a class="text-site-muted text-decoration-none me-3" asp-controller="Home" asp-action="Contact">Contact</a>
+                        <a class="text-site-muted text-decoration-none" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    }
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
