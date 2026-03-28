@@ -1,0 +1,49 @@
+@model AdminCommissionsIndexViewModel
+@using RealEstate.Models.Admin
+@{
+    ViewData["Title"] = "Commission";
+}
+
+<div class="admin-dashboard bg-light min-vh-100 pb-5">
+    <div class="container-fluid px-4 py-4" style="max-width: 1200px;">
+        <h1 class="h4 fw-bold text-site-dark mb-2">Commission</h1>
+        <p class="text-site-muted small mb-4">Total commission from <strong>completed</strong> deals: <span class="fw-bold text-site-dark">₱@Model.TotalCommissionFormatted</span></p>
+
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Transaction</th>
+                            <th scope="col">Property</th>
+                            <th scope="col">Client</th>
+                            <th scope="col">Type</th>
+                            <th scope="col" class="text-end">Deal amount</th>
+                            <th scope="col" class="text-end">Commission</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model.Rows)
+                        {
+                            var paidClass = r.CommissionPaid == BrokerCommissionPaidStatus.Paid ? "text-success" : "text-warning";
+                            <tr>
+                                <td class="font-monospace">
+                                    <a asp-controller="AdminTransactions" asp-action="Details" asp-route-id="@r.TransactionId" class="text-decoration-none">@r.TransactionId</a>
+                                </td>
+                                <td>@r.PropertyTitle</td>
+                                <td>@r.ClientName</td>
+                                <td>@r.TypeDisplay</td>
+                                <td class="text-end">₱@r.DealAmountFormatted</td>
+                                <td class="text-end fw-semibold">₱@r.CommissionFormatted</td>
+                                <td><span class="fw-semibold @paidClass">@r.PaymentDisplay</span></td>
+                                <td>@r.DateDisplay</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

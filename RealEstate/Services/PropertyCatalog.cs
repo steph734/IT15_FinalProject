@@ -16,7 +16,7 @@ public class PropertyCatalog
                 Id = 1,
                 Name = "Maria Santos",
                 Title = "Senior Property Consultant",
-                Email = "maria.santos@trusters.com",
+                Email = "maria.santos@estateflow.ph",
                 Phone = "+63 (2) 8812-4400",
                 PhotoUrl = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
                 Bio = "Maria focuses on condos and townhouses across Metro Manila—BGC, Makati, and Ortigas—with 10+ years of experience."
@@ -26,7 +26,7 @@ public class PropertyCatalog
                 Id = 2,
                 Name = "James Reyes",
                 Title = "Visayas & Mindanao Listings",
-                Email = "james.reyes@trusters.com",
+                Email = "james.reyes@estateflow.ph",
                 Phone = "+63 (32) 255-9100",
                 PhotoUrl = "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
                 Bio = "James leads Cebu and Davao developments, from IT Park condos to suburban family homes."
@@ -36,7 +36,7 @@ public class PropertyCatalog
                 Id = 3,
                 Name = "Liza Cruz",
                 Title = "Leasing & Rentals",
-                Email = "liza.cruz@trusters.com",
+                Email = "liza.cruz@estateflow.ph",
                 Phone = "+63 (2) 8812-4401",
                 PhotoUrl = "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80",
                 Bio = "Liza helps tenants find flexible leases in Makati, BGC, and Quezon City with clear move-in timelines."

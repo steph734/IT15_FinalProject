@@ -25,7 +25,7 @@ namespace RealEstate.Controllers
                     new PromotionItem
                     {
                         Title = "Zero buyer fees this month",
-                        Description = "List with TRUSTERS and we waive the buyer advisory fee on select BGC and Makati listings.",
+                        Description = "List with EstateFlow and we waive the buyer advisory fee on select BGC and Makati listings.",
                         Badge = "Limited time",
                         ImageUrl =
                             "https://images.unsplash.com/photo-1600585154084-4e5fe7c39198?auto=format&fit=crop&w=900&q=80"

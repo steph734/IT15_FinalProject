@@ -1,0 +1,182 @@
+@{
+    ViewData["Title"] = "Transactions dashboard";
+}
+
+<div class="admin-dashboard bg-light min-vh-100 pb-5">
+    <div class="container py-4">
+        <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
+            <div>
+                <h1 class="h4 fw-bold text-site-dark mb-1">Transactions dashboard</h1>
+                <p class="text-site-muted small mb-0">KPIs and charts load from <code class="small">/admin/api/broker/dashboard</code> (session required).</p>
+            </div>
+        </div>
+
+        <div id="brokerDashError" class="alert alert-danger d-none" role="alert"></div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="text-site-muted small text-uppercase fw-semibold mb-1">Total deals closed</div>
+                        <div class="h4 mb-0 fw-bold text-site-dark" id="kpiClosed">—</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="text-site-muted small text-uppercase fw-semibold mb-1">Total sales value</div>
+                        <div class="h4 mb-0 fw-bold text-site-dark" id="kpiSales">—</div>
+                        <div class="small text-site-muted">Completed sales only (PHP)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="text-site-muted small text-uppercase fw-semibold mb-1">Total commission</div>
+                        <div class="h4 mb-0 fw-bold text-site-dark" id="kpiCommission">—</div>
+                        <div class="small text-site-muted">Completed deals (PHP)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="text-site-muted small text-uppercase fw-semibold mb-1">Active deals</div>
+                        <div class="h4 mb-0 fw-bold text-site-dark" id="kpiActive">—</div>
+                        <div class="small text-site-muted">In pipeline</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h2 class="h6 fw-bold text-site-dark mb-3">Closed sales value by month</h2>
+                        <p class="small text-site-muted mb-3">Line chart — completed sale amounts (PHP) per calendar month.</p>
+                        <div style="height: 280px;">
+                            <canvas id="chartSalesLine" aria-label="Sales line chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h2 class="h6 fw-bold text-site-dark mb-3">Deals by status</h2>
+                        <p class="small text-site-muted mb-3">Bar chart — pending vs completed in the demo ledger.</p>
+                        <div style="height: 280px;">
+                            <canvas id="chartStatusBar" aria-label="Status bar chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body">
+                <h2 class="h6 fw-bold text-site-dark mb-2">Transaction flow (agent)</h2>
+                <ol class="small text-site-muted mb-0 ps-3">
+                    <li>Customer inquires → you qualify and respond.</li>
+                    <li>Schedule viewing → move the record through <strong>Inquiry → Viewing → Negotiation</strong>.</li>
+                    <li>Deal closed → payment recorded → commission calculated.</li>
+                    <li>Broker reviews transactions, commission, and sales history in this portal.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+    <script>
+        (function () {
+            const fmtPhp = (n) => '₱' + Number(n).toLocaleString('en-PH', { maximumFractionDigits: 0 });
+            const elErr = document.getElementById('brokerDashError');
+            let lineChart = null;
+            let barChart = null;
+
+            function showErr(msg) {
+                elErr.textContent = msg;
+                elErr.classList.remove('d-none');
+            }
+
+            fetch('@Url.Content("~/admin/api/broker/dashboard")', { credentials: 'same-origin' })
+                .then(r => {
+                    if (r.status === 401) throw new Error('Session expired. Sign in again.');
+                    if (!r.ok) throw new Error('Could not load dashboard data.');
+                    return r.json();
+                })
+                .then(data => {
+                    const k = data.kpis;
+                    document.getElementById('kpiClosed').textContent = k.totalDealsClosed;
+                    document.getElementById('kpiSales').textContent = fmtPhp(k.totalSalesValue);
+                    document.getElementById('kpiCommission').textContent = fmtPhp(k.totalCommissionEarned);
+                    document.getElementById('kpiActive').textContent = k.activeDeals;
+
+                    const c = data.charts;
+                    const teal = '#00b4a8';
+                    const navy = '#0f2744';
+                    const orange = '#f97316';
+
+                    const ctxLine = document.getElementById('chartSalesLine');
+                    lineChart = new Chart(ctxLine, {
+                        type: 'line',
+                        data: {
+                            labels: c.monthlyLabels,
+                            datasets: [{
+                                label: 'Sale value (PHP)',
+                                data: c.monthlySalesValues,
+                                borderColor: teal,
+                                backgroundColor: 'rgba(0, 180, 168, 0.15)',
+                                tension: 0.25,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false }
+                            },
+                            scales: {
+                                y: {
+                                    ticks: {
+                                        callback: (v) => '₱' + Number(v).toLocaleString('en-PH', { maximumFractionDigits: 0 })
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    const ctxBar = document.getElementById('chartStatusBar');
+                    barChart = new Chart(ctxBar, {
+                        type: 'bar',
+                        data: {
+                            labels: c.statusLabels,
+                            datasets: [{
+                                label: 'Deals',
+                                data: c.statusCounts,
+                                backgroundColor: [orange, teal],
+                                borderRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false }
+                            },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                            }
+                        }
+                    });
+                })
+                .catch(e => showErr(e.message));
+        })();
+    </script>
+}

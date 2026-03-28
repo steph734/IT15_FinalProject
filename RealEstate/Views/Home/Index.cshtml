@@ -1,7 +1,7 @@
 @model RealEstate.Models.HomeIndexViewModel
 @using RealEstate.Models
 @{
-    ViewData["Title"] = "TRUSTERS";
+    ViewData["Title"] = "EstateFlow";
     ViewData["IsHomeLanding"] = true;
     var ph = Currency.PhilippinePeso;
 }
@@ -288,7 +288,7 @@
                         <div class="p-4 p-lg-5 d-flex flex-column justify-content-center h-100">
                             <span class="display-4 text-landing-primary lh-1 mb-3" aria-hidden="true">&ldquo;</span>
                             <p class="fs-5 text-landing-dark mb-4 landing-quote">
-                                TRUSTERS made finding our family home straightforward. The team was responsive, honest about pricing, and helped us close with confidence.
+                                EstateFlow made finding our family home straightforward. The team was responsive, honest about pricing, and helped us close with confidence.
                             </p>
                             <div class="text-warning mb-2" aria-label="5 out of 5 stars"><span class="landing-stars">★★★★★</span></div>
                             <p class="mb-0 fw-semibold text-landing-dark">Antonio Dela Cruz</p>
@@ -325,14 +325,8 @@
         <div class="container">
             <div class="row g-4 g-lg-5">
                 <div class="col-md-6 col-lg-4">
-                    <div class="d-flex align-items-center gap-2 fw-bold text-landing-dark fs-5 text-uppercase mb-3">
-                        <span class="landing-logo-icon d-inline-flex align-items-center justify-content-center rounded-3" aria-hidden="true">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 21h18M5 21V8l7-5 7 5v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M9 21v-6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                        </span>
-                        TRUSTERS
+                    <div class="mb-3">
+                        <img src="~/images/estateflow-logo.png" alt="EstateFlow" class="brand-logo-img brand-logo-img--footer" width="200" height="60" />
                     </div>
                     <p class="text-landing-muted small mb-0">We connect families with homes they love—backed by transparent service and local expertise across the Philippines.</p>
                 </div>
@@ -354,7 +348,7 @@
                     </ul>
                 </div>
             </div>
-            <p class="text-center small text-landing-muted mb-0 mt-4 pt-3 border-top border-white">@DateTime.UtcNow.Year TRUSTERS. All rights reserved.</p>
+            <p class="text-center small text-landing-muted mb-0 mt-4 pt-3 border-top border-white">@DateTime.UtcNow.Year <span class="brand-wordmark"><span class="brand-estate">Estate</span><span class="brand-flow">Flow</span></span>. All rights reserved.</p>
         </div>
     </footer>
 </div>

@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Manager\" />
-    <Folder Include="Controllers\Customer\" />
-    <Folder Include="Models\Customer\" />
+    <Folder Include="Controllers\Admin\" />
+    <Folder Include="Models\Admin\" />
+    <Folder Include="Views\Admin\" />
   </ItemGroup>
 
 </Project>

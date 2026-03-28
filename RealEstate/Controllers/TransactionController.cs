@@ -93,7 +93,7 @@ public class TransactionController : Controller
             return View(vm);
         }
 
-        var reference = $"TRU-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpperInvariant()}";
+        var reference = $"EFL-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpperInvariant()}";
         HttpContext.Session.Remove(TransactionSessionKeys.PropertyId);
         HttpContext.Session.Remove(TransactionSessionKeys.CustomerName);
         HttpContext.Session.Remove(TransactionSessionKeys.CustomerEmail);

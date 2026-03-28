@@ -9,7 +9,7 @@ html {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem rgba(0, 180, 168, 0.45);
 }
 
 html {
@@ -30,17 +30,58 @@ body {
   text-align: start;
 }
 
-/* Full landing page (Index — TRUSTERS) */
+/* EstateFlow brand — navy, teal, orange */
+:root {
+  --ef-navy: #0f2744;
+  --ef-teal: #00b4a8;
+  --ef-teal-dark: #089891;
+  --ef-orange: #f97316;
+  --ef-soft: #e8f7f6;
+}
+
+/* Full landing page (Index) */
 .landing-body {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   margin-bottom: 0;
 }
 
+.brand-logo-img {
+  height: 48px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-logo-img--footer {
+  height: 56px;
+  max-width: 220px;
+}
+
+.brand-wordmark {
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.brand-wordmark--footer {
+  font-weight: 700;
+}
+
+.brand-estate {
+  color: var(--ef-navy);
+}
+
+.brand-flow {
+  color: var(--ef-teal);
+}
+
 .landing-page {
-  --landing-primary: #1e6bff;
-  --landing-primary-dark: #1558d6;
-  --landing-soft: #eef4ff;
-  --landing-dark: #14213d;
+  --landing-primary: var(--ef-teal);
+  --landing-primary-dark: var(--ef-teal-dark);
+  --landing-accent: var(--ef-orange);
+  --landing-soft: var(--ef-soft);
+  --landing-dark: var(--ef-navy);
   --landing-muted: #5c6578;
   color: var(--landing-dark);
 }
@@ -83,7 +124,7 @@ body {
 .landing-page .landing-logo-icon {
   width: 2.5rem;
   height: 2.5rem;
-  background: rgba(30, 107, 255, 0.12);
+  background: rgba(0, 180, 168, 0.12);
   color: var(--landing-primary);
 }
 
@@ -153,7 +194,7 @@ body {
   height: 2rem;
   align-items: center;
   justify-content: center;
-  background: rgba(30, 107, 255, 0.12);
+  background: rgba(0, 180, 168, 0.15);
 }
 
 .landing-page .landing-stat-number {
@@ -222,7 +263,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  color: #14213d;
+  color: var(--ef-navy);
 }
 
 .site-inner-body .container-fluid {
@@ -233,11 +274,9 @@ body {
   flex: 1 0 auto;
 }
 
-.site-header .landing-logo-icon {
-  width: 2.25rem;
-  height: 2.25rem;
-  background: rgba(30, 107, 255, 0.12);
-  color: #1e6bff;
+.site-header .brand-logo-img {
+  height: 44px;
+  max-width: 170px;
 }
 
 .site-inner-body .tracking-tight {
@@ -245,7 +284,7 @@ body {
 }
 
 .text-site-dark {
-  color: #14213d !important;
+  color: var(--ef-navy) !important;
 }
 
 .text-site-muted {
@@ -253,34 +292,34 @@ body {
 }
 
 .text-site {
-  color: #1e6bff !important;
+  color: var(--ef-teal) !important;
 }
 
 .bg-site-soft {
-  background-color: #eef4ff !important;
+  background-color: var(--ef-soft) !important;
 }
 
 .btn-site-primary {
-  --bs-btn-bg: #1e6bff;
-  --bs-btn-border-color: #1e6bff;
-  --bs-btn-hover-bg: #1558d6;
-  --bs-btn-hover-border-color: #1558d6;
-  --bs-btn-active-bg: #1558d6;
-  --bs-btn-active-border-color: #1558d6;
-  background-color: #1e6bff;
-  border-color: #1e6bff;
+  --bs-btn-bg: var(--ef-teal);
+  --bs-btn-border-color: var(--ef-teal);
+  --bs-btn-hover-bg: var(--ef-teal-dark);
+  --bs-btn-hover-border-color: var(--ef-teal-dark);
+  --bs-btn-active-bg: var(--ef-teal-dark);
+  --bs-btn-active-border-color: var(--ef-teal-dark);
+  background-color: var(--ef-teal);
+  border-color: var(--ef-teal);
 }
 
 .btn-outline-site {
-  --bs-btn-color: #1e6bff;
-  --bs-btn-border-color: #1e6bff;
-  --bs-btn-hover-bg: #1e6bff;
-  --bs-btn-hover-border-color: #1e6bff;
+  --bs-btn-color: var(--ef-teal);
+  --bs-btn-border-color: var(--ef-teal);
+  --bs-btn-hover-bg: var(--ef-teal);
+  --bs-btn-hover-border-color: var(--ef-teal);
   --bs-btn-hover-color: #fff;
 }
 
 .site-page .breadcrumb a {
-  color: #1e6bff;
+  color: var(--ef-teal);
 }
 
 .site-prose {
@@ -304,4 +343,30 @@ body {
 .site-property-card:hover {
   box-shadow: 0 0.5rem 1.25rem rgba(20, 33, 61, 0.1) !important;
   transform: translateY(-2px);
+}
+
+/* Admin (separate from customer layout) */
+.admin-body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  margin-bottom: 0;
+}
+
+.admin-login-page {
+  background: linear-gradient(155deg, var(--ef-navy) 0%, #0a1a2e 55%, #132f4a 100%);
+}
+
+.admin-login-card {
+  border-radius: 1rem;
+}
+
+.admin-portal-nav {
+  background: linear-gradient(90deg, var(--ef-navy) 0%, #132f4a 100%);
+}
+
+.admin-portal-nav .nav-link {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.admin-portal-nav .nav-link:hover {
+  color: #fff !important;
 }

@@ -1,0 +1,40 @@
+@using RealEstate.Models.Admin
+@{
+    var brokerUser = Context.Session.GetString(AdminSessionKeys.Username);
+}
+<nav class="navbar navbar-expand-lg navbar-dark border-bottom shadow-sm admin-portal-nav">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center gap-2 py-2" asp-controller="Admin" asp-action="Dashboard">
+            <img src="~/images/estateflow-logo.png" alt="" class="brand-logo-img" style="height: 32px; width: auto; filter: brightness(0) invert(1);" />
+            <span class="fw-bold small text-uppercase tracking-wide opacity-75">Broker</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminPortalNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="adminPortalNav">
+            <ul class="navbar-nav me-auto ms-lg-3 gap-lg-1 small fw-medium">
+                <li class="nav-item">
+                    <a class="nav-link px-lg-3" asp-controller="Admin" asp-action="Dashboard">Transactions dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-lg-3" asp-controller="AdminTransactions" asp-action="Index">Transactions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-lg-3" asp-controller="AdminCommissions" asp-action="Index">Commission</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-lg-3" asp-controller="AdminSalesHistory" asp-action="Index">Sales history</a>
+                </li>
+            </ul>
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
+                @if (!string.IsNullOrEmpty(brokerUser))
+                {
+                    <span class="navbar-text small text-white-50">@brokerUser</span>
+                }
+                <form asp-controller="Admin" asp-action="Logout" method="post" class="m-0">
+                    <button type="submit" class="btn btn-outline-light btn-sm">Sign out</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="h3 fw-bold text-site-dark mb-2">Admin dashboard</h1>
+            <p class="text-site-muted mb-4">You are signed in. Add admin tools and content management here as needed.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index" asp-area="">Go to customer site</a>
+                <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-danger">Sign out</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

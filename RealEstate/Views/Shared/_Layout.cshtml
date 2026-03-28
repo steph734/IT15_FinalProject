@@ -6,11 +6,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TRUSTERS</title>
+    <title>@ViewData["Title"] - EstateFlow</title>
     <script type="importmap"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RealEstate.styles.css" asp-append-version="true" />
@@ -22,14 +22,8 @@
         <header class="site-header border-bottom bg-white sticky-top">
             <nav class="navbar navbar-expand-lg navbar-light py-3">
                 <div class="container">
-                    <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-site-dark fs-5 text-uppercase tracking-tight" asp-controller="Home" asp-action="Index">
-                        <span class="landing-logo-icon d-inline-flex align-items-center justify-content-center rounded-3" aria-hidden="true">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 21h18M5 21V8l7-5 7 5v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M9 21v-6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                        </span>
-                        TRUSTERS
+                    <a class="navbar-brand d-flex align-items-center py-1" asp-controller="Home" asp-action="Index">
+                        <img src="~/images/estateflow-logo.png" alt="EstateFlow" class="brand-logo-img" width="160" height="48" />
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -58,7 +52,7 @@
             <div class="container">
                 <div class="row g-3 align-items-center">
                     <div class="col-md-6">
-                        <span class="fw-semibold text-site-dark text-uppercase small">TRUSTERS</span>
+                        <span class="brand-wordmark brand-wordmark--footer small"><span class="brand-estate">Estate</span><span class="brand-flow">Flow</span></span>
                         <span class="text-site-muted small ms-2">&copy; @DateTime.UtcNow.Year</span>
                     </div>
                     <div class="col-md-6 text-md-end small">

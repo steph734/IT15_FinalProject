@@ -1,0 +1,45 @@
+@model AdminLoginViewModel
+@{
+    ViewData["Title"] = "Admin sign in";
+    ViewData["HideBrokerNav"] = true;
+}
+
+<div class="admin-login-page min-vh-100 d-flex align-items-center py-5">
+    <div class="container" style="max-width: 420px;">
+        <div class="text-center mb-4">
+            <a asp-controller="Home" asp-action="Index" class="text-decoration-none d-inline-flex align-items-center justify-content-center gap-2 mb-2">
+                <img src="~/images/estateflow-logo.png" alt="EstateFlow" class="brand-logo-img" width="160" height="48" />
+            </a>
+            <p class="text-white-50 small mb-0">Administrator access</p>
+        </div>
+        <div class="card admin-login-card border-0 shadow-lg">
+            <div class="card-body p-4 p-md-5">
+                <h1 class="h5 fw-bold text-site-dark mb-1">Sign in</h1>
+                <p class="text-site-muted small mb-4">Use your admin credentials. Customer site is unchanged.</p>
+
+                <form asp-controller="Admin" asp-action="Login" method="post" novalidate>
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="Username" class="form-label small fw-semibold"></label>
+                        <input asp-for="Username" class="form-control" autocomplete="username" autofocus />
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-4">
+                        <label asp-for="Password" class="form-label small fw-semibold"></label>
+                        <input asp-for="Password" class="form-control" autocomplete="current-password" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <button type="submit" class="btn btn-site-primary w-100 py-2 fw-semibold">Sign in</button>
+                </form>
+            </div>
+        </div>
+        <p class="text-center small mt-4 mb-0">
+            <a href="~/Home/Index" class="text-white-50 text-decoration-none">← Back to EstateFlow</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

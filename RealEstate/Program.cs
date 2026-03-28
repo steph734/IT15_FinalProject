@@ -9,7 +9,10 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<RealEstate.Models.Admin.AdminAuthOptions>(
+    builder.Configuration.GetSection(RealEstate.Models.Admin.AdminAuthOptions.SectionName));
 builder.Services.AddSingleton<RealEstate.Services.PropertyCatalog>();
+builder.Services.AddSingleton<RealEstate.Services.BrokerDealLedger>();
 
 var app = builder.Build();
 
@@ -28,6 +31,8 @@ app.UseSession();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",
