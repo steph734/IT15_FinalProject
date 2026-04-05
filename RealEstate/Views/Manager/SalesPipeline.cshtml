@@ -1,0 +1,210 @@
+@{
+    ViewData["Title"] = "Sales Pipeline";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <h1 class="h4 fw-bold mb-4">📈 Sales Pipeline - Kanban Board</h1>
+
+    <div class="kanban-board">
+        <!-- Inquiry Stage -->
+        <div class="kanban-column">
+            <div class="column-header">
+                <h6>Inquiry <span class="badge bg-secondary">8</span></h6>
+            </div>
+            <div class="cards-container">
+                <div class="kanban-card">
+                    <div class="card-title">Property Condo BGC</div>
+                    <div class="card-meta">Client: John Doe</div>
+                    <div class="card-priority priority-high">High Priority</div>
+                </div>
+                <div class="kanban-card">
+                    <div class="card-title">House Makati</div>
+                    <div class="card-meta">Client: Jane Smith</div>
+                    <div class="card-priority priority-medium">Medium Priority</div>
+                </div>
+                <div class="kanban-card">
+                    <div class="card-title">Villa Tagaytay</div>
+                    <div class="card-meta">Client: Robert Lee</div>
+                    <div class="card-priority priority-low">Low Priority</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Viewing Stage -->
+        <div class="kanban-column">
+            <div class="column-header">
+                <h6>Viewing <span class="badge bg-info">5</span></h6>
+            </div>
+            <div class="cards-container">
+                <div class="kanban-card">
+                    <div class="card-title">Condo Taguig</div>
+                    <div class="card-meta">Scheduled: Today 3PM</div>
+                    <div class="card-priority priority-high">High Priority</div>
+                </div>
+                <div class="kanban-card">
+                    <div class="card-title">House Quezon City</div>
+                    <div class="card-meta">Scheduled: Tomorrow 10AM</div>
+                    <div class="card-priority priority-medium">Medium Priority</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Negotiation Stage -->
+        <div class="kanban-column">
+            <div class="column-header">
+                <h6>Negotiation <span class="badge bg-warning">4</span></h6>
+            </div>
+            <div class="cards-container">
+                <div class="kanban-card">
+                    <div class="card-title">Apartment Fort</div>
+                    <div class="card-meta">Offer: ₱8.5M</div>
+                    <div class="card-priority priority-high">High Priority</div>
+                </div>
+                <div class="kanban-card">
+                    <div class="card-title">Property Ortigas</div>
+                    <div class="card-meta">Counter-offer awaiting</div>
+                    <div class="card-priority priority-medium">Medium Priority</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Closed/Won Stage -->
+        <div class="kanban-column">
+            <div class="column-header">
+                <h6>Closed/Won <span class="badge bg-success">12</span></h6>
+            </div>
+            <div class="cards-container">
+                <div class="kanban-card completed">
+                    <div class="card-title">House BGC</div>
+                    <div class="card-meta">Closed: Mar 15, 2025</div>
+                    <div class="card-price">₱15.2M</div>
+                </div>
+                <div class="kanban-card completed">
+                    <div class="card-title">Condo Makati</div>
+                    <div class="card-meta">Closed: Mar 10, 2025</div>
+                    <div class="card-price">₱9.8M</div>
+                </div>
+                <div class="kanban-card completed">
+                    <div class="card-title">Villa Tagaytay</div>
+                    <div class="card-meta">Closed: Mar 5, 2025</div>
+                    <div class="card-price">₱12.5M</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .kanban-board {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .kanban-column {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 16px;
+        min-height: 600px;
+    }
+
+    .column-header {
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        border-left: 4px solid #6366f1;
+    }
+
+    .column-header h6 {
+        margin: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+    }
+
+    .cards-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .kanban-card {
+        background: white;
+        padding: 14px;
+        border-radius: 8px;
+        border-left: 3px solid #6366f1;
+        cursor: move;
+        transition: all 0.2s;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .kanban-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .kanban-card.completed {
+        border-left-color: #10b981;
+        background: #f0fdf4;
+    }
+
+    .card-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+        color: #1a1a1a;
+    }
+
+    .card-meta {
+        font-size: 0.8rem;
+        color: #999;
+        margin-bottom: 8px;
+    }
+
+    .card-priority {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        text-transform: uppercase;
+    }
+
+    .priority-high {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .priority-medium {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .priority-low {
+        background: #dbeafe;
+        color: #0284c7;
+    }
+
+    .card-price {
+        font-weight: 700;
+        color: #10b981;
+        margin-top: 8px;
+        font-size: 0.95rem;
+    }
+
+    @@media (max-width: 1200px) {
+        .kanban-board {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .kanban-board {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

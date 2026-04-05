@@ -1,0 +1,95 @@
+@{
+    ViewData["Title"] = "Revision Center";
+    Layout = "~/Views/Shared/_InvestorLayout.cshtml";
+}
+
+<div class="container py-4">
+    <h1 class="h4 fw-bold mb-4">🔍 Revision Center</h1>
+
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="alert alert-info" role="alert">
+                <strong>Revision Center:</strong> View feedback from Admin for rejected listings and resubmit with improvements.
+            </div>
+        </div>
+    </div>
+
+    <!-- Rejected Listings -->
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <div class="fw-semibold">The Orchid - Villa</div>
+                    <div class="small">Rejection Date: Mar 28, 2025</div>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-2">Feedback from Admin:</h6>
+                    <div class="alert alert-light border-start border-danger">
+                        <p class="mb-2"><strong>Issues Found:</strong></p>
+                        <ul class="mb-0 small">
+                            <li>Photos are low quality - need high-resolution images (min 1920x1080)</li>
+                            <li>Property description is incomplete</li>
+                            <li>Tax declaration document is expired (2022)</li>
+                            <li>Location pinning is inaccurate</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small">Resubmit with corrections:</label>
+                        <textarea class="form-control" rows="3" placeholder="Describe what you've corrected..."></textarea>
+                    </div>
+
+                    <button class="btn btn-primary btn-sm">Resubmit Listing</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <div class="fw-semibold">Maison Sterling - House</div>
+                    <div class="small">Rejection Date: Mar 25, 2025</div>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-2">Feedback from Admin:</h6>
+                    <div class="alert alert-light border-start border-danger">
+                        <p class="mb-2"><strong>Issues Found:</strong></p>
+                        <ul class="mb-0 small">
+                            <li>Price seems overvalued compared to similar properties in area</li>
+                            <li>Property condition photos show maintenance issues</li>
+                            <li>No survey plan provided</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small">Resubmit with corrections:</label>
+                        <textarea class="form-control" rows="3" placeholder="Describe what you've corrected..."></textarea>
+                    </div>
+
+                    <button class="btn btn-primary btn-sm">Resubmit Listing</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approved Listings (Optional Section) -->
+    <div class="row g-3 mt-3">
+        <div class="col-12">
+            <h6 class="mb-3">Recently Approved</h6>
+            <div class="card border-success shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <div class="fw-semibold">Echelon West - House</div>
+                    <div class="small">Approved on: Apr 2, 2025</div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <p class="mb-0"><strong>Status:</strong> <span class="badge bg-success">Live</span></p>
+                        </div>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View Listing</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

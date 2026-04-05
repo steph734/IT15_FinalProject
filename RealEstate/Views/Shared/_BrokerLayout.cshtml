@@ -1,0 +1,80 @@
+@{
+    var isBroker = ViewContext.RouteData.Values["controller"]?.ToString()?.Equals("Broker", System.StringComparison.OrdinalIgnoreCase) ?? false;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EstateFlow Broker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/RealEstate.styles.css" asp-append-version="true" />
+    <style>
+        :root {
+            --primary-color: #f97316;
+            --primary-dark: #ea580c;
+            --accent-color: #ff7a59;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .bg-site-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        }
+
+        .text-site-muted {
+            color: #9ca3af;
+        }
+
+        .bg-site-soft {
+            background-color: #f9fafb;
+        }
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="site-inner-body d-flex flex-column" style="min-height: 100vh;">
+    <!-- Broker Navigation -->
+    @if (isBroker)
+    {
+        @await Html.PartialAsync("~/Views/Broker/_BrokerNav.cshtml", ViewData)
+    }
+
+    <div class="container-fluid px-0 flex-grow-1">
+        <main role="main" class="pb-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer border-top bg-site-soft mt-auto py-4">
+        <div class="container">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <span class="brand-wordmark brand-wordmark--footer small">
+                        <span class="brand-estate" style="color: var(--accent-color); font-weight: 700;">Estate</span><span class="brand-flow" style="color: #333; font-weight: 700;">Flow</span>
+                    </span>
+                    <span class="text-site-muted small ms-2">&copy; @DateTime.UtcNow.Year</span>
+                </div>
+                <div class="col-md-6 text-md-end small">
+                    <a class="text-site-muted text-decoration-none me-3" href="#">Support</a>
+                    <a class="text-site-muted text-decoration-none me-3" href="#">Documentation</a>
+                    <a class="text-site-muted text-decoration-none" href="#">Settings</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

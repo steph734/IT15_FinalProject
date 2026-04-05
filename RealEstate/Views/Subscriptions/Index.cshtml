@@ -1,0 +1,72 @@
+@model RealEstate.Models.SubscriptionViewModel
+@{
+    ViewData["Title"] = "Subscriptions";
+}
+
+<div class="site-page py-5">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h1 class="h3 fw-bold">Choose a plan</h1>
+            <p class="text-muted">Upgrade your experience and access premium features.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 rounded-4 h-100 text-center p-4 pricing-card">
+                    <h5 class="fw-semibold text-pink">Freemium</h5>
+                    <p class="text-muted small">Have access to the basics for free</p>
+                    <div class="my-4 display-6 fw-bold">@Model.FreemiumPrice.ToString("C0") <small class="text-muted">/mo</small></div>
+                    <ul class="text-start small pricing-feature-list">
+                        <li>1 user</li>
+                        <li>Basic search &amp; wishlist</li>
+                        <li>Standard notifications</li>
+                    </ul>
+                    <div class="mt-4">
+                        <form method="post" asp-controller="Subscriptions" asp-action="Set">
+                            <input type="hidden" name="tier" value="Free" />
+                            <button class="btn btn-outline-primary w-100">Signup for free</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-lg rounded-4 h-100 text-center p-4 pricing-card" style="background:linear-gradient(180deg,#6b46c1,#805ad5); color:white;">
+                    <h5 class="fw-semibold">Plus</h5>
+                    <p class="small">Priority notifications, No-ads experience</p>
+                    <div class="my-4 display-6 fw-bold">@Model.PlusPrice.ToString("C0") <small class="text-muted">/mo</small></div>
+                    <ul class="text-start small pricing-feature-list">
+                        <li>Early access to new listings (24h)</li>
+                        <li>No promoted/sponsored listings</li>
+                        <li>Priority notifications</li>
+                    </ul>
+                    <div class="mt-4">
+                        <form method="post" asp-controller="Subscriptions" asp-action="Set">
+                            <input type="hidden" name="tier" value="Plus" />
+                            <button class="btn btn-light w-100" style="color:#6b46c1;">Go Premium</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 rounded-4 h-100 text-center p-4 pricing-card">
+                    <h5 class="fw-semibold text-pink">Premium</h5>
+                    <p class="text-muted small">All features plus direct messaging and premium map layers</p>
+                    <div class="my-4 display-6 fw-bold">@Model.PremiumPrice.ToString("C0") <small class="text-muted">/mo</small></div>
+                    <ul class="text-start small pricing-feature-list">
+                        <li>Everything in Plus</li>
+                        <li>Premium map data (crime, schools, plans)</li>
+                        <li>Direct-to-owner messaging (verified)</li>
+                    </ul>
+                    <div class="mt-4">
+                        <form method="post" asp-controller="Subscriptions" asp-action="Set">
+                            <input type="hidden" name="tier" value="Premium" />
+                            <button class="btn btn-outline-primary w-100">Sign up</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

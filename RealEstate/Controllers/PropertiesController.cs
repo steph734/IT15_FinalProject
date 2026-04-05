@@ -7,10 +7,17 @@ namespace RealEstate.Controllers;
 public class PropertiesController : Controller
 {
     private readonly PropertyCatalog _catalog;
+    private readonly SubscriptionService _subs;
 
     public PropertiesController(PropertyCatalog catalog)
     {
         _catalog = catalog;
+    }
+
+    public PropertiesController(PropertyCatalog catalog, SubscriptionService subs)
+    {
+        _catalog = catalog;
+        _subs = subs;
     }
 
     public IActionResult Index(string? location, string? priceRange, decimal? maxPrice, int page = 1, int pageSize = 5)

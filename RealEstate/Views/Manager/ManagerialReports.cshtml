@@ -1,0 +1,153 @@
+@{
+    ViewData["Title"] = "Managerial Reports";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <h1 class="h4 fw-bold mb-4">📄 Managerial Reports - Export & Analytics</h1>
+
+    <!-- Report Types -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="report-card">
+                <div class="report-icon">👥</div>
+                <div class="report-title">Team Productivity</div>
+                <div class="report-desc">Agent performance & sales metrics</div>
+                <button class="btn btn-sm btn-outline-primary mt-3">Generate</button>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="report-card">
+                <div class="report-icon">💰</div>
+                <div class="report-title">Revenue Report</div>
+                <div class="report-desc">Monthly & yearly revenue targets</div>
+                <button class="btn btn-sm btn-outline-primary mt-3">Generate</button>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="report-card">
+                <div class="report-icon">📊</div>
+                <div class="report-title">Sales Analysis</div>
+                <div class="report-desc">Deal breakdown & trends</div>
+                <button class="btn btn-sm btn-outline-primary mt-3">Generate</button>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="report-card">
+                <div class="report-icon">🎯</div>
+                <div class="report-title">Target Tracking</div>
+                <div class="report-desc">Monthly targets vs actuals</div>
+                <button class="btn btn-sm btn-outline-primary mt-3">Generate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Reports -->
+    <div class="card border-0 shadow-sm p-4 mb-4">
+        <h6 class="mb-3">📁 Recent Reports</h6>
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Report Name</th>
+                        <th>Generated</th>
+                        <th>Period</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Team Productivity - March 2025</td>
+                        <td>Today 10:30 AM</td>
+                        <td>Mar 1-31, 2025</td>
+                        <td><span class="badge bg-success">Ready</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary">📥 Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Monthly Revenue Report</td>
+                        <td>Yesterday 4:15 PM</td>
+                        <td>Mar 1-31, 2025</td>
+                        <td><span class="badge bg-success">Ready</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary">📥 Download</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Sales Pipeline Analysis</td>
+                        <td>Mar 25, 2025</td>
+                        <td>Mar 1-31, 2025</td>
+                        <td><span class="badge bg-success">Ready</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary">📥 Download</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Export Options -->
+    <div class="card border-0 shadow-sm p-4">
+        <h6 class="mb-3">⚙️ Export Settings</h6>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Report Type</label>
+                <select class="form-select">
+                    <option>Team Productivity</option>
+                    <option>Revenue Report</option>
+                    <option>Sales Analysis</option>
+                    <option>Target Tracking</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Date Range</label>
+                <input type="month" class="form-control" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Format</label>
+                <select class="form-select">
+                    <option>PDF</option>
+                    <option>Excel</option>
+                    <option>CSV</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn btn-primary mt-3">Generate & Export</button>
+    </div>
+</div>
+
+<style>
+    .report-card {
+        background: white;
+        border: 1px solid #e0e0ff;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .report-card:hover {
+        border-color: #6366f1;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+        transform: translateY(-4px);
+    }
+
+    .report-icon {
+        font-size: 32px;
+        margin-bottom: 12px;
+    }
+
+    .report-title {
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .report-desc {
+        font-size: 0.85rem;
+        color: #999;
+        margin-bottom: 16px;
+    }
+</style>

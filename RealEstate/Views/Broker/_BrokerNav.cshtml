@@ -1,0 +1,114 @@
+<!-- Broker Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-site-primary sticky-top shadow-sm">
+    <div class="container-fluid px-lg-4">
+        <!-- Logo -->
+        <a class="navbar-brand fw-bold" href="/broker/dashboard">
+            <span class="brand-estate">Estate</span><span class="brand-flow">Flow</span>
+        </a>
+
+        <!-- Toggle for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#brokerNavbar" aria-controls="brokerNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navigation Items -->
+        <div class="collapse navbar-collapse" id="brokerNavbar">
+            <ul class="navbar-nav ms-auto gap-1">
+                <li class="nav-item">
+                    <a class="nav-link" href="/broker/dashboard">
+                        <i class="fas fa-chart-line me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/broker/listings">
+                        <i class="fas fa-home me-2"></i>Listings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/broker/clients">
+                        <i class="fas fa-users me-2"></i>Clients
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/broker/sales">
+                        <i class="fas fa-handshake me-2"></i>Sales
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/broker/commissions">
+                        <i class="fas fa-dollar-sign me-2"></i>Commissions
+                    </a>
+                </li>
+
+                <!-- User Dropdown -->
+                <li class="nav-item dropdown ms-3">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-2"></i>
+                        <span>@(ViewData["UserName"] as string ?? "Broker")</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="/broker/profile">My Profile</a></li>
+                        <li><a class="dropdown-item" href="/broker/settings">Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="post" action="/broker/logout" style="display: inline;">
+                                <button type="submit" class="dropdown-item">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .brand-estate {
+        color: #ff7a59;
+        font-weight: 700;
+    }
+
+    .brand-flow {
+        color: #333;
+        font-weight: 700;
+    }
+
+    .bg-site-primary {
+        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    }
+
+    .navbar-dark .nav-link {
+        color: rgba(255, 255, 255, 0.8) !important;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .navbar-dark .nav-link:hover {
+        color: white !important;
+    }
+
+    .navbar-dark .dropdown-toggle::after {
+        border-top-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+    }
+
+    .dropdown-item {
+        color: #333;
+        transition: all 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f5f7fa;
+        color: #f97316;
+    }
+
+    .dropdown-item.active {
+        background-color: #f97316;
+        color: white;
+    }
+</style>

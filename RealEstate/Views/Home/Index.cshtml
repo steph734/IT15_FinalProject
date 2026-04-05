@@ -59,6 +59,152 @@
         </div>
     </section>
 
+    <!-- Marketplace / Advanced search -->
+    <section class="py-5 bg-white" id="marketplace">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold mb-0">Marketplace</h2>
+                <div class="small text-muted">Featured listings and trending areas</div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="row g-4" id="searchResults">
+                        @if (Model.SearchResults?.Count > 0)
+                        {
+                            @foreach (var p in Model.SearchResults)
+                            {
+                                <div class="col-sm-6">
+                                    <article class="card border-0 shadow-sm h-100">
+                                        <div class="row g-0">
+                                            <div class="col-5">
+                                                <a asp-controller="Properties" asp-action="Details" asp-route-id="@p.Id">
+                                                    <div class="ratio ratio-4x3">
+                                                        <img src="@p.ImageUrls.FirstOrDefault()" class="object-fit-cover w-100 h-100" />
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-7">
+                                                <div class="card-body">
+                                                    <a asp-controller="Properties" asp-action="Details" asp-route-id="@p.Id" class="text-decoration-none text-reset">
+                                                        <h3 class="h6 fw-semibold mb-1">@p.Title</h3>
+                                                    </a>
+                                                    <p class="small text-muted mb-2">@p.Location</p>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="fw-bold">@if (p.ListingType == PropertyListingType.Buy) { @p.Price.ToString("C0", ph) } else { @(p.Price.ToString("C0", ph) + "/mo") }</div>
+                                                        <div class="d-flex gap-2">
+                                                            <button class="btn btn-sm btn-outline-secondary btn-wishlist" data-id="@p.Id">❤️</button>
+                                                            <a class="btn btn-sm btn-primary" asp-controller="Properties" asp-action="Details" asp-route-id="@p.Id">Inquire</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-12">
+                                <div class="alert alert-light">No results yet — try searching or browse all properties.</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <aside class="col-lg-4">
+                    <div class="card border-0 shadow-sm p-3 mb-4">
+                        <h6 class="small text-site-muted mb-2">Advanced search</h6>
+                        <form method="get" asp-controller="Properties" asp-action="Index">
+                            <div class="mb-2">
+                                <label class="form-label small">Price (max)</label>
+                                <input name="maxPrice" type="number" class="form-control form-control-sm" placeholder="₱" />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">Bedrooms</label>
+                                <select name="bedrooms" class="form-select form-select-sm">
+                                    <option value="">Any</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">Map radius (km)</label>
+                                <input name="radiusKm" type="number" class="form-control form-control-sm" placeholder="e.g. 5" />
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-site-primary btn-sm">Apply filters</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card border-0 shadow-sm p-3 mb-4">
+                        <h6 class="small text-site-muted mb-2">Trending areas</h6>
+                        <div class="d-flex flex-column gap-2">
+                            @foreach (var t in Model.TrendingAreas ?? Array.Empty<string>())
+                            {
+                                <a class="small text-decoration-none" asp-controller="Properties" asp-action="Index" asp-route-location="@t">• @t</a>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm p-3">
+                        <h6 class="small text-site-muted mb-2">Wishlist</h6>
+                        <div id="wishlistPreview" class="small text-muted">No favourites yet</div>
+                        <div class="mt-2">
+                            <button id="btnCompare" class="btn btn-sm btn-outline-primary">Compare</button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>  
+    </section>
+
+    <!-- Booking Portal teaser -->
+    <section class="py-5 bg-landing-soft">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-1">Book a viewing</h3>
+                    <p class="small text-muted mb-0">Pick a preferred date &amp; time and we'll confirm availability.</p>
+                </div>
+                <div>
+                    <a class="btn btn-site-primary" asp-controller="Properties" asp-action="Index">Request viewing</a>
+                </div>
+            </div>
+        </div>
+    </section>
+@section Scripts {
+    <script>
+        (function(){
+            // wishlist button handler: post to Favorites controller
+            document.querySelectorAll('.btn-wishlist').forEach(btn => {
+                btn.addEventListener('click', function(e){
+                    const id = this.dataset.id;
+                    fetch('/favorites/add', { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: `id=${id}` })
+                        .then(r => r.json()).then(j => {
+                            const badge = document.getElementById('favCount');
+                            if (badge){ badge.textContent = j.count; badge.style.display = j.count > 0 ? 'inline-block' : 'none'; }
+                        });
+                });
+            });
+            // update count from session on load (simple)
+            fetch('/favorites').then(r => r.text()).then(html => {
+                if (!html) return;
+                // count occurrences of card items
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const count = doc.querySelectorAll('.card').length;
+                const badge = document.getElementById('favCount');
+                if (badge){ badge.textContent = count; badge.style.display = count > 0 ? 'inline-block' : 'none'; }
+            }).catch(()=>{});
+        })();
+    </script>
+}
+
     <section class="py-5 py-lg-6 bg-landing-soft scroll-landing-section" id="locations">
         <div class="container">
             <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-4 mb-lg-5">

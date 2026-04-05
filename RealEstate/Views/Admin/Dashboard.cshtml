@@ -1,182 +1,233 @@
 @{
-    ViewData["Title"] = "Transactions dashboard";
+    ViewData["Title"] = "Admin Dashboard - EstateFlow";
+    Layout = null;
+    var adminUser = Context.Session.GetString("AdminUser");
 }
 
-<div class="admin-dashboard bg-light min-vh-100 pb-5">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+        }
+
+        .navbar-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-custom .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+        }
+
+        .navbar-custom .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: white !important;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 10px 15px;
+            color: #666;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #f0f0f0;
+            color: #667eea;
+        }
+
+        .card-stat {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .card-stat h5 {
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .card-stat .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .welcome-section {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .welcome-section h2 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="~/images/estateflow-logo.png" alt="EstateFlow" style="height: 30px;" />
+                EstateFlow Admin
+            </a>
+            <div class="ms-auto">
+                <span class="text-white me-3">Welcome, @adminUser</span>
+                <form method="post" asp-action="Logout" style="display: inline;">
+                    <button type="submit" class="btn btn-logout">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
     <div class="container py-4">
-        <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
-            <div>
-                <h1 class="h4 fw-bold text-site-dark mb-1">Transactions dashboard</h1>
-                <p class="text-site-muted small mb-0">KPIs and charts load from <code class="small">/admin/api/broker/dashboard</code> (session required).</p>
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <div class="sidebar-title">Menu</div>
+                    <ul class="sidebar-menu">
+                        <li><a href="#overview">📊 Dashboard</a></li>
+                        <li><a href="#properties">🏠 Properties</a></li>
+                        <li><a href="#users">👥 Users</a></li>
+                        <li><a href="#inquiries">📬 Inquiries</a></li>
+                        <li><a href="#reports">📈 Reports</a></li>
+                        <li><a href="#settings">⚙️ Settings</a></li>
+                    </ul>
+                </div>
             </div>
-        </div>
 
-        <div id="brokerDashError" class="alert alert-danger d-none" role="alert"></div>
+            <!-- Main Content Area -->
+            <div class="col-md-9">
+                <!-- Welcome Section -->
+                <div class="welcome-section" id="overview">
+                    <h2>Welcome to EstateFlow Admin Panel</h2>
+                    <p>Manage your real estate platform from here. You are currently logged in as <strong>@adminUser</strong>.</p>
+                </div>
 
-        <div class="row g-3 mb-4">
-            <div class="col-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="text-site-muted small text-uppercase fw-semibold mb-1">Total deals closed</div>
-                        <div class="h4 mb-0 fw-bold text-site-dark" id="kpiClosed">—</div>
+                <!-- Statistics Row -->
+                <div class="row">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-stat">
+                            <h5>Total Properties</h5>
+                            <div class="number">0</div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="text-site-muted small text-uppercase fw-semibold mb-1">Total sales value</div>
-                        <div class="h4 mb-0 fw-bold text-site-dark" id="kpiSales">—</div>
-                        <div class="small text-site-muted">Completed sales only (PHP)</div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-stat">
+                            <h5>Active Users</h5>
+                            <div class="number">0</div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="text-site-muted small text-uppercase fw-semibold mb-1">Total commission</div>
-                        <div class="h4 mb-0 fw-bold text-site-dark" id="kpiCommission">—</div>
-                        <div class="small text-site-muted">Completed deals (PHP)</div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-stat">
+                            <h5>Pending Inquiries</h5>
+                            <div class="number">0</div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-6 col-xl-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="text-site-muted small text-uppercase fw-semibold mb-1">Active deals</div>
-                        <div class="h4 mb-0 fw-bold text-site-dark" id="kpiActive">—</div>
-                        <div class="small text-site-muted">In pipeline</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-lg-7">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <h2 class="h6 fw-bold text-site-dark mb-3">Closed sales value by month</h2>
-                        <p class="small text-site-muted mb-3">Line chart — completed sale amounts (PHP) per calendar month.</p>
-                        <div style="height: 280px;">
-                            <canvas id="chartSalesLine" aria-label="Sales line chart"></canvas>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-stat">
+                            <h5>Transactions</h5>
+                            <div class="number">0</div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-5">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <h2 class="h6 fw-bold text-site-dark mb-3">Deals by status</h2>
-                        <p class="small text-site-muted mb-3">Bar chart — pending vs completed in the demo ledger.</p>
-                        <div style="height: 280px;">
-                            <canvas id="chartStatusBar" aria-label="Status bar chart"></canvas>
+
+                <!-- Quick Actions -->
+                <div class="card" style="border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); border-radius: 8px; padding: 20px;">
+                    <h5 style="color: #333; font-weight: 700; margin-bottom: 15px;">Quick Actions</h5>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary w-100">View Properties</a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary w-100">Manage Users</a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary w-100">View Reports</a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="card border-0 shadow-sm mt-4">
-            <div class="card-body">
-                <h2 class="h6 fw-bold text-site-dark mb-2">Transaction flow (agent)</h2>
-                <ol class="small text-site-muted mb-0 ps-3">
-                    <li>Customer inquires → you qualify and respond.</li>
-                    <li>Schedule viewing → move the record through <strong>Inquiry → Viewing → Negotiation</strong>.</li>
-                    <li>Deal closed → payment recorded → commission calculated.</li>
-                    <li>Broker reviews transactions, commission, and sales history in this portal.</li>
-                </ol>
             </div>
         </div>
     </div>
-</div>
 
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
-    <script>
-        (function () {
-            const fmtPhp = (n) => '₱' + Number(n).toLocaleString('en-PH', { maximumFractionDigits: 0 });
-            const elErr = document.getElementById('brokerDashError');
-            let lineChart = null;
-            let barChart = null;
-
-            function showErr(msg) {
-                elErr.textContent = msg;
-                elErr.classList.remove('d-none');
-            }
-
-            fetch('@Url.Content("~/admin/api/broker/dashboard")', { credentials: 'same-origin' })
-                .then(r => {
-                    if (r.status === 401) throw new Error('Session expired. Sign in again.');
-                    if (!r.ok) throw new Error('Could not load dashboard data.');
-                    return r.json();
-                })
-                .then(data => {
-                    const k = data.kpis;
-                    document.getElementById('kpiClosed').textContent = k.totalDealsClosed;
-                    document.getElementById('kpiSales').textContent = fmtPhp(k.totalSalesValue);
-                    document.getElementById('kpiCommission').textContent = fmtPhp(k.totalCommissionEarned);
-                    document.getElementById('kpiActive').textContent = k.activeDeals;
-
-                    const c = data.charts;
-                    const teal = '#00b4a8';
-                    const navy = '#0f2744';
-                    const orange = '#f97316';
-
-                    const ctxLine = document.getElementById('chartSalesLine');
-                    lineChart = new Chart(ctxLine, {
-                        type: 'line',
-                        data: {
-                            labels: c.monthlyLabels,
-                            datasets: [{
-                                label: 'Sale value (PHP)',
-                                data: c.monthlySalesValues,
-                                borderColor: teal,
-                                backgroundColor: 'rgba(0, 180, 168, 0.15)',
-                                tension: 0.25,
-                                fill: true
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false }
-                            },
-                            scales: {
-                                y: {
-                                    ticks: {
-                                        callback: (v) => '₱' + Number(v).toLocaleString('en-PH', { maximumFractionDigits: 0 })
-                                    }
-                                }
-                            }
-                        }
-                    });
-
-                    const ctxBar = document.getElementById('chartStatusBar');
-                    barChart = new Chart(ctxBar, {
-                        type: 'bar',
-                        data: {
-                            labels: c.statusLabels,
-                            datasets: [{
-                                label: 'Deals',
-                                data: c.statusCounts,
-                                backgroundColor: [orange, teal],
-                                borderRadius: 6
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false }
-                            },
-                            scales: {
-                                y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                            }
-                        }
-                    });
-                })
-                .catch(e => showErr(e.message));
-        })();
-    </script>
-}
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

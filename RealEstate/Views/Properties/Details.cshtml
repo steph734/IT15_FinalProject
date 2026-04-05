@@ -77,8 +77,26 @@
                 </p>
                 <p class="display-6 fw-bold text-site mb-4">@priceDisplay</p>
 
+                <div class="d-flex gap-3 mb-3">
+                    <div class="small text-site-muted">@p.Bedrooms bd</div>
+                    <div class="small text-site-muted">@p.Bathrooms ba</div>
+                    <div class="small text-site-muted">@p.ParkingSlots parking</div>
+                    <div class="small text-site-muted">@p.Sqft.ToString("N0") sqm</div>
+                </div>
+
                 <div class="site-prose text-site-muted mb-4">
                     <p class="mb-0">@p.Description</p>
+                </div>
+
+                @* Premium features callout *@
+                <div class="card border-0 bg-landing-soft p-3 mb-3">
+                    <h6 class="small text-site-muted mb-2">Premium features</h6>
+                    <ul class="small mb-0">
+                        <li>Priority notifications: Early access for subscribers</li>
+                        <li>Neighborhood safety &amp; data layers (Premium)</li>
+                        <li>Direct-to-owner messaging (Premium &amp; verified)</li>
+                        <li>No-ads experience for subscribers</li>
+                    </ul>
                 </div>
 
                 <div class="d-flex flex-column flex-sm-row gap-2 mb-4">
@@ -92,6 +110,24 @@
                         <a class="btn btn-outline-site rounded-pill px-4" asp-controller="Home" asp-action="Contact" asp-route-propertyId="@p.Id">Contact agent</a>
                     }
                 </div>
+
+                @* Broker actions: handle inquiries and close deals when signed in as broker *@
+                @{
+                    var brokerUser = (string?)null;
+                }
+                @if (!string.IsNullOrEmpty(brokerUser))
+                {
+                    <div class="mt-3">
+                        <h6 class="small text-site-muted mb-2">Broker actions</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-sm btn-outline-primary" asp-controller="AdminProperties" asp-action="HandleInquiries" asp-route-id="@p.Id">Handle inquiries</a>
+                            <form method="post" asp-controller="AdminProperties" asp-action="CloseDeal" class="m-0">
+                                <input type="hidden" name="propertyId" value="@p.Id" />
+                                <button type="submit" class="btn btn-sm btn-success">Close deal</button>
+                            </form>
+                        </div>
+                    </div>
+                }
 
                 <div class="collapse @(!ViewData.ModelState.IsValid ? "show" : null)" id="scheduleViewing">
                     <div class="card border-0 bg-site-soft rounded-4">
@@ -135,6 +171,9 @@
                         </div>
                     </div>
                 </div>
+                <div class="position-sticky" style="bottom:24px;">
+                    <a href="#inquire" class="btn btn-lg btn-primary w-100 rounded-pill">Inquire now</a>
+                </div>
 
                 @if (Model.Agent is { } a)
                 {
@@ -144,6 +183,29 @@
                             <p class="fw-semibold text-site-dark mb-0">@a.Name</p>
                             <p class="small text-site-muted mb-0">@a.Title</p>
                             <p class="small mb-0"><a href="mailto:@a.Email">@a.Email</a> · @a.Phone</p>
+                        </div>
+                    </div>
+                }
+
+                @* Broker quick actions *@
+                @if (!string.IsNullOrEmpty(brokerUser))
+                {
+                    <div class="mt-3">
+                        <h6 class="small text-site-muted mb-2">Broker actions</h6>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-sm btn-outline-secondary" asp-controller="AdminProperties" asp-action="Index">Edit Property</a>
+                            <a class="btn btn-sm btn-outline-primary" asp-controller="AdminProperties" asp-action="HandleInquiries" asp-route-id="@p.Id">View Inquiries</a>
+                            <form method="post" asp-controller="AdminProperties" asp-action="ChangeStatus" class="m-0">
+                                <input type="hidden" name="propertyId" value="@p.Id" />
+                                <select name="status" class="form-select form-select-sm" style="width:200px; display:inline-block;">
+                                    <option>Available for Sale</option>
+                                    <option>Available for Rent</option>
+                                    <option>Reserved</option>
+                                    <option>Sold</option>
+                                    <option>Rented</option>
+                                </select>
+                                <button class="btn btn-sm btn-site-primary ms-2">Change Status</button>
+                            </form>
                         </div>
                     </div>
                 }

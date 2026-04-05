@@ -1,0 +1,957 @@
+@{
+    ViewData["Title"] = "Property Moderation";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <h1 class="h4 fw-bold mb-4">✅ Property Moderation - Review Queue</h1>
+
+    <!-- Moderation Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="stat-box">
+                <div class="stat-value text-warning">12</div>
+                <div class="stat-label">Pending Review</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-box">
+                <div class="stat-value text-success">28</div>
+                <div class="stat-label">Approved</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-box">
+                <div class="stat-value text-danger">3</div>
+                <div class="stat-label">Rejected</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="nav nav-tabs mb-4">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pending">Pending (12)</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#approved">Approved (28)</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rejected">Rejected (3)</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#revision">Revision Needed (2)</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Pending Properties -->
+        <div class="tab-pane fade show active" id="pending">
+            <div class="properties-grid">
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <div class="compact-property-card" onclick="showPropertyDetails(@i)" style="cursor: pointer;">
+                        <!-- Image -->
+                        <div class="card-image">
+                            <img src="@GetPropertyImage(i)" alt="Property @i" />
+                            <span class="status-badge">Pending</span>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="card-info">
+                            <h6 class="property-title">Condo Unit @i - BGC</h6>
+                            <p class="location">📍 BGC, Taguig</p>
+
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="label">Price</span>
+                                    <span class="value">₱15.2M</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Size</span>
+                                    <span class="value">85 sqm</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Beds</span>
+                                    <span class="value">2</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Baths</span>
+                                    <span class="value">2</span>
+                                </div>
+                            </div>
+
+                            <p class="description">Premium condo with modern finishes and city views.</p>
+
+                            <div class="docs-check">
+                                <span class="check-item">✓ Photos</span>
+                                <span class="check-item">✓ Location</span>
+                                <span class="check-item">✓ Docs</span>
+                            </div>
+
+                            <div class="meta">
+                                <small>By: investor</small>
+                                <small>Mar 20, 2025</small>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="card-actions" onclick="event.stopPropagation();">
+                            <button class="btn-action btn-approve" title="Approve" data-bs-toggle="modal" data-bs-target="#approveModal">
+                                ✓
+                            </button>
+                            <button class="btn-action btn-revision" title="Request Edit" data-bs-toggle="modal" data-bs-target="#reviseModal">
+                                !
+                            </button>
+                            <button class="btn-action btn-reject" title="Reject" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Approved Properties -->
+        <div class="tab-pane fade" id="approved">
+            <div class="alert alert-success">
+                <strong>28 properties approved</strong> - These listings are currently live on the platform.
+            </div>
+            <div class="properties-grid">
+                @for (int i = 1; i <= 6; i++)
+                {
+                    <div class="compact-property-card">
+                        <div class="card-image">
+                            <img src="~/images/property-placeholder.jpg" alt="Property" />
+                            <span class="status-badge approved">✓ Live</span>
+                        </div>
+                        <div class="card-info">
+                            <h6 class="property-title">Approved Property @i</h6>
+                            <p class="location">📍 BGC, Taguig</p>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="label">Price</span>
+                                    <span class="value">₱15.2M</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Size</span>
+                                    <span class="value">85 sqm</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Beds</span>
+                                    <span class="value">2</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Baths</span>
+                                    <span class="value">2</span>
+                                </div>
+                            </div>
+                            <div class="meta">
+                                <small>Approved: Mar 18</small>
+                                <small>By: investor</small>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Rejected Properties -->
+        <div class="tab-pane fade" id="rejected">
+            <div class="alert alert-danger">
+                <strong>3 properties rejected</strong> - These listings have been removed from the platform.
+            </div>
+        </div>
+
+        <!-- Revision Needed -->
+        <div class="tab-pane fade" id="revision">
+            <div class="alert alert-warning">
+                <strong>2 properties</strong> awaiting investor revisions.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Approve Modal -->
+<div class="modal fade" id="approveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Approve Property</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to approve this property?</p>
+                <p class="text-muted">The property will be published and visible to all users.</p>
+                <textarea class="form-control" placeholder="Add approval notes (optional)" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success">Approve Property</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Request Revision Modal -->
+<div class="modal fade" id="reviseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Request Revision</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Request changes from the investor before approval.</p>
+                <label class="form-label">Issues to fix:</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="issue1" />
+                    <label class="form-check-label" for="issue1">Low quality photos</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="issue2" />
+                    <label class="form-check-label" for="issue2">Incomplete description</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="issue3" />
+                    <label class="form-check-label" for="issue3">Missing documents</label>
+                </div>
+                <label class="form-label mt-3">Detailed feedback:</label>
+                <textarea class="form-control" placeholder="Provide specific feedback..." rows="4"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning">Send Revision Request</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reject Property</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger"><strong>⚠️ Warning:</strong> This action cannot be easily reversed.</p>
+                <label class="form-label">Rejection reason:</label>
+                <select class="form-select mb-3">
+                    <option selected>Select a reason...</option>
+                    <option>Fraudulent listing</option>
+                    <option>Inappropriate content</option>
+                    <option>False information</option>
+                    <option>Policy violation</option>
+                    <option>Other</option>
+                </select>
+                <label class="form-label">Detailed explanation:</label>
+                <textarea class="form-control" placeholder="Explain why..." rows="4"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger">Reject Property</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Property Details Modal -->
+<div class="modal fade" id="propertyDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Property Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <div class="property-details-content">
+                    <!-- Image Gallery -->
+                    <div class="details-image-section">
+                        <div class="main-image-container">
+                            <img id="mainPropertyImage" src="" alt="Property" class="main-property-image" />
+                        </div>
+                        <div class="thumbnail-gallery-details">
+                            <img id="thumb1" src="" class="thumbnail-detail" onclick="changeMainImage(this.src)" alt="View 1" />
+                            <img id="thumb2" src="" class="thumbnail-detail" onclick="changeMainImage(this.src)" alt="View 2" />
+                            <img id="thumb3" src="" class="thumbnail-detail" onclick="changeMainImage(this.src)" alt="View 3" />
+                            <img id="thumb4" src="" class="thumbnail-detail" onclick="changeMainImage(this.src)" alt="View 4" />
+                        </div>
+                    </div>
+
+                    <!-- Property Info -->
+                    <div class="details-info-section mt-4">
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <h4 id="detailTitle" class="mb-2">Property Title</h4>
+                                <p id="detailLocation" class="text-muted">📍 Location</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="price-display">
+                                    <small class="label">Price</small>
+                                    <h4 id="detailPrice" class="text-primary">₱0</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Features -->
+                        <div class="features-details">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-3">
+                                    <div class="feature-box">
+                                        <span class="feature-icon">🛏️</span>
+                                        <div>
+                                            <div class="feature-label">Bedrooms</div>
+                                            <div id="detailBeds" class="feature-value">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="feature-box">
+                                        <span class="feature-icon">🚿</span>
+                                        <div>
+                                            <div class="feature-label">Bathrooms</div>
+                                            <div id="detailBaths" class="feature-value">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="feature-box">
+                                        <span class="feature-icon">📐</span>
+                                        <div>
+                                            <div class="feature-label">Size</div>
+                                            <div id="detailSize" class="feature-value">0 sqm</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="feature-box">
+                                        <span class="feature-icon">🚗</span>
+                                        <div>
+                                            <div class="feature-label">Parking</div>
+                                            <div id="detailParking" class="feature-value">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="description-details mb-3">
+                            <h6>Description</h6>
+                            <p id="detailDescription" class="description-text">
+                                Premium condo with modern finishes and city views. Features high-end finishes, modern appliances, 
+                                floor-to-ceiling windows with stunning city views, and access to world-class amenities including 
+                                gym, pool, and 24/7 security.
+                            </p>
+                        </div>
+
+                        <!-- Amenities -->
+                        <div class="amenities-details mb-3">
+                            <h6>Amenities</h6>
+                            <div class="amenities-list-details">
+                                <span class="amenity-badge">🏊 Swimming Pool</span>
+                                <span class="amenity-badge">💪 Gym</span>
+                                <span class="amenity-badge">🌳 Garden</span>
+                                <span class="amenity-badge">🛡️ Security</span>
+                                <span class="amenity-badge">🅿️ Parking</span>
+                                <span class="amenity-badge">📦 Storage</span>
+                            </div>
+                        </div>
+
+                        <!-- Documentation -->
+                        <div class="documentation-details mb-3">
+                            <h6>Documentation Status</h6>
+                            <div class="docs-list">
+                                <div class="doc-item">
+                                    <span class="doc-icon">✓</span>
+                                    <span class="doc-name">High-res Photos (4 images)</span>
+                                </div>
+                                <div class="doc-item">
+                                    <span class="doc-icon">✓</span>
+                                    <span class="doc-name">Geolocation Pinned</span>
+                                </div>
+                                <div class="doc-item">
+                                    <span class="doc-icon">✓</span>
+                                    <span class="doc-name">Land Title</span>
+                                </div>
+                                <div class="doc-item">
+                                    <span class="doc-icon">✓</span>
+                                    <span class="doc-name">Tax Declaration</span>
+                                </div>
+                                <div class="doc-item">
+                                    <span class="doc-icon">✓</span>
+                                    <span class="doc-name">Survey Plan</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Investor Info -->
+                        <div class="investor-details">
+                            <h6>Investor Information</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <small class="label">Submitted By</small>
+                                    <p id="detailInvestor" class="mb-0"><strong>investor</strong></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="label">Submission Date</small>
+                                    <p id="detailDate" class="mb-0"><strong>Mar 20, 2025</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#approveModal">✓ Approve</button>
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#reviseModal">! Request Edit</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#rejectModal">✕ Reject</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetPropertyImage(int propertyId)
+    {
+        string[] images = new[]
+        {
+            "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1502933691298-84fc14542831?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1502933691298-84fc14542831?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=400&h=300&fit=crop",
+        };
+        return images[(propertyId - 1) % images.Length];
+    }
+}
+
+<script>
+    function showPropertyDetails(propertyId) {
+        // Set property details dynamically
+        document.getElementById('detailTitle').textContent = `Luxury Condo Unit ${propertyId} - BGC`;
+        document.getElementById('detailLocation').textContent = `📍 Bonifacio Global City, Taguig, Metro Manila`;
+        document.getElementById('detailPrice').textContent = `₱${(15200000 + propertyId * 100000).toLocaleString()}`;
+        document.getElementById('detailBeds').textContent = '2';
+        document.getElementById('detailBaths').textContent = '2';
+        document.getElementById('detailSize').textContent = '85 sqm';
+        document.getElementById('detailParking').textContent = '1';
+        document.getElementById('detailDescription').textContent = 
+            `Premium 2-bedroom, 2-bathroom condominium unit located in the heart of BGC. Features high-end finishes, modern appliances, 
+            floor-to-ceiling windows with stunning city views, and access to world-class amenities including gym, pool, and 24/7 security. 
+            Perfect for professionals and small families seeking luxury living in a vibrant business district. Unit ${propertyId} offers 
+            exceptional value and prime location in one of Manila's most prestigious developments.`;
+        document.getElementById('detailInvestor').textContent = 'investor';
+        document.getElementById('detailDate').textContent = 'Mar 20, 2025';
+
+        // Set images
+        const baseImages = [
+            'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop',
+            'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop',
+            'https://images.unsplash.com/photo-1502933691298-84fc14542831?w=600&h=400&fit=crop',
+            'https://images.unsplash.com/photo-1545324418-cc1a9a6fded0?w=600&h=400&fit=crop',
+        ];
+
+        const images = baseImages.map((img, idx) => img.replace('600', '600').replace('400', '400'));
+        document.getElementById('mainPropertyImage').src = images[0];
+        document.getElementById('thumb1').src = images[0];
+        document.getElementById('thumb2').src = images[1];
+        document.getElementById('thumb3').src = images[2];
+        document.getElementById('thumb4').src = images[3];
+
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('propertyDetailsModal'));
+        modal.show();
+    }
+
+    function changeMainImage(src) {
+        document.getElementById('mainPropertyImage').src = src;
+    }
+</script>
+
+<style>
+    .stat-box {
+        background: white;
+        border: 1px solid #e0e0ff;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* Grid Layout for Compact Cards */
+    .properties-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+    }
+
+    /* Compact Property Card */
+    .compact-property-card {
+        background: white;
+        border: 1.5px solid #e0e0ff;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        box-shadow: 0 2px 6px rgba(99, 102, 241, 0.08);
+    }
+
+    .compact-property-card:hover {
+        border-color: #6366f1;
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.15);
+        transform: translateY(-4px);
+    }
+
+    /* Card Image */
+    .card-image {
+        position: relative;
+        overflow: hidden;
+        height: 150px;
+        background: #f0f0f0;
+    }
+
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .compact-property-card:hover .card-image img {
+        transform: scale(1.05);
+    }
+
+    .card-image .status-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #fbbf24;
+        color: #78350f;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .card-image .status-badge.approved {
+        background: #86efac;
+        color: #166534;
+    }
+
+    /* Card Info */
+    .card-info {
+        padding: 12px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .property-title {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        line-height: 1.3;
+    }
+
+    .location {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #999;
+    }
+
+    /* Info Grid (4 items in 2x2) */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        background: #f8f9fa;
+        padding: 8px;
+        border-radius: 6px;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        text-align: center;
+    }
+
+    .info-item .label {
+        font-size: 0.7rem;
+        color: #999;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .info-item .value {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #6366f1;
+    }
+
+    /* Description */
+    .description {
+        font-size: 0.8rem;
+        color: #666;
+        margin: 0;
+        line-height: 1.3;
+        max-height: 40px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    /* Docs Check */
+    .docs-check {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        font-size: 0.7rem;
+    }
+
+    .check-item {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #10b981;
+        font-weight: 600;
+    }
+
+    /* Meta */
+    .meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: #999;
+        padding-top: 6px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    /* Card Actions */
+    .card-actions {
+        display: flex;
+        gap: 6px;
+        padding: 8px;
+        background: #f8f9fa;
+        border-top: 1px solid #e0e0ff;
+        justify-content: space-between;
+    }
+
+    .btn-action {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .btn-approve {
+        background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .btn-approve:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        transform: scale(1.08);
+    }
+
+    .btn-revision {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .btn-revision:hover {
+        background: linear-gradient(135deg, #d97706, #b45309);
+        transform: scale(1.08);
+    }
+
+    .btn-reject {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .btn-reject:hover {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        transform: scale(1.08);
+    }
+
+    /* Tabs */
+    .nav-tabs {
+        border-bottom: 2px solid #e0e0ff;
+    }
+
+    .nav-tabs .nav-link {
+        color: #666;
+        border: none;
+        border-bottom: 3px solid transparent;
+        font-weight: 500;
+    }
+
+    .nav-tabs .nav-link:hover {
+        border-bottom-color: #6366f1;
+        color: #6366f1;
+    }
+
+    .nav-tabs .nav-link.active {
+        border-bottom-color: #6366f1;
+        color: #6366f1;
+        background: none;
+    }
+
+    /* Responsive */
+    @@media (max-width: 1200px) {
+        .properties-grid {
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        }
+    }
+
+    @@media (max-width: 992px) {
+        .properties-grid {
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .properties-grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+
+        .card-image {
+            height: 120px;
+        }
+
+        .property-title {
+            font-size: 0.9rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .properties-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+
+        .card-image {
+            height: 100px;
+        }
+
+        .property-title {
+            font-size: 0.8rem;
+        }
+
+        .info-grid {
+            padding: 6px;
+        }
+
+        .info-item .label {
+            font-size: 0.65rem;
+        }
+
+        .info-item .value {
+            font-size: 0.75rem;
+        }
+    }
+
+    /* Property Details Modal Styles */
+    .details-image-section {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .main-image-container {
+        width: 100%;
+        height: 350px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid #e0e0ff;
+        background: #f0f0f0;
+    }
+
+    .main-property-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .thumbnail-gallery-details {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+
+    .thumbnail-detail {
+        width: 100%;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #e0e0ff;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .thumbnail-detail:hover {
+        border-color: #6366f1;
+        transform: scale(1.05);
+    }
+
+    .details-info-section {
+        padding: 0;
+    }
+
+    .price-display {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .price-display .label {
+        font-size: 0.8rem;
+        color: #999;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .price-display h4 {
+        margin: 0;
+        color: #6366f1;
+    }
+
+    .features-details {
+        background: #f8f9fa;
+        padding: 16px;
+        border-radius: 8px;
+    }
+
+    .feature-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: white;
+        border-radius: 8px;
+        border-left: 3px solid #6366f1;
+    }
+
+    .feature-icon {
+        font-size: 28px;
+    }
+
+    .feature-label {
+        font-size: 0.8rem;
+        color: #999;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .feature-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+
+    .description-details h6,
+    .amenities-details h6,
+    .documentation-details h6,
+    .investor-details h6 {
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: #1a1a1a;
+    }
+
+    .description-text {
+        font-size: 0.95rem;
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .amenities-list-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .amenity-badge {
+        display: inline-block;
+        padding: 8px 14px;
+        background: #f0f1ff;
+        border: 1px solid #e0e0ff;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: #666;
+        font-weight: 500;
+    }
+
+    .docs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .doc-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 3px solid #10b981;
+    }
+
+    .doc-icon {
+        font-weight: bold;
+        color: #10b981;
+        font-size: 1.2rem;
+    }
+
+    .doc-name {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .investor-details {
+        background: #f8f9fa;
+        padding: 16px;
+        border-radius: 8px;
+    }
+
+    .investor-details .label {
+        font-size: 0.75rem;
+        color: #999;
+        text-transform: uppercase;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .investor-details p {
+        font-size: 0.95rem;
+        color: #1a1a1a;
+    }
+</style>

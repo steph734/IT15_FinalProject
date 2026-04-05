@@ -1,0 +1,659 @@
+@{
+    ViewData["Title"] = "Admin Register - EstateFlow";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: auto;
+            padding: 40px 0;
+        }
+
+        .login-background {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 60%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        .login-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.7) 0%, rgba(118, 75, 162, 0.7) 100%);
+        }
+
+        @@media (max-width: 1024px) {
+            .login-background {
+                width: 100%;
+                opacity: 0.3;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .login-background {
+                display: none;
+            }
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 450px;
+            margin: 0 40px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            padding: 50px 40px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .login-brand {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .login-brand img {
+            height: 32px;
+        }
+
+        .login-brand-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #16a34a;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .login-header p {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #fafafa;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #16a34a;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-control option {
+            background-color: white;
+            color: #1f2937;
+            padding: 8px;
+        }
+
+        .form-control option:checked {
+            background: linear-gradient(#16a34a, #16a34a);
+            background-color: #16a34a;
+            color: white;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        select.form-control:focus {
+            outline: none;
+            border-color: #16a34a;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+
+        .password-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @@media (max-width: 480px) {
+            .password-row {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 11px 24px;
+            background: #2d3748;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-register:hover {
+            background: #1a202c;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        .alert {
+            border-radius: 8px;
+            border: 1px solid #fecaca;
+            background-color: #fef2f2;
+            color: #991b1b;
+            padding: 12px 16px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .alert strong {
+            font-weight: 600;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .login-footer a {
+            color: #16a34a;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .login-footer a:hover {
+            color: #22c55e;
+        }
+
+        .have-account-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .have-account-link a {
+            color: #16a34a;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .have-account-link a:hover {
+            text-decoration: underline;
+        }
+
+        .form-requirements {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .form-requirements strong {
+            color: #1f2937;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        @@media (max-width: 768px) {
+            .login-card {
+                padding: 40px 30px;
+            }
+
+            .login-header h1 {
+                font-size: 24px;
+            }
+
+            .login-container {
+                margin: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Image -->
+    <div class="login-background"></div>
+
+    <!-- Register Card -->
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-brand">
+                    <img src="~/images/estateflow-logo.png" alt="EstateFlow" />
+                    <span class="login-brand-text">ESTATEFLOW</span>
+                </div>
+                <h1>Create Account</h1>
+                <p>Join EstateFlow Admin Portal</p>
+            </div>
+
+            @if (ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
+            {
+                <div class="alert">
+                    <strong>Registration Failed:</strong>
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        @foreach (var error in modelState.Errors)
+                        {
+                            <div>@error.ErrorMessage</div>
+                        }
+                    }
+                </div>
+            }
+
+            <form method="post" asp-action="Register">
+                <div class="form-group">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="fullName" 
+                           name="fullName" 
+                           placeholder="Jonathan Reichert" 
+                           required 
+                           autofocus />
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" 
+                           class="form-control" 
+                           id="email" 
+                           name="email" 
+                           placeholder="jonathan@estateflow.com" 
+                           required />
+                </div>
+
+                <div class="form-group">
+                    <label for="roleType" class="form-label">Role</label>
+                    <select class="form-control" 
+                            id="roleType" 
+                            name="roleType" 
+                            required>
+                        <option value="">-- Select a Role --</option>
+                        @if (ViewBag.Roles != null)
+                        {
+                            @foreach (var role in ViewBag.Roles)
+                            {
+                                <option value="@role.RoleType">@role.RoleType</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="password-row">
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="password" 
+                               name="password" 
+                               placeholder="••••••••••" 
+                               required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="confirmPassword" 
+                               name="confirmPassword" 
+                               placeholder="••••••••••" 
+                               required />
+                    </div>
+                </div>
+
+                <div class="form-requirements">
+                    <strong>Password Requirements:</strong>
+                    • At least 6 characters long<br/>
+                    • Must match confirmation
+                </div>
+
+                <button type="submit" class="btn btn-register">Create Account</button>
+
+                <div class="have-account-link">
+                    Already have an account? <a href="/admin/login">Sign In</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Success Toast Notification (Top Right) -->
+    <div id="successToast" class="success-toast">
+        <div class="toast-container">
+            <div class="toast-checkmark">
+                <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="26" cy="26" r="25" fill="none" stroke="#22c55e" stroke-width="2"/>
+                    <polyline points="15 26 23 34 37 20" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="toast-content">
+                <h4 class="toast-title">SUCCESS!</h4>
+                <p class="toast-message">Registration successful! Your account has been created.</p>
+                <p class="toast-redirect">Redirecting to login in <strong id="toastCountdown">5</strong>s...</p>
+            </div>
+            <button class="toast-close" onclick="closeToast()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <style>
+        /* Success Toast Styling */
+        .success-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: none;
+            animation: slideInRight 0.4s ease-out;
+        }
+
+        .success-toast.show {
+            display: block;
+        }
+
+        @@keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @@keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        .success-toast.hide {
+            animation: slideOutRight 0.4s ease-out forwards;
+        }
+
+        .toast-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            max-width: 320px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .toast-checkmark {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+        }
+
+        .toast-checkmark svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .toast-title {
+            color: #22c55e;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .toast-message {
+            color: #4b5563;
+            font-size: 13px;
+            margin: 0 0 4px 0;
+            line-height: 1.4;
+        }
+
+        .toast-redirect {
+            color: #9ca3af;
+            font-size: 12px;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .toast-redirect strong {
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        .toast-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            color: #d1d5db;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .toast-close:hover {
+            color: #6b7280;
+        }
+
+        .toast-close svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        @@media (max-width: 480px) {
+            .success-toast {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+            }
+
+            .toast-container {
+                max-width: none;
+                padding: 20px;
+            }
+
+            .toast-title {
+                font-size: 16px;
+            }
+
+            .toast-message {
+                font-size: 12px;
+            }
+        }
+    </style>
+
+    <script>
+        function closeToast() {
+            const toast = document.getElementById('successToast');
+            if (toast) {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+            }
+        }
+
+        // Check if registration was successful
+        const urlParams = new URLSearchParams(window.location.search);
+        const registered = urlParams.get('registered');
+
+        if (registered === 'true') {
+            // Show success toast
+            const toast = document.getElementById('successToast');
+            if (toast) {
+                // Small delay to ensure DOM is ready
+                setTimeout(() => {
+                    toast.classList.add('show');
+                }, 100);
+
+                // Countdown and redirect
+                let seconds = 5;
+                const countdownEl = document.getElementById('toastCountdown');
+
+                const countdownInterval = setInterval(() => {
+                    seconds--;
+                    if (countdownEl) {
+                        countdownEl.textContent = seconds;
+                    }
+
+                    if (seconds === 0) {
+                        clearInterval(countdownInterval);
+                        window.location.href = '/admin/login';
+                    }
+                }, 1000);
+
+                // Allow manual close
+                const closeBtn = document.querySelector('.toast-close');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', () => {
+                        clearInterval(countdownInterval);
+                        closeToast();
+                        // Redirect immediately to login
+                        setTimeout(() => {
+                            window.location.href = '/admin/login';
+                        }, 400);
+                    });
+                }
+            }
+        }
+    </script>
+
+    <script>
+        // Real-time password validation
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+
+        function validatePasswords() {
+            if (passwordInput && confirmPasswordInput) {
+                if (passwordInput.value && confirmPasswordInput.value) {
+                    if (passwordInput.value !== confirmPasswordInput.value) {
+                        confirmPasswordInput.style.borderColor = '#ef4444';
+                        confirmPasswordInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                    } else {
+                        confirmPasswordInput.style.borderColor = '#22c55e';
+                        confirmPasswordInput.style.boxShadow = '0 0 0 3px rgba(34, 197, 94, 0.1)';
+                    }
+                }
+            }
+        }
+
+        if (passwordInput && confirmPasswordInput) {
+            passwordInput.addEventListener('input', validatePasswords);
+            confirmPasswordInput.addEventListener('input', validatePasswords);
+        }
+    </script>
+</body>
+</html>

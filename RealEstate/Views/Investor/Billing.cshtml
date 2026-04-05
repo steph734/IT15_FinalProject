@@ -1,0 +1,102 @@
+@{
+    ViewData["Title"] = "Subscription & Billing";
+    Layout = "~/Views/Shared/_InvestorLayout.cshtml";
+}
+
+<div class="container py-4">
+    <h1 class="h4 fw-bold mb-4">💳 Subscription & Billing</h1>
+
+    <div class="row g-3">
+        <!-- Current Plan -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4">
+                <h6 class="mb-3">Current Subscription</h6>
+                <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded mb-3">
+                    <div>
+                        <div class="fw-semibold">Professional Plan</div>
+                        <div class="small text-muted">₱499/month</div>
+                    </div>
+                    <span class="badge bg-success">Active</span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="small text-muted">Features Included:</div>
+                    <ul class="small list-unstyled mt-2">
+                        <li>✓ Up to 10 Active Listings</li>
+                        <li>✓ Priority Support</li>
+                        <li>✓ Advanced Analytics</li>
+                        <li>✓ Featured Listings</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-outline-primary">Upgrade to Premium</button>
+            </div>
+
+            <!-- Billing History -->
+            <div class="card border-0 shadow-sm p-4 mt-3">
+                <h6 class="mb-3">Billing History</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Apr 1, 2025</td>
+                                <td>Professional Plan</td>
+                                <td>₱499</td>
+                                <td><span class="badge bg-success">Paid</span></td>
+                            </tr>
+                            <tr>
+                                <td>Mar 1, 2025</td>
+                                <td>Professional Plan</td>
+                                <td>₱499</td>
+                                <td><span class="badge bg-success">Paid</span></td>
+                            </tr>
+                            <tr>
+                                <td>Feb 1, 2025</td>
+                                <td>Professional Plan</td>
+                                <td>₱499</td>
+                                <td><span class="badge bg-success">Paid</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4">
+                <h6 class="mb-3">Payment Methods</h6>
+                <div class="p-3 border rounded mb-2">
+                    <div class="d-flex gap-2 align-items-center">
+                        <span style="font-size:20px;">💳</span>
+                        <div>
+                            <div class="small fw-semibold">GCash</div>
+                            <div class="small text-muted">09171234567</div>
+                        </div>
+                        <span class="badge bg-success ms-auto">Active</span>
+                    </div>
+                </div>
+
+                <div class="p-3 border rounded mb-3">
+                    <div class="d-flex gap-2 align-items-center">
+                        <span style="font-size:20px;">💳</span>
+                        <div>
+                            <div class="small fw-semibold">Maya</div>
+                            <div class="small text-muted">09175678901</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-outline-primary w-100 btn-sm">+ Add Payment Method</button>
+            </div>
+        </div>
+    </div>
+</div>

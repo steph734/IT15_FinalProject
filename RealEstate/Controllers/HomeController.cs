@@ -20,6 +20,7 @@ namespace RealEstate.Controllers
             var vm = new HomeIndexViewModel
             {
                 FeaturedProperties = all.Take(4).ToList(),
+                SearchResults = all.Take(8).ToList(),
                 Promotions =
                 [
                     new PromotionItem
@@ -38,7 +39,8 @@ namespace RealEstate.Controllers
                         ImageUrl =
                             "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=900&q=80"
                     }
-                ]
+                ],
+                TrendingAreas = new[] { "BGC, Taguig", "Makati", "Cebu IT Park" }
             };
             return View(vm);
         }

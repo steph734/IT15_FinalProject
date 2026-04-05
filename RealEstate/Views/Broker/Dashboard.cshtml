@@ -1,0 +1,247 @@
+@{
+    ViewData["Title"] = "Broker Dashboard - EstateFlow";
+    Layout = null;
+    var userName = ViewData["UserName"] as string ?? "Broker";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+        }
+
+        .navbar-custom {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-custom .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .navbar-custom .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: white !important;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 10px 15px;
+            color: #666;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #f0f0f0;
+            color: #f97316;
+        }
+
+        .card-stat {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border-left: 4px solid #f97316;
+        }
+
+        .card-stat h5 {
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .card-stat .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .welcome-section {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .welcome-section h2 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(249, 115, 22, 0.4);
+        }
+
+        .role-badge {
+            display: inline-block;
+            background: #fed7aa;
+            color: #92400e;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="~/images/estateflow-logo.png" alt="EstateFlow" style="height: 30px;" />
+                EstateFlow
+            </a>
+            <div class="ms-auto">
+                <span class="text-white me-3">
+                    Welcome, @userName
+                    <span class="role-badge">Broker</span>
+                </span>
+                <form method="post" asp-action="Logout" style="display: inline;">
+                    <button type="submit" class="btn btn-logout">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <div class="sidebar-title">Menu</div>
+                    <ul class="sidebar-menu">
+                        <li><a href="#overview">📊 Dashboard</a></li>
+                        <li><a href="#properties">🏠 Properties</a></li>
+                        <li><a href="#clients">👥 Clients</a></li>
+                        <li><a href="#sales">💼 My Sales</a></li>
+                        <li><a href="#settings">⚙️ Settings</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-md-9">
+                <!-- Welcome Section -->
+                <div class="welcome-section" id="overview">
+                    <h2>Welcome to Broker Portal</h2>
+                    <p>Manage your properties and sales. You are logged in as <strong>@userName</strong> (Broker).</p>
+                </div>
+
+                <!-- Statistics Row -->
+                <div class="row">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-stat">
+                            <h5>Listed Properties</h5>
+                            <div class="number">0</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-stat">
+                            <h5>Active Clients</h5>
+                            <div class="number">0</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-stat">
+                            <h5>Pending Sales</h5>
+                            <div class="number">0</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card-stat">
+                            <h5>Commission</h5>
+                            <div class="number">₱0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card" style="border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); border-radius: 8px; padding: 20px;">
+                    <h5 style="color: #333; font-weight: 700; margin-bottom: 15px;">Quick Actions</h5>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary w-100">List Property</a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary w-100">View Clients</a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary w-100">Sales Report</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

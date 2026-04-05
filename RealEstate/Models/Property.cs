@@ -13,4 +13,25 @@ public class Property
     public string Description { get; set; } = string.Empty;
     public IReadOnlyList<string> ImageUrls { get; set; } = Array.Empty<string>();
     public int AgentId { get; set; }
+    // Current status managed by broker
+    public PropertyStatus Status { get; set; } = PropertyStatus.AvailableForSale;
+
+    // Accommodation details
+    /// <summary>Number of bedrooms.</summary>
+    public int Bedrooms { get; set; } = 1;
+
+    /// <summary>Number of bathrooms.</summary>
+    public int Bathrooms { get; set; } = 1;
+
+    /// <summary>Number of parking slots (0 when none).</summary>
+    public int ParkingSlots { get; set; } = 0;
+}
+
+public enum PropertyStatus
+{
+    AvailableForSale,
+    AvailableForRent,
+    Reserved,
+    Sold,
+    Rented
 }

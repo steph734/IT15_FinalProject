@@ -1,0 +1,77 @@
+@{
+    ViewData["Title"] = "Investor Profile";
+    Layout = "~/Views/Shared/_InvestorLayout.cshtml";
+}
+
+<div class="container py-4">
+    <h1 class="h4 fw-bold mb-4">👤 Investor Profile</h1>
+
+    <div class="row g-3">
+        <!-- Profile Info -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4">
+                <h6 class="mb-3">Personal Information</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Full Name</label>
+                        <input class="form-control" value="John Investor" readonly />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Email</label>
+                        <input class="form-control" value="investor@estateflow.com" readonly />
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Phone</label>
+                        <input class="form-control" value="+63 912 345 6789" readonly />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted">Member Since</label>
+                        <input class="form-control" value="January 15, 2024" readonly />
+                    </div>
+                </div>
+
+                <h6 class="mb-3">Identity Verification</h6>
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-success">✓ Verified</span>
+                    <span class="small text-muted">ID verified on Jan 15, 2024</span>
+                </div>
+
+                <button class="btn btn-primary">Edit Profile</button>
+            </div>
+        </div>
+
+        <!-- Verification Status -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4">
+                <h6 class="mb-3">Verification Status</h6>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small">Email Verified</span>
+                        <span class="badge bg-success">✓</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small">Phone Verified</span>
+                        <span class="badge bg-success">✓</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small">Government ID</span>
+                        <span class="badge bg-success">✓</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small">Bank Account</span>
+                        <span class="badge bg-warning">Pending</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

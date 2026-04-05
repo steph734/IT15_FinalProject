@@ -1,0 +1,107 @@
+@model IReadOnlyList<RealEstate.Models.Property>
+@{
+    ViewData["Title"] = "Inventory Overview";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <h1 class="h4 fw-bold mb-4">🏠 Inventory Overview - Master List</h1>
+
+    <!-- Filters -->
+    <div class="card p-3 mb-4 border-0 shadow-sm">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <input class="form-control" placeholder="Search properties..." />
+            </div>
+            <div class="col-md-3">
+                <select class="form-select">
+                    <option>All Locations</option>
+                    <option>BGC</option>
+                    <option>Makati</option>
+                    <option>Taguig</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select">
+                    <option>All Status</option>
+                    <option>Active</option>
+                    <option>Pending</option>
+                    <option>Sold</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100">Filter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Property</th>
+                        <th>Location</th>
+                        <th>Type</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Agent</th>
+                        <th>Inquiries</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">No properties in inventory</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var p in Model.Take(10))
+                        {
+                            <tr>
+                                <td class="fw-semibold">@p.Title</td>
+                                <td>@p.Location</td>
+                                <td><span class="badge bg-info">@p.ListingType</span></td>
+                                <td>@String.Format("₱{0:N0}", p.Price)</td>
+                                <td>
+                                    <span class="badge bg-success">Active</span>
+                                </td>
+                                <td>Agent001</td>
+                                <td><span class="badge bg-warning">3</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">View</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="row g-3 mt-4">
+        <div class="col-md-4">
+            <div class="card p-4 border-0 shadow-sm">
+                <div class="small text-muted">Total Inventory Value</div>
+                <div class="h4 fw-bold">@String.Format("₱{0:N0}", Model.Sum(x => x.Price))</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 border-0 shadow-sm">
+                <div class="small text-muted">Properties Listed</div>
+                <div class="h4 fw-bold">@Model.Count</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 border-0 shadow-sm">
+                <div class="small text-muted">Average Price</div>
+                <div class="h4 fw-bold">@String.Format("₱{0:N0}", Model.Count > 0 ? (long)(Model.Average(x => x.Price)) : 0)</div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using RealEstate;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,10 +12,19 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
 builder.Services.AddControllersWithViews();
-builder.Services.Configure<RealEstate.Models.Admin.AdminAuthOptions>(
-    builder.Configuration.GetSection(RealEstate.Models.Admin.AdminAuthOptions.SectionName));
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<RealEstate.Services.PropertyCatalog>();
-builder.Services.AddSingleton<RealEstate.Services.BrokerDealLedger>();
+builder.Services.AddSingleton<RealEstate.Services.InquiryService>();
+builder.Services.AddSingleton<RealEstate.Services.SubscriptionService>();
+builder.Services.AddScoped<RealEstate.Services.AppointmentService>();
+builder.Services.AddScoped<RealEstate.Services.UserService>();
+// Investor controllers use the same services; no extra DI required
+
+// Database context for admin authentication and appointments
+builder.Services.AddDbContext<ApplicationDBContext>(options => {
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseSqlServer(connectionString);
+});
 
 var app = builder.Build();
 
@@ -34,6 +46,14 @@ app.MapStaticAssets();
 
 app.MapControllers();
 
+// Root route for landing page
+app.MapControllerRoute(
+    name: "root",
+    pattern: "",
+    defaults: new { controller = "Home", action = "Index" })
+    .WithStaticAssets();
+
+// Default fallback route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")

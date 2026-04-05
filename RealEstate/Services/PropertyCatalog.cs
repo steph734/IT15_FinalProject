@@ -1,3 +1,4 @@
+using System.Linq;
 using RealEstate.Models;
 
 namespace RealEstate.Services;
@@ -351,6 +352,29 @@ public class PropertyCatalog
     public Agent? GetAgent(int id) => _agents.FirstOrDefault(a => a.Id == id);
 
     public IReadOnlyList<Property> GetProperties() => _properties;
+
+    /// <summary>
+    /// Get properties assigned to a broker username. Mapping rule:
+    /// - "admin" returns all properties.
+    /// - usernames containing digits (e.g. agen001) map trailing digits to Agent.Id (001 -> 1).
+    /// - otherwise returns empty list.
+    /// </summary>
+    public IReadOnlyList<Property> GetPropertiesForBroker(string? brokerUsername)
+    {
+        if (string.IsNullOrWhiteSpace(brokerUsername))
+            return Array.Empty<Property>();
+
+        if (brokerUsername.Equals("admin", StringComparison.OrdinalIgnoreCase))
+            return _properties;
+
+        var digits = new string(brokerUsername.Where(char.IsDigit).ToArray());
+        if (int.TryParse(digits, out var agentId))
+        {
+            return _properties.Where(p => p.AgentId == agentId).ToList();
+        }
+
+        return Array.Empty<Property>();
+    }
 
     public Property? GetProperty(int id) => _properties.FirstOrDefault(p => p.Id == id);
 

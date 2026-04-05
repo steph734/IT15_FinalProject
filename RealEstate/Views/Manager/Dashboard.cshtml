@@ -1,0 +1,98 @@
+@{
+    ViewData["Title"] = "Manager Dashboard";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <h1 class="h4 fw-bold mb-4">Manager Dashboard</h1>
+
+    <!-- KPI Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card p-4 border-0 shadow-sm manager-card">
+                <div class="small text-muted mb-2">Total Properties</div>
+                <div class="h3 fw-bold text-primary">@ViewData["TotalProperties"]</div>
+                <div class="small text-success mt-2">📈 Active & managed</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-4 border-0 shadow-sm manager-card">
+                <div class="small text-muted mb-2">Active Listings</div>
+                <div class="h3 fw-bold text-primary">@ViewData["ActiveListings"]</div>
+                <div class="small text-success mt-2">✓ Live on market</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-4 border-0 shadow-sm manager-card">
+                <div class="small text-muted mb-2">Total Deals</div>
+                <div class="h3 fw-bold text-primary">@ViewData["TotalDeals"]</div>
+                <div class="small text-success mt-2">✓ Completed</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-4 border-0 shadow-sm manager-card">
+                <div class="small text-muted mb-2">Total Revenue</div>
+                <div class="h3 fw-bold text-primary">@String.Format("₱{0:N0}", ViewData["TotalRevenue"])</div>
+                <div class="small text-success mt-2">💰 YTD</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Access -->
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card p-4 border-0 shadow-sm">
+                <h6 class="mb-3">Quick Access</h6>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <a href="@Url.Action("SalesPipeline", "Manager")" class="btn btn-outline-primary w-100">
+                            <span>📈</span> Sales Pipeline
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="@Url.Action("AgentAssignment", "Manager")" class="btn btn-outline-primary w-100">
+                            <span>👥</span> Agent Assignment
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="@Url.Action("PerformanceTracking", "Manager")" class="btn btn-outline-primary w-100">
+                            <span>📊</span> Performance
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="@Url.Action("InventoryOverview", "Manager")" class="btn btn-outline-primary w-100">
+                            <span>🏠</span> Inventory
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card p-4 border-0 shadow-sm">
+                <h6 class="mb-3">Recent Activity</h6>
+                <div class="small">
+                    <p class="mb-2">✓ 3 new properties listed</p>
+                    <p class="mb-2">✓ 5 deals completed this month</p>
+                    <p class="mb-2">✓ 2 agent assignments made</p>
+                    <p>✓ Team meeting in 2 hours</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .manager-card {
+        border-left: 4px solid #6366f1;
+        transition: all 0.3s ease;
+    }
+
+    .manager-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 16px rgba(99, 102, 241, 0.15);
+    }
+
+    .text-primary {
+        color: #6366f1 !important;
+    }
+</style>

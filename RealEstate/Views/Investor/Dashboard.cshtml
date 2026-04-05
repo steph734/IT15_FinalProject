@@ -1,0 +1,142 @@
+@model RealEstate.Models.Investor.InvestorDashboardViewModel
+@{
+    ViewData["Title"] = "Investor Dashboard";
+    Layout = "~/Views/Shared/_InvestorLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h4 fw-bold">Investor Dashboard</h1>
+        <a href="@Url.Action("Submit", "Investor")" class="btn btn-primary">+ Submit Property</a>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card p-4 border-0 shadow-sm">
+                <div class="small text-muted mb-1">Total Portfolio Value</div>
+                <div class="h3 fw-bold">@String.Format("₱{0:N0}", Model.TotalPortfolioValue)</div>
+                <div class="small text-success mt-2">↑ 12% from last year</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 border-0 shadow-sm">
+                <div class="small text-muted mb-1">Monthly Income</div>
+                <div class="h3 fw-bold">@String.Format("₱{0:N0}", Model.MonthlyIncome)</div>
+                <div class="small text-success mt-2">↑ 8% from last month</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 border-0 shadow-sm">
+                <div class="small text-muted mb-1">Active Properties</div>
+                <div class="h3 fw-bold">@Model.PropertyCount</div>
+                <div class="small text-info mt-2">2 pending approval</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Summary -->
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card p-4 border-0 shadow-sm">
+                <h6 class="mb-3">Portfolio Performance</h6>
+                <canvas id="investorPerf" style="height:280px;"></canvas>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card p-4 border-0 shadow-sm">
+                <h6 class="mb-3">Quick Stats</h6>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small">Rental Yield</span>
+                        <span class="small fw-semibold">8.5%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small">Occupancy Rate</span>
+                        <span class="small fw-semibold">92%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-info" style="width: 92%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small">ROI</span>
+                        <span class="small fw-semibold">15.2%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="row g-3 mt-4">
+        <div class="col-md-3">
+            <a href="@Url.Action("MyProperties", "Investor")" class="card p-3 text-decoration-none border-0 shadow-sm">
+                <div class="h6">My Properties</div>
+                <div class="small text-muted">View all listings</div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="@Url.Action("Earnings", "Investor")" class="card p-3 text-decoration-none border-0 shadow-sm">
+                <div class="h6">Earnings & ROI</div>
+                <div class="small text-muted">Financial reports</div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="@Url.Action("Transactions", "Investor")" class="card p-3 text-decoration-none border-0 shadow-sm">
+                <div class="h6">Transactions</div>
+                <div class="small text-muted">Sale & rental history</div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="@Url.Action("Submit", "Investor")" class="card p-3 text-decoration-none border-0 shadow-sm">
+                <div class="h6">+ New Listing</div>
+                <div class="small text-muted">Submit property</div>
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+    <script>
+        const ctx = document.getElementById('investorPerf');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Portfolio Value',
+                        data: [15000000, 15600000, 16200000, 15800000, 17200000, 18500000],
+                        borderColor: '#ff7a59',
+                        backgroundColor: 'rgba(255,122,89,0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true } },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: (v) => '₱' + Number(v).toLocaleString('en-PH', { maximumFractionDigits: 0 })
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}

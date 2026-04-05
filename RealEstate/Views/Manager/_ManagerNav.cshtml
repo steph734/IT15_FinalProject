@@ -1,0 +1,126 @@
+<!-- Manager Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-site-primary sticky-top shadow-sm">
+    <div class="container-fluid px-lg-4">
+        <!-- Logo -->
+        <a class="navbar-brand fw-bold" href="/manager/dashboard">
+            <span class="brand-estate">Estate</span><span class="brand-flow">Flow</span>
+        </a>
+
+        <!-- Toggle for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#managerNavbar" aria-controls="managerNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navigation Items -->
+        <div class="collapse navbar-collapse" id="managerNavbar">
+            <ul class="navbar-nav ms-auto gap-1">
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/dashboard">
+                        <i class="fas fa-chart-line me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="teamDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-users me-2"></i>Team
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="teamDropdown">
+                        <li><a class="dropdown-item" href="/manager/team-management">Team Management</a></li>
+                        <li><a class="dropdown-item" href="/manager/agent-assignment">Agent Assignment</a></li>
+                        <li><a class="dropdown-item" href="/manager/performance-tracking">Performance Tracking</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="propertyDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-home me-2"></i>Properties
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="propertyDropdown">
+                        <li><a class="dropdown-item" href="/manager/inventory-overview">Inventory Overview</a></li>
+                        <li><a class="dropdown-item" href="/manager/property-moderation">Property Moderation</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="reportDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-chart-bar me-2"></i>Reports
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="reportDropdown">
+                        <li><a class="dropdown-item" href="/manager/sales-pipeline">Sales Pipeline</a></li>
+                        <li><a class="dropdown-item" href="/manager/managerial-reports">Managerial Reports</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manager/settings">
+                        <i class="fas fa-cog me-2"></i>Settings
+                    </a>
+                </li>
+
+                <!-- User Dropdown -->
+                <li class="nav-item dropdown ms-3">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-2"></i>
+                        <span>@(ViewData["UserName"] as string ?? "Manager")</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="/manager/settings">Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="post" action="/manager/logout" style="display: inline;">
+                                <button type="submit" class="dropdown-item">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .brand-estate {
+        color: #ff7a59;
+        font-weight: 700;
+    }
+
+    .brand-flow {
+        color: #333;
+        font-weight: 700;
+    }
+
+    .bg-site-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    }
+
+    .navbar-dark .nav-link {
+        color: rgba(255, 255, 255, 0.8) !important;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .navbar-dark .nav-link:hover {
+        color: white !important;
+    }
+
+    .navbar-dark .dropdown-toggle::after {
+        border-top-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+    }
+
+    .dropdown-item {
+        color: #333;
+        transition: all 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f5f7fa;
+        color: #3b82f6;
+    }
+
+    .dropdown-item.active {
+        background-color: #3b82f6;
+        color: white;
+    }
+</style>

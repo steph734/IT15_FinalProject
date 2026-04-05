@@ -1,45 +1,349 @@
-@model AdminLoginViewModel
 @{
-    ViewData["Title"] = "Admin sign in";
-    ViewData["HideBrokerNav"] = true;
+    ViewData["Title"] = "Admin Login - EstateFlow";
+    Layout = null;
 }
 
-<div class="admin-login-page min-vh-100 d-flex align-items-center py-5">
-    <div class="container" style="max-width: 420px;">
-        <div class="text-center mb-4">
-            <a asp-controller="Home" asp-action="Index" class="text-decoration-none d-inline-flex align-items-center justify-content-center gap-2 mb-2">
-                <img src="~/images/estateflow-logo.png" alt="EstateFlow" class="brand-logo-img" width="160" height="48" />
-            </a>
-            <p class="text-white-50 small mb-0">Administrator access</p>
-        </div>
-        <div class="card admin-login-card border-0 shadow-lg">
-            <div class="card-body p-4 p-md-5">
-                <h1 class="h5 fw-bold text-site-dark mb-1">Sign in</h1>
-                <p class="text-site-muted small mb-4">Use your admin credentials. Customer site is unchanged.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-                <form asp-controller="Admin" asp-action="Login" method="post" novalidate>
-                    <input type="hidden" asp-for="ReturnUrl" />
-                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
-                    <div class="mb-3">
-                        <label asp-for="Username" class="form-label small fw-semibold"></label>
-                        <input asp-for="Username" class="form-control" autocomplete="username" autofocus />
-                        <span asp-validation-for="Username" class="text-danger small"></span>
-                    </div>
-                    <div class="mb-4">
-                        <label asp-for="Password" class="form-label small fw-semibold"></label>
-                        <input asp-for="Password" class="form-control" autocomplete="current-password" />
-                        <span asp-validation-for="Password" class="text-danger small"></span>
-                    </div>
-                    <button type="submit" class="btn btn-site-primary w-100 py-2 fw-semibold">Sign in</button>
-                </form>
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-background {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        .login-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.7) 0%, rgba(118, 75, 162, 0.7) 100%);
+        }
+
+        @@media (max-width: 1024px) {
+            .login-background {
+                width: 100%;
+                opacity: 0.3;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .login-background {
+                display: none;
+            }
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 450px;
+            margin: 0 40px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            padding: 50px 40px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .login-brand {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .login-brand img {
+            height: 32px;
+        }
+
+        .login-brand-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #16a34a;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .login-header p {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #fafafa;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #16a34a;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 25px;
+        }
+
+        .forgot-password a {
+            color: #16a34a;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: #22c55e;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px 24px;
+            background: #2d3748;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            background: #1a202c;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .alert {
+            border-radius: 8px;
+            border: 1px solid #fecaca;
+            background-color: #fef2f2;
+            color: #991b1b;
+            padding: 12px 16px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .alert strong {
+            font-weight: 600;
+        }
+
+        .alert-success {
+            border-color: #bbf7d0;
+            background-color: #f0fdf4;
+            color: #166534;
+        }
+
+        .alert-success strong {
+            color: #166534;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .login-footer a {
+            color: #16a34a;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .login-footer a:hover {
+            color: #22c55e;
+        }
+
+        .create-account-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .create-account-link a {
+            color: #16a34a;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .create-account-link a:hover {
+            text-decoration: underline;
+        }
+
+        @@media (max-width: 768px) {
+            .login-card {
+                padding: 40px 30px;
+            }
+
+            .login-header h1 {
+                font-size: 24px;
+            }
+
+            .login-container {
+                margin: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Image -->
+    <div class="login-background"></div>
+
+    <!-- Login Card -->
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-brand">
+                    <img src="~/images/estateflow-logo.png" alt="EstateFlow" />
+                    <span class="login-brand-text">ESTATEFLOW</span>
+                </div>
+                <h1>Admin Login</h1>
+                <p>Please enter your details</p>
             </div>
-        </div>
-        <p class="text-center small mt-4 mb-0">
-            <a href="~/Home/Index" class="text-white-50 text-decoration-none">← Back to EstateFlow</a>
-        </p>
-    </div>
-</div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+            @if (ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
+            {
+                <div class="alert">
+                    <strong>Login Failed:</strong>
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        @foreach (var error in modelState.Errors)
+                        {
+                            <div>@error.ErrorMessage</div>
+                        }
+                    }
+                </div>
+            }
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    <strong>Success!</strong>
+                    <div>@TempData["SuccessMessage"]</div>
+                </div>
+            }
+
+            <form method="post" asp-action="Login">
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" 
+                           class="form-control" 
+                           id="email" 
+                           name="email" 
+                           placeholder="jonathan@estateflow.com" 
+                           required 
+                           autofocus />
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" 
+                           class="form-control" 
+                           id="password" 
+                           name="password" 
+                           placeholder="••••••••••"
+                           required />
+                </div>
+
+                <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-login">Sign in</button>
+
+                <div class="create-account-link">
+                    Are you new? <a href="/admin/register">Create an Account</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

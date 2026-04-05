@@ -1,0 +1,182 @@
+@{
+    ViewData["Title"] = "Agent Assignment";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <h1 class="h4 fw-bold mb-4">👥 Agent Assignment & Workload Management</h1>
+
+    <div class="row g-4">
+        <!-- Unassigned Properties -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm p-4">
+                <h6 class="mb-3">📋 Unassigned Properties</h6>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="fw-semibold">Condo BGC</div>
+                                <div class="small text-muted">₱15.2M • 2 Bed</div>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Assign</button>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="fw-semibold">House Makati</div>
+                                <div class="small text-muted">₱12.5M • 3 Bed</div>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Assign</button>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="fw-semibold">Villa Tagaytay</div>
+                                <div class="small text-muted">₱18.9M • 4 Bed</div>
+                            </div>
+                            <button class="btn btn-sm btn-primary">Assign</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent Workload -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm p-4">
+                <h6 class="mb-3">⚖️ Agent Workload</h6>
+                <div class="workload-items">
+                    <div class="workload-item">
+                        <div class="agent-name">Agent Agen001</div>
+                        <div class="workload-bar">
+                            <div class="workload-fill" style="width: 85%;"></div>
+                        </div>
+                        <div class="workload-info">
+                            <span>5/6 Properties</span>
+                            <span class="badge bg-warning">High</span>
+                        </div>
+                    </div>
+                    <div class="workload-item">
+                        <div class="agent-name">Agent Maria</div>
+                        <div class="workload-bar">
+                            <div class="workload-fill" style="width: 60%;"></div>
+                        </div>
+                        <div class="workload-info">
+                            <span>3/5 Properties</span>
+                            <span class="badge bg-info">Medium</span>
+                        </div>
+                    </div>
+                    <div class="workload-item">
+                        <div class="agent-name">Agent John</div>
+                        <div class="workload-bar">
+                            <div class="workload-fill" style="width: 40%;"></div>
+                        </div>
+                        <div class="workload-info">
+                            <span>2/5 Properties</span>
+                            <span class="badge bg-success">Low</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leads Distribution -->
+    <div class="card border-0 shadow-sm p-4 mt-4">
+        <h6 class="mb-3">📊 Lead Distribution Strategy</h6>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="distribution-option">
+                    <input type="radio" name="distribution" id="equal" value="equal">
+                    <label for="equal">
+                        <strong>Equal Distribution</strong>
+                        <div class="small text-muted">Divide equally among available agents</div>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="distribution-option">
+                    <input type="radio" name="distribution" id="performance" value="performance">
+                    <label for="performance">
+                        <strong>Performance-Based</strong>
+                        <div class="small text-muted">Assign to top-performing agents</div>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="distribution-option">
+                    <input type="radio" name="distribution" id="workload" value="workload" checked>
+                    <label for="workload">
+                        <strong>Workload Balancing</strong>
+                        <div class="small text-muted">Assign to agents with lower workload</div>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary mt-3">Apply Distribution</button>
+    </div>
+</div>
+
+<style>
+    .workload-items {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .workload-item {
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .agent-name {
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .workload-bar {
+        height: 6px;
+        background: #e0e0e0;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 8px;
+    }
+
+    .workload-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        transition: width 0.3s ease;
+    }
+
+    .workload-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .distribution-option {
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .distribution-option:hover {
+        background: #f0f1ff;
+    }
+
+    .distribution-option input {
+        margin-right: 8px;
+    }
+
+    .distribution-option label {
+        cursor: pointer;
+        margin-bottom: 0;
+    }
+</style>
