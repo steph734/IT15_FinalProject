@@ -1,66 +1,112 @@
 using Microsoft.AspNetCore.Mvc;
+using RealEstate.Attributes;
+using RealEstate.Helpers;
 using RealEstate.Services;
 
 namespace RealEstate.Controllers;
 
 [Route("broker")]
-[AuthorizeRole("Broker")]
+[RequireRole("Broker")]
 public class BrokerController : Controller
 {
+    private readonly PropertyCatalog _catalog;
+
+    public BrokerController(PropertyCatalog catalog)
+    {
+        _catalog = catalog;
+    }
+
+    [HttpGet("")]
+    public IActionResult Index()
+    {
+        return RedirectToAction("Dashboard");
+    }
+
     [HttpGet("dashboard")]
     public IActionResult Dashboard()
     {
-        var userName = HttpContext.Session.GetString("UserName");
-        ViewData["UserName"] = userName;
-        return View("~/Views/Broker/Dashboard.cshtml");
+        var brokerId = AuthorizationHelper.GetUserId(HttpContext);
+        if (!brokerId.HasValue)
+            return RedirectToAction("Login", "Admin");
+
+        ViewBag.BrokerId = brokerId.Value;
+        ViewBag.BrokerName = HttpContext.Session.GetString("UserName") ?? "Broker";
+        return View();
     }
 
-    [HttpGet("listings")]
-    public IActionResult Listings()
+    [HttpGet("properties")]
+    public IActionResult Properties(int page = 1, int pageSize = 10)
     {
-        var userName = HttpContext.Session.GetString("UserName");
-        ViewData["UserName"] = userName;
-        return View("~/Views/Broker/Listings.cshtml");
+        var brokerId = AuthorizationHelper.GetUserId(HttpContext);
+        if (!brokerId.HasValue)
+            return RedirectToAction("Login", "Admin");
+
+        var allProperties = _catalog.GetProperties().ToList();
+        var total = allProperties.Count;
+        page = Math.Max(1, page);
+        pageSize = Math.Clamp(pageSize, 1, 50);
+
+        var paged = allProperties
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        ViewBag.BrokerId = brokerId.Value;
+        ViewBag.BrokerName = HttpContext.Session.GetString("UserName") ?? "Broker";
+        ViewBag.Page = page;
+        ViewBag.PageSize = pageSize;
+        ViewBag.TotalCount = total;
+        ViewBag.TotalPages = (int)Math.Ceiling((double)total / pageSize);
+
+        return View(paged);
     }
 
-    [HttpGet("clients")]
-    public IActionResult Clients()
+    [HttpGet("leads")]
+    public IActionResult Leads()
     {
-        var userName = HttpContext.Session.GetString("UserName");
-        ViewData["UserName"] = userName;
-        return View("~/Views/Broker/Clients.cshtml");
+        var brokerId = AuthorizationHelper.GetUserId(HttpContext);
+        if (!brokerId.HasValue)
+            return RedirectToAction("Login", "Admin");
+
+        ViewBag.BrokerId = brokerId.Value;
+        ViewBag.BrokerName = HttpContext.Session.GetString("UserName") ?? "Broker";
+        return View();
     }
 
-    [HttpGet("sales")]
-    public IActionResult Sales()
+    [HttpGet("performance")]
+    public IActionResult Performance()
     {
-        var userName = HttpContext.Session.GetString("UserName");
-        ViewData["UserName"] = userName;
-        return View("~/Views/Broker/Sales.cshtml");
+        var brokerId = AuthorizationHelper.GetUserId(HttpContext);
+        if (!brokerId.HasValue)
+            return RedirectToAction("Login", "Admin");
+
+        ViewBag.BrokerId = brokerId.Value;
+        ViewBag.BrokerName = HttpContext.Session.GetString("UserName") ?? "Broker";
+        return View();
     }
 
     [HttpGet("commissions")]
     public IActionResult Commissions()
     {
-        var userName = HttpContext.Session.GetString("UserName");
-        ViewData["UserName"] = userName;
-        return View("~/Views/Broker/Commissions.cshtml");
-    }
+        var brokerId = AuthorizationHelper.GetUserId(HttpContext);
+        if (!brokerId.HasValue)
+            return RedirectToAction("Login", "Admin");
 
-    [HttpGet("profile")]
-    public IActionResult Profile()
-    {
-        var userName = HttpContext.Session.GetString("UserName");
-        ViewData["UserName"] = userName;
-        return View("~/Views/Broker/Profile.cshtml");
+        ViewBag.BrokerId = brokerId.Value;
+        ViewBag.BrokerName = HttpContext.Session.GetString("UserName") ?? "Broker";
+        return View();
     }
 
     [HttpGet("settings")]
     public IActionResult Settings()
     {
-        var userName = HttpContext.Session.GetString("UserName");
-        ViewData["UserName"] = userName;
-        return View("~/Views/Broker/Settings.cshtml");
+        var brokerId = AuthorizationHelper.GetUserId(HttpContext);
+        if (!brokerId.HasValue)
+            return RedirectToAction("Login", "Admin");
+
+        ViewBag.BrokerId = brokerId.Value;
+        ViewBag.BrokerName = HttpContext.Session.GetString("UserName") ?? "Broker";
+        return View();
     }
 
     [HttpPost("logout")]

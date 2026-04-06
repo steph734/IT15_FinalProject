@@ -4,100 +4,323 @@
     Layout = "~/Views/Shared/_InvestorLayout.cshtml";
 }
 
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h4 fw-bold">Investor Dashboard</h1>
-        <a href="@Url.Action("Submit", "Investor")" class="btn btn-primary">+ Submit Property</a>
+<style>
+    .dashboard-header {
+        margin-bottom: 40px;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    .dashboard-header h1 {
+        font-size: 42px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .dashboard-subtitle {
+        font-size: 16px;
+        color: #6b7280;
+        margin-bottom: 20px;
+    }
+
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+        margin-bottom: 40px;
+        animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+
+    .kpi-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 24px;
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .kpi-card:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transform: translateY(-4px);
+    }
+
+    .kpi-label {
+        font-size: 13px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+
+    .kpi-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 12px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .kpi-change {
+        font-size: 13px;
+        font-weight: 600;
+        color: #10b981;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+    .chart-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 20px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .stat-item {
+        margin-bottom: 20px;
+    }
+
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #6b7280;
+    }
+
+    .stat-value {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .progress-bar-custom {
+        height: 6px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .quick-nav {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 16px;
+        margin-top: 40px;
+        animation: fadeInUp 0.6s ease-out 0.3s both;
+    }
+
+    .nav-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: block;
+    }
+
+    .nav-card:hover {
+        border-color: #3b82f6;
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .nav-card-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 4px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .nav-card-desc {
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .nav-card-icon {
+        font-size: 24px;
+        margin-bottom: 12px;
+        opacity: 0.8;
+    }
+
+    @@keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 1024px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .dashboard-header h1 {
+            font-size: 28px;
+        }
+
+        .kpi-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .kpi-value {
+            font-size: 24px;
+        }
+    }
+</style>
+
+<div class="container-fluid px-4 py-5">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1>Investor Dashboard</h1>
+        <p class="dashboard-subtitle">Centralized SaaS dashboard enhances real estate activity overview.</p>
     </div>
 
     <!-- KPI Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card p-4 border-0 shadow-sm">
-                <div class="small text-muted mb-1">Total Portfolio Value</div>
-                <div class="h3 fw-bold">@String.Format("₱{0:N0}", Model.TotalPortfolioValue)</div>
-                <div class="small text-success mt-2">↑ 12% from last year</div>
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-label">💼 Total Portfolio Value</div>
+            <div class="kpi-value">@String.Format("₱{0:N0}", Model.TotalPortfolioValue)</div>
+            <div class="kpi-change">
+                <span>↑</span>
+                <span>12% from last year</span>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card p-4 border-0 shadow-sm">
-                <div class="small text-muted mb-1">Monthly Income</div>
-                <div class="h3 fw-bold">@String.Format("₱{0:N0}", Model.MonthlyIncome)</div>
-                <div class="small text-success mt-2">↑ 8% from last month</div>
+        <div class="kpi-card">
+            <div class="kpi-label">💰 Monthly Income</div>
+            <div class="kpi-value">@String.Format("₱{0:N0}", Model.MonthlyIncome)</div>
+            <div class="kpi-change">
+                <span>↑</span>
+                <span>8% from last month</span>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card p-4 border-0 shadow-sm">
-                <div class="small text-muted mb-1">Active Properties</div>
-                <div class="h3 fw-bold">@Model.PropertyCount</div>
-                <div class="small text-info mt-2">2 pending approval</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Charts and Summary -->
-    <div class="row g-3">
-        <div class="col-lg-8">
-            <div class="card p-4 border-0 shadow-sm">
-                <h6 class="mb-3">Portfolio Performance</h6>
-                <canvas id="investorPerf" style="height:280px;"></canvas>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="card p-4 border-0 shadow-sm">
-                <h6 class="mb-3">Quick Stats</h6>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small">Rental Yield</span>
-                        <span class="small fw-semibold">8.5%</span>
-                    </div>
-                    <div class="progress" style="height: 6px;">
-                        <div class="progress-bar bg-success" style="width: 85%"></div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small">Occupancy Rate</span>
-                        <span class="small fw-semibold">92%</span>
-                    </div>
-                    <div class="progress" style="height: 6px;">
-                        <div class="progress-bar bg-info" style="width: 92%"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small">ROI</span>
-                        <span class="small fw-semibold">15.2%</span>
-                    </div>
-                    <div class="progress" style="height: 6px;">
-                        <div class="progress-bar bg-warning" style="width: 75%"></div>
-                    </div>
-                </div>
+        <div class="kpi-card">
+            <div class="kpi-label">🏠 Active Properties</div>
+            <div class="kpi-value">@Model.PropertyCount</div>
+            <div class="kpi-change">
+                <span style="color: #f59e0b;">⚠</span>
+                <span style="color: #f59e0b;">2 pending approval</span>
             </div>
         </div>
     </div>
 
-    <!-- Navigation Links -->
-    <div class="row g-3 mt-4">
-        <div class="col-md-3">
-            <a href="@Url.Action("MyProperties", "Investor")" class="card p-3 text-decoration-none border-0 shadow-sm">
-                <div class="h6">My Properties</div>
-                <div class="small text-muted">View all listings</div>
-            </a>
+    <!-- Content Section -->
+    <div class="content-grid">
+        <!-- Chart Area -->
+        <div class="chart-card">
+            <h3 class="chart-title">Portfolio Health Status</h3>
+            <canvas id="investorPerf" style="height:280px;"></canvas>
         </div>
-        <div class="col-md-3">
-            <a href="@Url.Action("Earnings", "Investor")" class="card p-3 text-decoration-none border-0 shadow-sm">
-                <div class="h6">Earnings & ROI</div>
-                <div class="small text-muted">Financial reports</div>
-            </a>
+
+        <!-- Quick Stats -->
+        <div class="chart-card">
+            <h3 class="chart-title">Quick Stats</h3>
+
+            <div class="stat-item">
+                <div class="stat-row">
+                    <span class="stat-label">Rental Yield</span>
+                    <span class="stat-value">8.5%</span>
+                </div>
+                <div class="progress-bar-custom">
+                    <div class="progress-fill" style="width: 85%;"></div>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-row">
+                    <span class="stat-label">Occupancy Rate</span>
+                    <span class="stat-value">92%</span>
+                </div>
+                <div class="progress-bar-custom">
+                    <div class="progress-fill" style="width: 92%; background: linear-gradient(90deg, #10b981 0%, #059669 100%);"></div>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-row">
+                    <span class="stat-label">ROI</span>
+                    <span class="stat-value">15.2%</span>
+                </div>
+                <div class="progress-bar-custom">
+                    <div class="progress-fill" style="width: 75%; background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);"></div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3">
-            <a href="@Url.Action("Transactions", "Investor")" class="card p-3 text-decoration-none border-0 shadow-sm">
-                <div class="h6">Transactions</div>
-                <div class="small text-muted">Sale & rental history</div>
-            </a>
-        </div>
-        <div class="col-md-3">
+    </div>
+
+    <!-- Quick Navigation -->
+    <div class="quick-nav">
+        <a href="@Url.Action("MyProperties", "Investor")" class="nav-card">
+            <div class="nav-card-icon">📑</div>
+            <div class="nav-card-title">My Properties</div>
+            <div class="nav-card-desc">View and manage all listings</div>
+        </a>
+        <a href="@Url.Action("Submit", "Investor")" class="nav-card">
+            <div class="nav-card-icon">➕</div>
+            <div class="nav-card-title">Submit Property</div>
+            <div class="nav-card-desc">List a new property</div>
+        </a>
+        <a href="@Url.Action("Earnings", "Investor")" class="nav-card">
+            <div class="nav-card-icon">📊</div>
+            <div class="nav-card-title">Earnings & ROI</div>
+            <div class="nav-card-desc">Financial reports</div>
+        </a>
+        <a href="@Url.Action("Transactions", "Investor")" class="nav-card">
+            <div class="nav-card-icon">💳</div>
+            <div class="nav-card-title">Transactions</div>
+            <div class="nav-card-desc">Sale & rental history</div>
+        </a>
+    </div>
+</div>
             <a href="@Url.Action("Submit", "Investor")" class="card p-3 text-decoration-none border-0 shadow-sm">
                 <div class="h6">+ New Listing</div>
                 <div class="small text-muted">Submit property</div>

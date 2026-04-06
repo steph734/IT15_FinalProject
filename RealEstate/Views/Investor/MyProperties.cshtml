@@ -4,70 +4,534 @@
     Layout = "~/Views/Shared/_InvestorLayout.cshtml";
 }
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h4 fw-bold">My Properties</h1>
-        <a href="@Url.Action("Submit", "Investor")" class="btn btn-primary">+ Add New Property</a>
+<style>
+    .properties-header {
+        margin-bottom: 40px;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    .properties-header h1 {
+        font-size: 42px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .properties-header-subtitle {
+        font-size: 16px;
+        color: #6b7280;
+        margin-bottom: 20px;
+    }
+
+    .badge-tag {
+        display: inline-block;
+        background: #e9d5ff;
+        color: #7c3aed;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .header-links {
+        display: flex;
+        gap: 24px;
+        margin-top: 15px;
+    }
+
+    .header-link {
+        color: #3b82f6;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .header-link:hover {
+        color: #2563eb;
+    }
+
+    .properties-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 15px;
+    }
+
+    .search-box {
+        position: relative;
+        flex: 1;
+        max-width: 300px;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        font-size: 16px;
+    }
+
+    .view-toggle {
+        display: flex;
+        gap: 8px;
+    }
+
+    .view-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e5e7eb;
+        background: white;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #6b7280;
+    }
+
+    .view-btn:hover,
+    .view-btn.active {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+    }
+
+    .properties-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+        will-change: transform;
+    }
+
+    .property-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .property-card:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transform: translateY(-4px);
+    }
+
+    .property-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+        background: #f3f4f6;
+    }
+
+    .property-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .property-card:hover .property-image img {
+        transform: scale(1.05);
+    }
+
+    .property-rating {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .rating-excellent {
+        background: white;
+        color: #3b82f6;
+        border: 3px solid #3b82f6;
+    }
+
+    .rating-good {
+        background: #10b981;
+        color: white;
+    }
+
+    .rating-poor {
+        background: #ef4444;
+        color: white;
+    }
+
+    .property-badge {
+        position: absolute;
+        bottom: 12px;
+        left: 12px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-live {
+        background: #10b981;
+        color: white;
+    }
+
+    .property-body {
+        padding: 20px;
+    }
+
+    .property-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 4px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .property-location {
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 16px;
+    }
+
+    .property-info-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .property-info-item {
+        padding: 12px;
+        background: #f9fafb;
+        border-radius: 8px;
+    }
+
+    .property-info-label {
+        font-size: 11px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .property-info-value {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .property-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .btn-action {
+        padding: 10px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .btn-view {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-view:hover {
+        background: #2563eb;
+    }
+
+    .btn-remove {
+        background: #f3f4f6;
+        color: #ef4444;
+        border: 1px solid #e5e7eb;
+    }
+
+    .btn-remove:hover {
+        background: #ef4444;
+        color: white;
+        border-color: #ef4444;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .empty-icon {
+        font-size: 64px;
+        color: #d1d5db;
+        margin-bottom: 16px;
+    }
+
+    .empty-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+    }
+
+    .empty-text {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+
+    .btn-add-primary {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-add-primary:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    @@keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .properties-header h1 {
+            font-size: 28px;
+        }
+
+        .properties-controls {
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            max-width: 100%;
+        }
+
+        .properties-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .property-info-row {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+</style>
+
+<div class="container-fluid px-4 py-5">
+    <!-- Header -->
+    <div class="properties-header">
+        <h1>My properties</h1>
+        <p class="properties-header-subtitle">Organize and manage properties efficiently.</p>
+
+        <div class="badge-tag">
+            <i class="fas fa-cube"></i> EstateFlow
+        </div>
+
+        <div class="header-links">
+            <a href="#" class="header-link">User experience</a>
+            <a href="#" class="header-link">Real Estate UX</a>
+            <a href="#" class="header-link">Portfolio</a>
+        </div>
     </div>
 
-    <div class="row g-4">
-        @if (Model.Count == 0)
-        {
-            <div class="col-12">
-                <div class="alert alert-info">
-                    <strong>No properties yet.</strong> <a href="@Url.Action("Submit", "Investor")">Submit your first property</a>
-                </div>
+    <!-- Controls -->
+    @if (Model.Count > 0)
+    {
+        <div class="properties-controls">
+            <div class="search-box">
+                <input type="text" placeholder="Find a property..." id="propertySearch" />
+                <i class="fas fa-search search-icon"></i>
             </div>
-        }
-        else
-        {
+
+            <div class="view-toggle">
+                <button class="view-btn active" title="Grid view">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="view-btn" title="List view">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+    }
+
+    <!-- Properties Grid -->
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <h3 class="empty-title">No properties yet</h3>
+            <p class="empty-text">Start managing your real estate portfolio by adding your first property.</p>
+            <a href="@Url.Action("Submit", "Investor")" class="btn-add-primary">+ Add New Property</a>
+        </div>
+    }
+    else
+    {
+        <div class="properties-grid" id="propertiesGrid">
             @foreach (var p in Model)
             {
-                <div class="col-md-6 col-lg-4">
-                    <div class="card border-0 shadow-sm overflow-hidden">
-                        <!-- Image -->
-                        <div style="position:relative;height:200px;overflow:hidden;">
-                            <img src="@p.ImageUrls?.FirstOrDefault()" class="w-100 h-100" style="object-fit:cover;" alt="@p.Title" />
-                            <div style="position:absolute;top:10px;right:10px;">
-                                <span class="badge bg-success">Live</span>
+                <div class="property-card" data-title="@p.Title" data-location="@p.Location">
+                    <!-- Image -->
+                    <div class="property-image">
+                        <img src="@p.ImageUrls?.FirstOrDefault() ?? '/images/placeholder.jpg'" 
+                             alt="@p.Title" 
+                             loading="lazy" />
+                        <div class="property-rating rating-good">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <span class="property-badge badge-live">Live</span>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="property-body">
+                        <h3 class="property-title">@p.Title</h3>
+                        <p class="property-location">
+                            <i class="fas fa-map-marker-alt" style="margin-right: 6px;"></i>
+                            @p.Location
+                        </p>
+
+                        <div class="property-info-row">
+                            <div class="property-info-item">
+                                <div class="property-info-label">Price</div>
+                                <div class="property-info-value">₱@String.Format("{0:N0}", p.Price)</div>
+                            </div>
+                            <div class="property-info-item">
+                                <div class="property-info-label">Type</div>
+                                <div class="property-info-value">@p.ListingType</div>
                             </div>
                         </div>
 
-                        <!-- Content -->
-                        <div class="card-body">
-                            <h6 class="mb-1">@p.Title</h6>
-                            <p class="small text-muted mb-2">@p.Location</p>
-                            
-                            <div class="row g-2 mb-3">
-                                <div class="col-6">
-                                    <div class="small text-muted">Price</div>
-                                    <div class="fw-semibold">@String.Format("₱{0:N0}", p.Price)</div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="small text-muted">Type</div>
-                                    <div class="fw-semibold">@p.ListingType</div>
+                        <div class="property-info-row">
+                            <div class="property-info-item">
+                                <div class="property-info-label">Size</div>
+                                <div class="property-info-value">@p.Sqft sqft</div>
+                            </div>
+                            <div class="property-info-item">
+                                <div class="property-info-label">Status</div>
+                                <div class="property-info-value">
+                                    <span class="badge" style="background: #d1fae5; color: #065f46;">Active</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="row g-2 mb-3">
-                                <div class="col-6">
-                                    <div class="small text-muted">Size</div>
-                                    <div class="fw-semibold">@p.Sqft sqft</div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="small text-muted">Status</div>
-                                    <div class="fw-semibold"><span class="badge bg-primary">Active</span></div>
-                                </div>
-                            </div>
-
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-sm btn-outline-primary">View Details</button>
-                                <button class="btn btn-sm btn-outline-danger">Remove Listing</button>
-                            </div>
+                        <div class="property-actions">
+                            <button class="btn-action btn-view">View Details</button>
+                            <button class="btn-action btn-remove">Remove</button>
                         </div>
                     </div>
                 </div>
             }
-        }
-    </div>
+        </div>
+
+        <!-- Add New Property Button (Floating) -->
+        <div style="position: fixed; bottom: 30px; right: 30px; z-index: 100;">
+            <a href="@Url.Action("Submit", "Investor")" class="btn-add-primary" style="display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-plus"></i> Add Property
+            </a>
+        </div>
+    }
 </div>
+
+<script>
+    // Debounce function for search
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Optimized search with debounce
+    const searchInput = document.getElementById('propertySearch');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', debounce(function() {
+            const query = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.property-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const title = card.dataset.title.toLowerCase();
+                const location = card.dataset.location.toLowerCase();
+
+                if (title.includes(query) || location.includes(query)) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Optional: Show message if no results
+            if (visibleCount === 0 && query.length > 0) {
+                console.log('No properties found matching: ' + query);
+            }
+        }, 300));
+    }
+
+    // View toggle with debounce
+    document.querySelectorAll('.view-btn').forEach((btn, index) => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            const grid = document.querySelector('.properties-grid');
+            requestAnimationFrame(() => {
+                if (index === 0) {
+                    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+                } else {
+                    grid.style.gridTemplateColumns = '1fr';
+                }
+            });
+        });
+    });
+</script>

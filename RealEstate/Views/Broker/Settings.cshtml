@@ -1,0 +1,128 @@
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f8f9fc; font-family: 'Inter', sans-serif; color: #1f2937; }
+    .broker-page { display: flex; flex-direction: column; min-height: 100vh; }
+    .broker-navbar { background: linear-gradient(135deg, #667eea, #764ba2); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 2px 12px rgba(102, 126, 234, 0.15); gap: 40px; }
+    .navbar-left { display: flex; align-items: center; gap: 30px; }
+    .navbar-brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; white-space: nowrap; }
+    .navbar-brand i { font-size: 24px; }
+    .navbar-menu { display: flex; align-items: center; gap: 8px; list-style: none; }
+    .navbar-item { position: relative; }
+    .navbar-link { display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: rgba(255,255,255,0.9); text-decoration: none; border-radius: 6px; transition: all 0.3s; font-size: 14px; font-weight: 500; white-space: nowrap; }
+    .navbar-link:hover { background: rgba(255,255,255,0.2); color: white; }
+    .navbar-link.active { background: rgba(255,255,255,0.3); color: white; }
+    .navbar-right { display: flex; align-items: center; gap: 16px; }
+    .navbar-user { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(255,255,255,0.1); border-radius: 6px; font-size: 13px; }
+    .main-content { flex: 1; overflow-y: auto; padding: 40px; max-width: 800px; background: #f8f9fc; }
+    .page-title { font-size: 32px; font-weight: 700; color: #1f2937; margin-bottom: 24px; }
+    .card { background: white; border-radius: 12px; border: 1px solid #e5e7eb; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb; color: #1f2937; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #6b7280; }
+    .form-control { width: 100%; padding: 10px 12px; background: white; border: 1px solid #e5e7eb; border-radius: 6px; color: #1f2937; }
+    .form-control:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+    .btn { padding: 10px 20px; background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .btn:hover { opacity: 0.9; }
+    .btn-logout { background: #ef4444; }
+    .btn-logout:hover { background: #dc2626; opacity: 1; }
+    .checkbox-group { display: flex; flex-direction: column; gap: 12px; }
+    .checkbox-group label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .checkbox-group input { width: 18px; height: 18px; cursor: pointer; accent-color: #667eea; }
+    @@media (max-width: 768px) { .broker-navbar { flex-wrap: wrap; padding: 12px 20px; gap: 16px; } .navbar-left { width: 100%; gap: 16px; } .navbar-menu { width: 100%; flex-wrap: wrap; } .navbar-right { width: 100%; } .main-content { padding: 20px; max-width: 100%; } }
+</style>
+
+<div class="broker-page">
+    <nav class="broker-navbar">
+        <div class="navbar-left">
+            <div class="navbar-brand">
+                <i class="fas fa-building"></i>
+                <span>EstateFlow</span>
+            </div>
+            <ul class="navbar-menu">
+                <li class="navbar-item"><a href="@Url.Action("Dashboard", "Broker")" class="navbar-link"><i class="fas fa-chart-line"></i> Overview</a></li>
+                <li class="navbar-item"><a href="@Url.Action("Properties", "Broker")" class="navbar-link"><i class="fas fa-home"></i> Properties</a></li>
+                <li class="navbar-item"><a href="@Url.Action("Leads", "Broker")" class="navbar-link"><i class="fas fa-users"></i> Leads</a></li>
+                <li class="navbar-item"><a href="@Url.Action("Performance", "Broker")" class="navbar-link"><i class="fas fa-chart-bar"></i> Performance</a></li>
+                <li class="navbar-item"><a href="@Url.Action("Commissions", "Broker")" class="navbar-link"><i class="fas fa-dollar-sign"></i> Commissions</a></li>
+                <li class="navbar-item"><a href="@Url.Action("Settings", "Broker")" class="navbar-link active"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+        </div>
+        <div class="navbar-right">
+            <div class="navbar-user">
+                <i class="fas fa-user-circle"></i>
+                <span>Broker</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-title">⚙️ Settings</div>
+
+        <div class="card">
+            <div class="card-title">👤 Profile Settings</div>
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" placeholder="Your full name" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" placeholder="your@email.com" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input type="tel" class="form-control" placeholder="+63 917 123 4567" />
+            </div>
+            <button class="btn">Save Changes</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🔒 Security</div>
+            <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input type="password" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input type="password" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" />
+            </div>
+            <button class="btn">Update Password</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🔔 Notification Preferences</div>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" checked />
+                    <span>Email notifications for new leads</span>
+                </label>
+                <label>
+                    <input type="checkbox" checked />
+                    <span>SMS alerts for hot leads</span>
+                </label>
+                <label>
+                    <input type="checkbox" />
+                    <span>Weekly performance reports</span>
+                </label>
+            </div>
+            <button class="btn" style="margin-top: 16px;">Save Preferences</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Account</div>
+            <p style="margin-bottom: 12px; color: #6b7280; font-size: 13px;">Click below to logout from your account.</p>
+            <form method="post" action="@Url.Action("Logout", "Broker")" style="display: inline;">
+                <button type="submit" class="btn btn-logout">Logout</button>
+            </form>
+        </div>
+    </main>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />

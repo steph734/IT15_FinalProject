@@ -3,100 +3,360 @@
     Layout = "~/Views/Shared/_InvestorLayout.cshtml";
 }
 
-<div class="container py-4">
-    <h1 class="h4 fw-bold mb-4">💳 Subscription & Billing</h1>
+<style>
+    .billing-header {
+        margin-bottom: 40px;
+        animation: fadeInDown 0.6s ease-out;
+    }
 
-    <div class="row g-3">
-        <!-- Current Plan -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm p-4">
-                <h6 class="mb-3">Current Subscription</h6>
-                <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded mb-3">
-                    <div>
-                        <div class="fw-semibold">Professional Plan</div>
-                        <div class="small text-muted">₱499/month</div>
+    .billing-header h1 {
+        font-size: 42px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .billing-subtitle {
+        font-size: 16px;
+        color: #6b7280;
+    }
+
+    .billing-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 20px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        border-bottom: 2px solid #f3f4f6;
+        padding-bottom: 16px;
+    }
+
+    .plan-badge {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e9f5ff 100%);
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .plan-info {
+        flex: 1;
+    }
+
+    .plan-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 4px;
+    }
+
+    .plan-price {
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .status-badge {
+        background: #10b981;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px 0;
+    }
+
+    .feature-list li {
+        font-size: 13px;
+        color: #6b7280;
+        padding: 8px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .feature-list li:before {
+        content: "✓";
+        color: #10b981;
+        font-weight: 700;
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary.outline {
+        background: transparent;
+        color: #3b82f6;
+        border: 1px solid #3b82f6;
+    }
+
+    .btn-primary.outline:hover {
+        background: #f0f7ff;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+    }
+
+    .table thead {
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .table th {
+        padding: 12px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .table td {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 13px;
+    }
+
+    .payment-method {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 12px;
+    }
+
+    .payment-icon {
+        font-size: 24px;
+    }
+
+    .payment-info {
+        flex: 1;
+    }
+
+    .payment-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .payment-detail {
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+    .payment-badge {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 1px solid #e5e7eb;
+        color: #6b7280;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-outline:hover {
+        border-color: #3b82f6;
+        background: #f0f7ff;
+        color: #3b82f6;
+    }
+
+    @@keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 1024px) {
+        .billing-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .billing-header h1 {
+            font-size: 28px;
+        }
+
+        .plan-badge {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+    }
+</style>
+
+<div class="container-fluid px-4 py-5">
+    <!-- Header -->
+    <div class="billing-header">
+        <h1>💳 Subscription & Billing</h1>
+        <p class="billing-subtitle">Manage your subscription plan and payment methods</p>
+    </div>
+
+    <div class="billing-grid">
+        <!-- Subscription & History -->
+        <div>
+            <!-- Current Plan -->
+            <div class="card mb-4">
+                <h3 class="card-title">Current Subscription</h3>
+
+                <div class="plan-badge">
+                    <div class="plan-info">
+                        <div class="plan-name">Professional Plan</div>
+                        <div class="plan-price">₱499/month</div>
                     </div>
-                    <span class="badge bg-success">Active</span>
+                    <span class="status-badge">Active</span>
                 </div>
 
-                <div class="mb-3">
-                    <div class="small text-muted">Features Included:</div>
-                    <ul class="small list-unstyled mt-2">
-                        <li>✓ Up to 10 Active Listings</li>
-                        <li>✓ Priority Support</li>
-                        <li>✓ Advanced Analytics</li>
-                        <li>✓ Featured Listings</li>
+                <div class="mb-4">
+                    <div style="font-size: 13px; font-weight: 600; color: #6b7280; margin-bottom: 12px;">Features Included:</div>
+                    <ul class="feature-list">
+                        <li>Up to 10 Active Listings</li>
+                        <li>Priority Support</li>
+                        <li>Advanced Analytics</li>
+                        <li>Featured Listings</li>
                     </ul>
                 </div>
 
-                <button class="btn btn-outline-primary">Upgrade to Premium</button>
+                <button class="btn-primary outline" style="width: 100%;">Upgrade to Premium</button>
             </div>
 
             <!-- Billing History -->
-            <div class="card border-0 shadow-sm p-4 mt-3">
-                <h6 class="mb-3">Billing History</h6>
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Description</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Apr 1, 2025</td>
-                                <td>Professional Plan</td>
-                                <td>₱499</td>
-                                <td><span class="badge bg-success">Paid</span></td>
-                            </tr>
-                            <tr>
-                                <td>Mar 1, 2025</td>
-                                <td>Professional Plan</td>
-                                <td>₱499</td>
-                                <td><span class="badge bg-success">Paid</span></td>
-                            </tr>
-                            <tr>
-                                <td>Feb 1, 2025</td>
-                                <td>Professional Plan</td>
-                                <td>₱499</td>
-                                <td><span class="badge bg-success">Paid</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card">
+                <h3 class="card-title">Billing History</h3>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Apr 1, 2025</td>
+                            <td>Professional Plan</td>
+                            <td>₱499</td>
+                            <td><span class="status-badge">Paid</span></td>
+                        </tr>
+                        <tr>
+                            <td>Mar 1, 2025</td>
+                            <td>Professional Plan</td>
+                            <td>₱499</td>
+                            <td><span class="status-badge">Paid</span></td>
+                        </tr>
+                        <tr>
+                            <td>Feb 1, 2025</td>
+                            <td>Professional Plan</td>
+                            <td>₱499</td>
+                            <td><span class="status-badge">Paid</span></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <!-- Payment Methods -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm p-4">
-                <h6 class="mb-3">Payment Methods</h6>
-                <div class="p-3 border rounded mb-2">
-                    <div class="d-flex gap-2 align-items-center">
-                        <span style="font-size:20px;">💳</span>
-                        <div>
-                            <div class="small fw-semibold">GCash</div>
-                            <div class="small text-muted">09171234567</div>
-                        </div>
-                        <span class="badge bg-success ms-auto">Active</span>
-                    </div>
-                </div>
+        <div class="card">
+            <h3 class="card-title">Payment Methods</h3>
 
-                <div class="p-3 border rounded mb-3">
-                    <div class="d-flex gap-2 align-items-center">
-                        <span style="font-size:20px;">💳</span>
-                        <div>
-                            <div class="small fw-semibold">Maya</div>
-                            <div class="small text-muted">09175678901</div>
-                        </div>
-                    </div>
+            <div class="payment-method">
+                <span class="payment-icon">💳</span>
+                <div class="payment-info">
+                    <div class="payment-name">GCash</div>
+                    <div class="payment-detail">09171234567</div>
                 </div>
-
-                <button class="btn btn-outline-primary w-100 btn-sm">+ Add Payment Method</button>
+                <span class="payment-badge">Active</span>
             </div>
+
+            <div class="payment-method">
+                <span class="payment-icon">💳</span>
+                <div class="payment-info">
+                    <div class="payment-name">Maya</div>
+                    <div class="payment-detail">09175678901</div>
+                </div>
+            </div>
+
+            <button class="btn-outline">+ Add Payment Method</button>
         </div>
+    </div>
+</div>
     </div>
 </div>

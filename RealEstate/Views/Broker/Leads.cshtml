@@ -1,0 +1,130 @@
+@{
+    ViewData["Title"] = "Leads";
+}
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f8f9fc; font-family: 'Inter', sans-serif; color: #1f2937; }
+    .broker-page { display: flex; flex-direction: column; min-height: 100vh; }
+    .broker-navbar { background: linear-gradient(135deg, #667eea, #764ba2); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 2px 12px rgba(102, 126, 234, 0.15); gap: 40px; }
+    .navbar-left { display: flex; align-items: center; gap: 30px; }
+    .navbar-brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; white-space: nowrap; }
+    .navbar-brand i { font-size: 24px; }
+    .navbar-menu { display: flex; align-items: center; gap: 8px; list-style: none; }
+    .navbar-item { position: relative; }
+    .navbar-link { display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: rgba(255,255,255,0.9); text-decoration: none; border-radius: 6px; transition: all 0.3s; font-size: 14px; font-weight: 500; white-space: nowrap; }
+    .navbar-link:hover { background: rgba(255,255,255,0.2); color: white; }
+    .navbar-link.active { background: rgba(255,255,255,0.3); color: white; }
+    .navbar-right { display: flex; align-items: center; gap: 16px; }
+    .navbar-user { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(255,255,255,0.1); border-radius: 6px; font-size: 13px; }
+    .main-content { flex: 1; overflow-y: auto; padding: 40px; background: #f8f9fc; }
+    .page-title { font-size: 32px; font-weight: 700; color: #1f2937; margin-bottom: 24px; }
+    .leads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+    .lead-card { background: white; border-radius: 12px; border: 1px solid #e5e7eb; padding: 24px; transition: all 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .lead-card:hover { border-color: #d1d5db; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .lead-header { display: flex; gap: 12px; margin-bottom: 16px; }
+    .lead-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+    .lead-info { flex: 1; }
+    .lead-name { font-weight: 600; color: #1f2937; margin-bottom: 2px; }
+    .lead-type { font-size: 12px; color: #6b7280; }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .badge-hot { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
+    .badge-warm { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+    .lead-details { font-size: 13px; color: #6b7280; margin: 12px 0; padding: 12px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; }
+    .lead-detail { margin-bottom: 6px; }
+    .lead-detail strong { color: #1f2937; }
+    .lead-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .btn-action { flex: 1; padding: 8px; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; color: #667eea; cursor: pointer; font-size: 12px; transition: all 0.3s; font-weight: 600; }
+    .btn-action:hover { background: #e5e7eb; border-color: #d1d5db; }
+    @@media (max-width: 768px) { .broker-navbar { flex-wrap: wrap; padding: 12px 20px; gap: 16px; } .navbar-left { width: 100%; gap: 16px; } .navbar-menu { width: 100%; flex-wrap: wrap; } .navbar-right { width: 100%; } .main-content { padding: 20px; } .leads-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } }
+</style>
+
+<div class="broker-page">
+    <nav class="broker-navbar">
+        <div class="navbar-left">
+            <div class="navbar-brand">
+                <i class="fas fa-building"></i>
+                <span>EstateFlow</span>
+            </div>
+            <ul class="navbar-menu">
+                <li class="navbar-item"><a href="@Url.Action("Dashboard", "Broker")" class="navbar-link"><i class="fas fa-chart-line"></i> Overview</a></li>
+                <li class="navbar-item"><a href="@Url.Action("Properties", "Broker")" class="navbar-link"><i class="fas fa-home"></i> Properties</a></li>
+                <li class="navbar-item"><a href="@Url.Action("Leads", "Broker")" class="navbar-link active"><i class="fas fa-users"></i> Leads</a></li>
+                <li class="navbar-item"><a href="@Url.Action("Performance", "Broker")" class="navbar-link"><i class="fas fa-chart-bar"></i> Performance</a></li>
+                <li class="navbar-item"><a href="@Url.Action("Commissions", "Broker")" class="navbar-link"><i class="fas fa-dollar-sign"></i> Commissions</a></li>
+                <li class="navbar-item"><a href="@Url.Action("Settings", "Broker")" class="navbar-link"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+        </div>
+        <div class="navbar-right">
+            <div class="navbar-user">
+                <i class="fas fa-user-circle"></i>
+                <span>Broker</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-title">👥 All Leads</div>
+        <div class="leads-grid">
+            <div class="lead-card">
+                <div class="lead-header">
+                    <img src="https://i.pravatar.cc/48?u=1" class="lead-avatar" alt="" />
+                    <div class="lead-info">
+                        <div class="lead-name">Alena Korsigaard</div>
+                        <div class="lead-type">Buyer</div>
+                    </div>
+                    <span class="badge badge-hot">Hot 94/100</span>
+                </div>
+                <div class="lead-details">
+                    <div class="lead-detail"><strong>Budget:</strong> $425k - $475k</div>
+                    <div class="lead-detail"><strong>Intent:</strong> Buy</div>
+                    <div class="lead-detail"><strong>Score:</strong> 94/100</div>
+                </div>
+                <div class="lead-actions">
+                    <button class="btn-action"><i class="fas fa-phone"></i> Call</button>
+                    <button class="btn-action"><i class="fas fa-envelope"></i> Email</button>
+                </div>
+            </div>
+            <div class="lead-card">
+                <div class="lead-header">
+                    <img src="https://i.pravatar.cc/48?u=2" class="lead-avatar" alt="" />
+                    <div class="lead-info">
+                        <div class="lead-name">Maren Bator</div>
+                        <div class="lead-type">Buyer</div>
+                    </div>
+                    <span class="badge badge-hot">Hot 90/100</span>
+                </div>
+                <div class="lead-details">
+                    <div class="lead-detail"><strong>Budget:</strong> $425k - $475k</div>
+                    <div class="lead-detail"><strong>Intent:</strong> Buy</div>
+                    <div class="lead-detail"><strong>Score:</strong> 90/100</div>
+                </div>
+                <div class="lead-actions">
+                    <button class="btn-action"><i class="fas fa-phone"></i> Call</button>
+                    <button class="btn-action"><i class="fas fa-envelope"></i> Email</button>
+                </div>
+            </div>
+            <div class="lead-card">
+                <div class="lead-header">
+                    <img src="https://i.pravatar.cc/48?u=3" class="lead-avatar" alt="" />
+                    <div class="lead-info">
+                        <div class="lead-name">Martin Aminoff</div>
+                        <div class="lead-type">Investor</div>
+                    </div>
+                    <span class="badge badge-warm">Warm 78/100</span>
+                </div>
+                <div class="lead-details">
+                    <div class="lead-detail"><strong>Budget:</strong> $600k - $800k</div>
+                    <div class="lead-detail"><strong>Intent:</strong> Invest</div>
+                    <div class="lead-detail"><strong>Score:</strong> 78/100</div>
+                </div>
+                <div class="lead-actions">
+                    <button class="btn-action"><i class="fas fa-phone"></i> Call</button>
+                    <button class="btn-action"><i class="fas fa-envelope"></i> Email</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />

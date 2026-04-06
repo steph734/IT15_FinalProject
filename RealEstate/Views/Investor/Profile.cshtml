@@ -3,74 +3,245 @@
     Layout = "~/Views/Shared/_InvestorLayout.cshtml";
 }
 
-<div class="container py-4">
-    <h1 class="h4 fw-bold mb-4">👤 Investor Profile</h1>
+<style>
+    .profile-header {
+        margin-bottom: 40px;
+        animation: fadeInDown 0.6s ease-out;
+    }
 
-    <div class="row g-3">
-        <!-- Profile Info -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm p-4">
-                <h6 class="mb-3">Personal Information</h6>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label small text-muted">Full Name</label>
-                        <input class="form-control" value="John Investor" readonly />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label small text-muted">Email</label>
-                        <input class="form-control" value="investor@estateflow.com" readonly />
-                    </div>
+    .profile-header h1 {
+        font-size: 42px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .profile-subtitle {
+        font-size: 16px;
+        color: #6b7280;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+
+    .profile-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 20px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        border-bottom: 2px solid #f3f4f6;
+        padding-bottom: 16px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        background: #f9fafb;
+        color: #6b7280;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .verification-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .verification-item:last-child {
+        border-bottom: none;
+    }
+
+    .verification-label {
+        font-size: 14px;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-verified {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .badge-pending {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    @@keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 1024px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .profile-header h1 {
+            font-size: 28px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container-fluid px-4 py-5">
+    <!-- Header -->
+    <div class="profile-header">
+        <h1>👤 Your Profile</h1>
+        <p class="profile-subtitle">Manage your account information and verification status</p>
+    </div>
+
+    <div class="profile-grid">
+        <!-- Profile Information -->
+        <div class="profile-card">
+            <h3 class="card-title">Personal Information</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input class="form-control" value="John Investor" readonly />
                 </div>
-
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label small text-muted">Phone</label>
-                        <input class="form-control" value="+63 912 345 6789" readonly />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label small text-muted">Member Since</label>
-                        <input class="form-control" value="January 15, 2024" readonly />
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input class="form-control" value="investor@estateflow.com" readonly />
                 </div>
-
-                <h6 class="mb-3">Identity Verification</h6>
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <span class="badge bg-success">✓ Verified</span>
-                    <span class="small text-muted">ID verified on Jan 15, 2024</span>
-                </div>
-
-                <button class="btn btn-primary">Edit Profile</button>
             </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input class="form-control" value="+63 912 345 6789" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Member Since</label>
+                    <input class="form-control" value="January 15, 2024" readonly />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <input class="form-control" value="Manila, Philippines" readonly />
+            </div>
+
+            <button class="btn-primary">Edit Profile</button>
         </div>
 
         <!-- Verification Status -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm p-4">
-                <h6 class="mb-3">Verification Status</h6>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small">Email Verified</span>
-                        <span class="badge bg-success">✓</span>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small">Phone Verified</span>
-                        <span class="badge bg-success">✓</span>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small">Government ID</span>
-                        <span class="badge bg-success">✓</span>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small">Bank Account</span>
-                        <span class="badge bg-warning">Pending</span>
-                    </div>
-                </div>
+        <div class="profile-card">
+            <h3 class="card-title">Verification</h3>
+
+            <div class="verification-item">
+                <span class="verification-label">Email Verified</span>
+                <span class="badge badge-verified">✓ Verified</span>
+            </div>
+
+            <div class="verification-item">
+                <span class="verification-label">Phone Verified</span>
+                <span class="badge badge-verified">✓ Verified</span>
+            </div>
+
+            <div class="verification-item">
+                <span class="verification-label">Government ID</span>
+                <span class="badge badge-verified">✓ Verified</span>
+            </div>
+
+            <div class="verification-item">
+                <span class="verification-label">Bank Account</span>
+                <span class="badge badge-pending">⏳ Pending</span>
             </div>
         </div>
     </div>

@@ -51,6 +51,7 @@ public class AdminController : Controller
             "Manager" => RedirectToAction("Dashboard", "Manager"),
             "Accounting" => RedirectToAction("Dashboard", "Accounting"),
             "Investor" => RedirectToAction("Dashboard", "Investor"),
+            "Agent" => Redirect("/agent"),
             "Broker" => RedirectToAction("Dashboard", "Broker"),
             _ => RedirectToAction("Dashboard", "Admin")
         };
