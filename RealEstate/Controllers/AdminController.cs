@@ -1,6 +1,9 @@
+using System.Net.Http;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate.Models;
 using RealEstate.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace RealEstate.Controllers;
 
@@ -8,10 +11,12 @@ namespace RealEstate.Controllers;
 public class AdminController : Controller
 {
     private readonly UserService _userService;
+    private readonly IConfiguration _configuration;
 
-    public AdminController(UserService userService)
+    public AdminController(UserService userService, IConfiguration configuration)
     {
         _userService = userService;
+        _configuration = configuration;
     }
 
     [HttpGet("login")]
@@ -21,11 +26,23 @@ public class AdminController : Controller
     }
 
     [HttpPost("login")]
-    public IActionResult Login(string email, string password)
+    public async Task<IActionResult> Login(string email, string password)
     {
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
             ModelState.AddModelError("", "Email and password are required");
+            return View();
+        }
+
+        var recaptchaResponse = Request.Form["g-recaptcha-response"];
+        var secretKey = _configuration["RecaptchaSettings:SecretKey"];
+        using var client = new HttpClient();
+        var response = await client.PostAsync($"https://www.google.com/recaptcha/api/siteverify?secret={secretKey}&response={recaptchaResponse}", null);
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var jsonResponse = JsonSerializer.Deserialize<JsonElement>(jsonString);
+        if (!jsonResponse.GetProperty("success").GetBoolean())
+        {
+            ModelState.AddModelError("", "Please verify that you are not a robot.");
             return View();
         }
 
@@ -86,7 +103,7 @@ public class AdminController : Controller
     }
 
     [HttpPost("register")]
-    public IActionResult Register(string fullName, string email, string password, string confirmPassword, string roleType)
+    public async Task<IActionResult> Register(string fullName, string email, string password, string confirmPassword, string roleType)
     {
         // Validate input
         if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email) || 
@@ -94,6 +111,19 @@ public class AdminController : Controller
             string.IsNullOrEmpty(roleType))
         {
             ModelState.AddModelError("", "All fields are required");
+            ViewBag.Roles = _userService.GetAllRoles();
+            return View();
+        }
+
+        var recaptchaResponse = Request.Form["g-recaptcha-response"];
+        var secretKey = _configuration["RecaptchaSettings:SecretKey"];
+        using var client = new HttpClient();
+        var response = await client.PostAsync($"https://www.google.com/recaptcha/api/siteverify?secret={secretKey}&response={recaptchaResponse}", null);
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var jsonResponse = JsonSerializer.Deserialize<JsonElement>(jsonString);
+        if (!jsonResponse.GetProperty("success").GetBoolean())
+        {
+            ModelState.AddModelError("", "Please verify that you are not a robot.");
             ViewBag.Roles = _userService.GetAllRoles();
             return View();
         }
@@ -115,6 +145,16 @@ public class AdminController : Controller
         if (!email.Contains("@"))
         {
             ModelState.AddModelError("", "Invalid email format");
+            ViewBag.Roles = _userService.GetAllRoles();
+            return View();
+        }
+
+        // Validate email domain
+        var validDomains = new[] { "gmail.com", "yahoo.com", "outlook.com", "hotmail.com" };
+        var emailDomain = email.Split("@")[1].ToLower();
+        if (!validDomains.Contains(emailDomain))
+        {
+            ModelState.AddModelError("", $"Email domain must be one of: {string.Join(", ", validDomains)}. Please use a valid email provider.");
             ViewBag.Roles = _userService.GetAllRoles();
             return View();
         }

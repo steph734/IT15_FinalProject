@@ -16,10 +16,12 @@
     <Folder Include="Models\Agent\" />
     <Folder Include="Models\Admin\" />
     <Folder Include="Models\Super admin\" />
+    <Folder Include="Views\Customer\" />
     <Folder Include="Views\Super admin\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.13.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.5">
       <PrivateAssets>all</PrivateAssets>

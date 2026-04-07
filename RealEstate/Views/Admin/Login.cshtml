@@ -1,6 +1,9 @@
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 @{
     ViewData["Title"] = "Login - EstateFlow";
     Layout = null;
+    var siteKey = Configuration["RecaptchaSettings:SiteKey"];
 }
 
 <!DOCTYPE html>
@@ -12,6 +15,7 @@
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         * {
             margin: 0;
@@ -204,6 +208,26 @@
             color: #1f2937;
             margin: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .register-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .register-btn:hover {
+            opacity: 0.8;
+            text-decoration: underline;
         }
 
         .sign-in-btn {
@@ -485,18 +509,33 @@
 
             .auth-navbar {
                 padding: 14px 20px;
-                justify-content: center;
+                justify-content: space-between;
                 text-align: center;
+                flex-wrap: wrap;
             }
 
             .navbar-brand {
                 margin-bottom: 8px;
+                flex: 1;
             }
 
             .navbar-tagline {
                 display: block;
                 font-size: 12px;
                 margin-top: 8px;
+                flex: 1;
+                order: 3;
+                width: 100%;
+            }
+
+            .nav-buttons {
+                gap: 8px;
+            }
+
+            .register-btn,
+            .sign-in-btn {
+                padding: 6px 14px;
+                font-size: 12px;
             }
 
             .auth-left {
@@ -753,6 +792,9 @@
             <div class="navbar-tagline">
                 🏠 Find Your Dream Home - Professional Real Estate Solutions
             </div>
+            <div class="nav-buttons">
+                <a href="/admin/register" class="register-btn">Register</a>
+            </div>
         </nav>
 
         <!-- Content Area -->
@@ -828,7 +870,15 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-login">Login</button>
+                        <div class="form-group mb-3 d-flex justify-content-center">
+                            <div class="g-recaptcha" data-sitekey="@siteKey"></div>
+                        </div>
+
+                        <button type="submit" class="btn-login" id="loginBtn">Login</button>
+
+                        <div class="auth-footer">
+                            Don't have an account? <a href="/admin/register">Register</a>
+                        </div>
 
                         <div class="instant-login">Or continue with</div>
 
@@ -841,10 +891,6 @@
                                 <i class="fab fa-facebook-f"></i>
                                 <span>Facebook</span>
                             </a>
-                        </div>
-
-                        <div class="auth-footer">
-                            Don't have an account? <a href="/admin/register">Register here</a>
                         </div>
                     </form>
                 </div>

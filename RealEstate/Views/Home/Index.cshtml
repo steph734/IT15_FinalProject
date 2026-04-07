@@ -9,7 +9,6 @@
         ? Model.FeaturedProperties
         : (Model?.SearchResults ?? Enumerable.Empty<Property>());
     var areaChips = Model?.TrendingAreas?.Take(6) ?? Enumerable.Empty<string>();
-    var allProperties = featuredSource.Take(9).ToList();
 }
 
 <div class="realestate-landing">

@@ -1,6 +1,9 @@
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 @{
     ViewData["Title"] = "Register - EstateFlow";
     Layout = null;
+    var siteKey = Configuration["RecaptchaSettings:SiteKey"];
 }
 
 <!DOCTYPE html>
@@ -12,6 +15,7 @@
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         * {
             margin: 0;
@@ -733,8 +737,10 @@
                                class="form-control" 
                                id="email" 
                                name="email" 
-                               placeholder="jonathan@estateflow.com" 
+                               placeholder="jonathan@gmail.com" 
+                               title="Please use a valid email domain (gmail.com, yahoo.com, outlook.com, or hotmail.com)"
                                required />
+                        <small id="emailError" class="text-danger" style="display:none;">Please use a valid email domain (gmail.com, yahoo.com, outlook.com, or hotmail.com)</small>
                     </div>
 
                     <div class="form-group">
@@ -776,11 +782,15 @@
                         </div>
                     </div>
 
-                    <div class="form-requirements">
+                    <div class="form-requirements mb-3">
                         <strong>Requirements:</strong> Minimum 6 characters, passwords must match
                     </div>
 
-                    <button type="submit" class="btn-register">Create Account</button>
+                    <div class="form-group mb-3 d-flex justify-content-center">
+                        <div class="g-recaptcha" data-sitekey="@siteKey"></div>
+                    </div>
+
+                    <button type="submit" class="btn-register">Signin</button>
 
                     <div class="auth-footer">
                         Already have an account? <a href="/admin/login">Sign In</a>
@@ -1009,6 +1019,69 @@
             passwordInput.addEventListener('input', validatePasswords);
             confirmPasswordInput.addEventListener('input', validatePasswords);
         }
+
+        // Email domain validation
+        const emailInput = document.getElementById('email');
+        const emailError = document.getElementById('emailError');
+        const validDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com'];
+
+        if (emailInput) {
+            emailInput.addEventListener('blur', validateEmail);
+            emailInput.addEventListener('input', validateEmail);
+
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    if (!validateEmail()) {
+                        e.preventDefault();
+                        emailInput.focus();
+                    }
+                });
+            }
+        }
+
+        function validateEmail() {
+            const email = emailInput.value.trim();
+            const emailRegex = new RegExp('^[a-zA-Z0-9._%+\\-]+@@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$');
+
+            if (!email) {
+                emailError.style.display = 'none';
+                emailInput.classList.remove('is-invalid');
+                return true;
+            }
+
+            if (!emailRegex.test(email)) {
+                emailError.textContent = 'Please enter a valid email address';
+                emailError.style.display = 'block';
+                emailInput.classList.add('is-invalid');
+                return false;
+            }
+
+            const domain = email.split('@@')[1].toLowerCase();
+            if (!validDomains.includes(domain)) {
+                emailError.textContent = 'Email domain must be one of: ' + validDomains.join(', ');
+                emailError.style.display = 'block';
+                emailInput.classList.add('is-invalid');
+                return false;
+            }
+
+            emailError.style.display = 'none';
+            emailInput.classList.remove('is-invalid');
+            return true;
+        }
     </script>
+
+    <style>
+        .form-control.is-invalid {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        #emailError {
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+    </style>
 </body>
 </html>
