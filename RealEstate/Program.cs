@@ -18,6 +18,8 @@ builder.Services.AddSingleton<RealEstate.Services.InquiryService>();
 builder.Services.AddSingleton<RealEstate.Services.SubscriptionService>();
 builder.Services.AddScoped<RealEstate.Services.AppointmentService>();
 builder.Services.AddScoped<RealEstate.Services.UserService>();
+builder.Services.AddScoped<RealEstate.Services.OtpService>();
+builder.Services.AddScoped<RealEstate.Services.EmailService>();
 // Investor controllers use the same services; no extra DI required
 
 // Database context for admin authentication and appointments

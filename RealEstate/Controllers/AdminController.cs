@@ -11,12 +11,18 @@ namespace RealEstate.Controllers;
 public class AdminController : Controller
 {
     private readonly UserService _userService;
+    private readonly OtpService _otpService;
+    private readonly EmailService _emailService;
     private readonly IConfiguration _configuration;
+    private readonly ILogger<AdminController> _logger;
 
-    public AdminController(UserService userService, IConfiguration configuration)
+    public AdminController(UserService userService, OtpService otpService, EmailService emailService, IConfiguration configuration, ILogger<AdminController> logger)
     {
         _userService = userService;
+        _otpService = otpService;
+        _emailService = emailService;
         _configuration = configuration;
+        _logger = logger;
     }
 
     [HttpGet("login")]
@@ -30,6 +36,9 @@ public class AdminController : Controller
     {
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
+            if (IsJsonRequest())
+                return Json(new { success = false, message = "Email and password are required" });
+
             ModelState.AddModelError("", "Email and password are required");
             return View();
         }
@@ -42,6 +51,9 @@ public class AdminController : Controller
         var jsonResponse = JsonSerializer.Deserialize<JsonElement>(jsonString);
         if (!jsonResponse.GetProperty("success").GetBoolean())
         {
+            if (IsJsonRequest())
+                return Json(new { success = false, message = "Please verify that you are not a robot." });
+
             ModelState.AddModelError("", "Please verify that you are not a robot.");
             return View();
         }
@@ -50,19 +62,127 @@ public class AdminController : Controller
 
         if (user == null)
         {
+            if (IsJsonRequest())
+                return Json(new { success = false, message = "Invalid email or password" });
+
             ModelState.AddModelError("", "Invalid email or password");
             return View();
         }
 
-        // Set session
-        HttpContext.Session.SetString("UserId", user.UserId.ToString());
-        HttpContext.Session.SetString("UserEmail", user.Email);
-        HttpContext.Session.SetString("UserName", user.FullName);
-        HttpContext.Session.SetString("UserRole", user.Role?.RoleType ?? "Unknown");
+        // Generate OTP
+        var otpCode = await _otpService.GenerateOtpAsync(user.UserId);
 
-        // Redirect based on role
-        var userRole = user.Role?.RoleType;
-        return userRole switch
+        // Send OTP via email
+        var emailSent = await _emailService.SendOtpEmailAsync(user.Email, otpCode, user.FullName);
+
+        if (!emailSent)
+        {
+            _logger.LogWarning($"Failed to send OTP email to {user.Email}");
+            if (IsJsonRequest())
+                return Json(new { success = false, message = "Failed to send OTP email. Please try again." });
+
+            ModelState.AddModelError("", "Failed to send OTP email. Please try again.");
+            return View();
+        }
+
+        // Store temporary session data for OTP verification
+        HttpContext.Session.SetString("TempUserId", user.UserId.ToString());
+        HttpContext.Session.SetString("TempUserEmail", user.Email);
+        HttpContext.Session.SetString("TempUserName", user.FullName);
+        HttpContext.Session.SetString("TempUserRole", user.Role?.RoleType ?? "Unknown");
+        HttpContext.Session.SetString("OtpSentTime", DateTime.UtcNow.ToString("o"));
+
+        var expirySeconds = await _otpService.GetOtpExpirySecondsAsync(user.UserId);
+
+        if (IsJsonRequest())
+            return Json(new { success = true, userId = user.UserId, email = user.Email, expirySeconds = expirySeconds });
+
+        // Redirect to OTP verification page for non-AJAX requests
+        return RedirectToAction("VerifyOtp");
+    }
+
+    private bool IsJsonRequest()
+    {
+        return Request.Headers["Accept"].ToString().Contains("application/json") || 
+               Request.ContentType?.Contains("application/json") == true;
+    }
+
+    [HttpGet("verify-otp")]
+    public IActionResult VerifyOtp()
+    {
+        var tempUserId = HttpContext.Session.GetString("TempUserId");
+        if (string.IsNullOrEmpty(tempUserId))
+        {
+            return RedirectToAction("Login");
+        }
+
+        var model = new OtpVerificationViewModel
+        {
+            Email = HttpContext.Session.GetString("TempUserEmail") ?? "",
+            UserId = int.Parse(tempUserId)
+        };
+
+        return View(model);
+    }
+
+    [HttpPost("verify-otp")]
+    public async Task<IActionResult> VerifyOtp(int userId, string otpCode)
+    {
+        if (string.IsNullOrEmpty(otpCode))
+        {
+            if (IsJsonRequest())
+                return Json(new { success = false, message = "OTP code is required" });
+
+            ModelState.AddModelError("", "OTP code is required");
+            return View(new OtpVerificationViewModel { UserId = userId, Email = HttpContext.Session.GetString("TempUserEmail") ?? "" });
+        }
+
+        // Verify OTP
+        var isValidOtp = await _otpService.VerifyOtpAsync(userId, otpCode);
+
+        if (!isValidOtp)
+        {
+            if (IsJsonRequest())
+                return Json(new { success = false, message = "Invalid or expired OTP. Please try again." });
+
+            ModelState.AddModelError("", "Invalid or expired OTP. Please try again.");
+            return View(new OtpVerificationViewModel { UserId = userId, Email = HttpContext.Session.GetString("TempUserEmail") ?? "" });
+        }
+
+        // OTP is valid, complete the login
+        var tempUserRole = HttpContext.Session.GetString("TempUserRole");
+        var tempUserName = HttpContext.Session.GetString("TempUserName");
+        var tempUserEmail = HttpContext.Session.GetString("TempUserEmail");
+
+        // Set permanent session
+        HttpContext.Session.SetString("UserId", userId.ToString());
+        HttpContext.Session.SetString("UserEmail", tempUserEmail);
+        HttpContext.Session.SetString("UserName", tempUserName);
+        HttpContext.Session.SetString("UserRole", tempUserRole);
+
+        // Clear temporary session data
+        HttpContext.Session.Remove("TempUserId");
+        HttpContext.Session.Remove("TempUserEmail");
+        HttpContext.Session.Remove("TempUserName");
+        HttpContext.Session.Remove("TempUserRole");
+        HttpContext.Session.Remove("OtpSentTime");
+
+        // Determine redirect URL based on role
+        string redirectUrl = tempUserRole switch
+        {
+            "SuperAdmin" => "/superadmin/dashboard",
+            "Manager" => "/manager/dashboard",
+            "Accounting" => "/accounting/dashboard",
+            "Investor" => "/investor/dashboard",
+            "Agent" => "/agent",
+            "Broker" => "/broker/dashboard",
+            _ => "/admin/dashboard"
+        };
+
+        if (IsJsonRequest())
+            return Json(new { success = true, redirectUrl = redirectUrl });
+
+        return tempUserRole switch
         {
             "SuperAdmin" => RedirectToAction("Dashboard", "SuperAdmin"),
             "Manager" => RedirectToAction("Dashboard", "Manager"),
@@ -72,6 +192,49 @@ public class AdminController : Controller
             "Broker" => RedirectToAction("Dashboard", "Broker"),
             _ => RedirectToAction("Dashboard", "Admin")
         };
+    }
+
+    [HttpPost("resend-otp")]
+    public async Task<IActionResult> ResendOtp(int userId)
+    {
+        var tempUserId = HttpContext.Session.GetString("TempUserId");
+        if (string.IsNullOrEmpty(tempUserId) || int.Parse(tempUserId) != userId)
+        {
+            return Json(new { success = false, message = "Invalid session. Please login again." });
+        }
+
+        var tempUserEmail = HttpContext.Session.GetString("TempUserEmail");
+        var tempUserName = HttpContext.Session.GetString("TempUserName");
+
+        if (string.IsNullOrEmpty(tempUserEmail) || string.IsNullOrEmpty(tempUserName))
+        {
+            return Json(new { success = false, message = "Invalid session data." });
+        }
+
+        try
+        {
+            // Generate new OTP
+            var otpCode = await _otpService.GenerateOtpAsync(userId);
+
+            // Send OTP via email
+            var emailSent = await _emailService.SendOtpEmailAsync(tempUserEmail, otpCode, tempUserName);
+
+            if (!emailSent)
+            {
+                _logger.LogWarning($"Failed to resend OTP email to {tempUserEmail}");
+                return Json(new { success = false, message = "Failed to send OTP email. Please try again." });
+            }
+
+            var expirySeconds = await _otpService.GetOtpExpirySecondsAsync(userId);
+            HttpContext.Session.SetString("OtpSentTime", DateTime.UtcNow.ToString("o"));
+
+            return Json(new { success = true, message = "OTP sent successfully", expirySeconds = expirySeconds });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error resending OTP: {ex.Message}");
+            return Json(new { success = false, message = "Failed to resend OTP. Please try again." });
+        }
     }
 
     [HttpGet("dashboard")]

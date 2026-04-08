@@ -13,6 +13,7 @@ public class ApplicationDBContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<ViewingAppointment> ViewingAppointments { get; set; }
+    public DbSet<OtpVerification> OtpVerifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -93,6 +94,30 @@ public class ApplicationDBContext : DbContext
 
             entity.HasIndex(e => e.PropertyId);
             entity.HasIndex(e => e.WhenUtc);
+        });
+
+        // Configure OtpVerification table
+        modelBuilder.Entity<OtpVerification>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.OtpCode)
+                .IsRequired()
+                .HasMaxLength(6);
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            // Foreign Key relationship
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.ExpiresAt);
+            entity.HasIndex(e => e.IsUsed);
         });
     }
 }
