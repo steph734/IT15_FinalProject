@@ -109,6 +109,30 @@ public class BrokerController : Controller
         return View();
     }
 
+    [HttpGet("messages")]
+    public IActionResult Messages()
+    {
+        var brokerId = AuthorizationHelper.GetUserId(HttpContext);
+        if (!brokerId.HasValue)
+            return RedirectToAction("Login", "Admin");
+
+        ViewBag.BrokerId = brokerId.Value;
+        ViewBag.BrokerName = HttpContext.Session.GetString("UserName") ?? "Broker";
+        return View();
+    }
+
+    [HttpGet("inbox")]
+    public IActionResult Inbox()
+    {
+        var brokerId = AuthorizationHelper.GetUserId(HttpContext);
+        if (!brokerId.HasValue)
+            return RedirectToAction("Login", "Admin");
+
+        ViewBag.BrokerId = brokerId.Value;
+        ViewBag.BrokerName = HttpContext.Session.GetString("UserName") ?? "Broker";
+        return View();
+    }
+
     [HttpPost("logout")]
     public IActionResult Logout()
     {

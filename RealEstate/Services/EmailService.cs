@@ -18,6 +18,9 @@ public class EmailService
     {
         try
         {
+            // Configure ServicePointManager for better SMTP handling
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+
             var smtpSettings = _configuration.GetSection("SmtpSettings");
             var smtpServer = smtpSettings["SmtpServer"];
             var smtpPort = int.Parse(smtpSettings["SmtpPort"] ?? "587");
@@ -41,8 +44,9 @@ public class EmailService
             using (var client = new SmtpClient(smtpServer, smtpPort))
             {
                 client.EnableSsl = true;
+                client.UseDefaultCredentials = false;
                 client.Credentials = new NetworkCredential(smtpUsername, smtpPassword);
-                client.Timeout = 10000; // 10 second timeout
+                client.Timeout = 30000; // 30 second timeout
 
                 var subject = "Your OTP Verification Code";
                 var body = GenerateOtpEmailBody(otpCode, userName);
