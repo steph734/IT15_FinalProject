@@ -1,0 +1,422 @@
+@model List<Customer>
+@using RealEstate.Models
+@{
+    Layout = "_BrokerLayout";
+    ViewData["Title"] = "Orders";
+    int page = ViewBag.Page ?? 1;
+    int pageSize = ViewBag.PageSize ?? 10;
+    int totalCount = ViewBag.TotalCount ?? 0;
+    int totalPages = ViewBag.TotalPages ?? 1;
+}
+
+<style>
+    .orders-container {
+        background: #F5F7FA;
+        padding: 24px;
+        min-height: 100vh;
+    }
+
+    .orders-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .orders-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1E3A5F;
+    }
+
+    .breadcrumb {
+        font-size: 13px;
+        color: #9CA3AF;
+    }
+
+    .breadcrumb a {
+        color: #FF9500;
+        text-decoration: none;
+    }
+
+    /* Filter Section */
+    .filter-bar {
+        background: white;
+        padding: 16px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .filter-bar h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1E3A5F;
+        margin: 0;
+    }
+
+    .filter-select {
+        padding: 8px 12px;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        font-size: 13px;
+        background: white;
+        color: #6B7280;
+        cursor: pointer;
+    }
+
+    /* Table Section */
+    .table-wrapper {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .orders-table thead {
+        background: #F9FAFB;
+        border-bottom: 2px solid #E5E7EB;
+    }
+
+    .orders-table th {
+        padding: 16px 20px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #6B7280;
+        letter-spacing: 0.5px;
+    }
+
+    .orders-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 13px;
+        color: #374151;
+    }
+
+    .orders-table tbody tr:hover {
+        background: #F9FAFB;
+    }
+
+    /* Customer Cell */
+    .customer-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .customer-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FF9500, #FF8C00);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .customer-name {
+        font-weight: 600;
+        color: #1E3A5F;
+    }
+
+    /* Property Type Badge */
+    .property-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-residential {
+        background: #D1FAE5;
+        color: #10B981;
+    }
+
+    .badge-commercial {
+        background: #DBEAFE;
+        color: #3B82F6;
+    }
+
+    .badge-industrial {
+        background: #FED7AA;
+        color: #D97706;
+    }
+
+    .badge-apartment {
+        background: #F3E8FF;
+        color: #9333EA;
+    }
+
+    /* Status Badge */
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-paid {
+        background: #D1FAE5;
+        color: #059669;
+    }
+
+    .status-unpaid {
+        background: #FEE2E2;
+        color: #DC2626;
+    }
+
+    .status-pending {
+        background: #FEF3C7;
+        color: #D97706;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 6px;
+        background: #F3F4F6;
+        color: #6B7280;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    .action-btn:hover {
+        background: #E5E7EB;
+        color: #374151;
+    }
+
+    .action-btn.delete:hover {
+        background: #FEE2E2;
+        color: #EF4444;
+    }
+
+    /* Pagination */
+    .pagination-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background: white;
+        border-top: 1px solid #E5E7EB;
+    }
+
+    .pagination-info {
+        font-size: 13px;
+        color: #6B7280;
+    }
+
+    .pagination-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .page-btn {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #E5E7EB;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #6B7280;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .page-btn.active {
+        background: #FF9500;
+        color: white;
+        border-color: #FF9500;
+    }
+
+    .page-btn:hover:not(.active) {
+        border-color: #FF9500;
+        color: #FF9500;
+    }
+
+    .page-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6B7280;
+    }
+
+    .empty-state i {
+        font-size: 48px;
+        color: #D1D5DB;
+        margin-bottom: 16px;
+        display: block;
+    }
+</style>
+
+<div class="orders-container">
+    <!-- Header -->
+    <div class="orders-header">
+        <div>
+            <h1 class="orders-title">Orders</h1>
+            <div class="breadcrumb">
+                <a href="/broker/dashboard/analytics">Real Estate</a> > <span>Orders</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <h3>All Order List</h3>
+        <select class="filter-select">
+            <option>This Month</option>
+            <option>Last Month</option>
+            <option>Last 3 Months</option>
+        </select>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrapper">
+        @if (Model == null || Model.Count == 0)
+        {
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>No orders found</p>
+            </div>
+        }
+        else
+        {
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30px;"><input type="checkbox"></th>
+                        <th>Customer Photo & Name</th>
+                        <th>Purchase Date</th>
+                        <th>Contact</th>
+                        <th>Property Type</th>
+                        <th>Amount</th>
+                        <th>Purchase Properties</th>
+                        <th>Amount Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var customer in Model)
+                    {
+                        string initials = "";
+                        if (!string.IsNullOrEmpty(customer.FullName))
+                        {
+                            var names = customer.FullName.Split(' ');
+                            foreach (var name in names)
+                            {
+                                if (name.Length > 0)
+                                    initials += name[0];
+                                if (initials.Length >= 2) break;
+                            }
+                        }
+
+                        string statusBadge = customer.PaymentMethod == "card" ? "status-paid" : customer.PaymentMethod == "cash" ? "status-unpaid" : "status-pending";
+                        string statusText = customer.PaymentMethod == "card" ? "Paid" : customer.PaymentMethod == "cash" ? "Unpaid" : "Pending";
+                        string propertyBadge = customer.PropertyType?.ToLower() == "commercial" ? "badge-commercial" :
+                                              customer.PropertyType?.ToLower() == "industrial" ? "badge-industrial" :
+                                              customer.PropertyType?.ToLower() == "apartment" ? "badge-apartment" : "badge-residential";
+
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>
+                                <div class="customer-cell">
+                                    <div class="customer-avatar">@initials</div>
+                                    <span class="customer-name">@customer.FullName</span>
+                                </div>
+                            </td>
+                            <td>@customer.CreatedDate.ToString("MM/dd/yyyy")</td>
+                            <td>@customer.Phone</td>
+                            <td>
+                                <span class="property-badge @propertyBadge">
+                                    @(customer.PropertyType ?? "Residential")
+                                </span>
+                            </td>
+                            <td style="font-weight: 700;">₱@(customer.MaxBudget?.ToString("N0") ?? "0")</td>
+                            <td>@customer.InterestedProperties</td>
+                            <td>
+                                <span class="status-badge @statusBadge">@statusText</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        <!-- Pagination -->
+        <div class="pagination-wrapper">
+            <span class="pagination-info">
+                @{
+                    int startItem = Model?.Count > 0 ? ((page - 1) * pageSize) + 1 : 0;
+                    int endItem = Math.Min(page * pageSize, totalCount);
+                }
+                Previous @startItem - @endItem of @totalCount Next
+            </span>
+            <div class="pagination-controls">
+                @if (page > 1)
+                {
+                    <a href="@Url.Action("Orders", "Broker", new { page = page - 1 })" class="page-btn">Previous</a>
+                }
+                @for (int i = 1; i <= Math.Min(totalPages, 5); i++)
+                {
+                    <a href="@Url.Action("Orders", "Broker", new { page = i })" 
+                       class="page-btn @(i == page ? "active" : "")">@i</a>
+                }
+                @if (page < totalPages)
+                {
+                    <a href="@Url.Action("Orders", "Broker", new { page = page + 1 })" class="page-btn">Next</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+

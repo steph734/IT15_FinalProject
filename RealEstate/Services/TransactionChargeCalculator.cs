@@ -10,28 +10,15 @@ public static class TransactionChargeCalculator
     /// </summary>
     public static TransactionChargeSummary Summarize(Property property)
     {
-        if (property.ListingType == PropertyListingType.Buy)
-        {
-            var earnest = Math.Max(25_000m, Math.Round(property.Price * 0.01m, 0));
-            return new TransactionChargeSummary
-            {
-                TotalDue = earnest,
-                SummaryLine = "Earnest money (1% of list price, minimum ₱25,000)",
-                BuyEarnestMoney = earnest,
-                RentAdvance = null,
-                RentSecurityDeposit = null
-            };
-        }
-
-        var advance = property.Price;
-        var security = property.Price * 2m;
+        // Default to Buy calculation using BasePrice
+        var earnest = Math.Max(25_000m, Math.Round(property.BasePrice * 0.01m, 0));
         return new TransactionChargeSummary
         {
-            TotalDue = advance + security,
-            SummaryLine = "Advance rent (1 month) + security deposit (2 months)",
-            RentAdvance = advance,
-            RentSecurityDeposit = security,
-            BuyEarnestMoney = null
+            TotalDue = earnest,
+            SummaryLine = "Earnest money (1% of list price, minimum ₱25,000)",
+            BuyEarnestMoney = earnest,
+            RentAdvance = null,
+            RentSecurityDeposit = null
         };
     }
 }

@@ -11,372 +11,448 @@
     var areaChips = Model?.TrendingAreas?.Take(6) ?? Enumerable.Empty<string>();
 }
 
-<div class="realestate-landing">
+<div class="realestate-landing-modern">
     <partial name="_LandingNavbar" />
 
     <main>
-        <section id="top" class="hero-section">
-            <div class="hero-overlay"></div>
-            <div class="container position-relative z-1 py-5 py-lg-6">
-                <div class="row align-items-center gy-5">
-                    <div class="col-lg-7 text-white">
-                        <div class="hero-pill mb-3">#1 Real estate marketplace</div>
-                        <h1 class="hero-title mb-3">Find your ideal home and start your best deal with our expertise</h1>
-                        <p class="hero-subtitle mb-4">Discover a seamless property journey with trusted guidance, curated listings, and a simple search experience tailored for modern homebuyers.</p>
-
-                        <div class="hero-stats d-flex flex-wrap gap-4 mb-4">
-                            <div>
-                                <div class="stat-value">350k+</div>
-                                <div class="stat-label">Properties listed</div>
-                            </div>
-                            <div>
-                                <div class="stat-value">120k+</div>
-                                <div class="stat-label">Happy customers</div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex flex-wrap gap-3">
-                            <a class="btn btn-dark rounded-pill px-4 py-3" asp-controller="Home" asp-action="Contact">Contact Us</a>
-                            <a class="btn btn-outline-light rounded-pill px-4 py-3" asp-controller="Properties" asp-action="Index">Browse Properties</a>
+        <!-- HERO SECTION - MODERN CITYSCAPE STYLE -->
+        <section class="hero-section-modern">
+            <div class="container-fluid px-0">
+                <div class="row g-0 align-items-center min-vh-100">
+                    <div class="col-lg-6 hero-content-wrapper">
+                        <div class="hero-content">
+                            <span class="hero-label">LUXURY REAL ESTATE</span>
+                            <h1 class="hero-title-modern">Beyond Walls We Build Dreams</h1>
+                            <p class="hero-subtitle">Unlock the power of real estate making your real estate dreams a reality. Discover premium properties tailored to your lifestyle.</p>
+                            <a href="#properties" class="btn-primary-modern">EXPLORE PROPERTIES</a>
                         </div>
                     </div>
-
-                    <div class="col-lg-5 d-none d-lg-block">
-                        <div class="hero-side-card shadow-lg">
-                            <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80" alt="Modern home" />
+                    <div class="col-lg-6 hero-image-wrapper">
+                        <div class="hero-image-container">
+                            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="Modern Building" class="hero-image">
+                            <div class="hero-shape-overlay"></div>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div class="container position-relative z-2 pb-5 pb-lg-6">
-                <div class="search-shell shadow-lg">
-                    <div class="search-tabs">
-                        <button type="button" class="active">Buy</button>
-                        <button type="button">Sell</button>
-                        <button type="button">Rent</button>
-                    </div>
-
-                    <form class="search-form" method="get" asp-controller="Properties" asp-action="Index">
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-4">
-                                <label class="form-label small text-uppercase fw-semibold text-secondary mb-1" for="searchLocation">Location</label>
-                                <input type="text" id="searchLocation" name="location" class="form-control form-control-lg border-0 bg-light" placeholder="e.g. Makati, BGC, Cebu" value="@Model?.SearchLocation" autocomplete="off" />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small text-uppercase fw-semibold text-secondary mb-1" for="searchType">Type</label>
-                                <input type="text" id="searchType" name="propertyType" class="form-control form-control-lg border-0 bg-light" placeholder="House, condo, lot" />
-                            </div>
-                            <div class="col-md-4 col-lg-3">
-                                <label class="form-label small text-uppercase fw-semibold text-secondary mb-1" for="searchMaxPrice">Price</label>
-                                <input type="number" id="searchMaxPrice" name="maxPrice" class="form-control form-control-lg border-0 bg-light" min="0" step="1000" inputmode="numeric" placeholder="₱ 1,200,000" value="@(Model?.SearchMaxPrice?.ToString())" />
-                            </div>
-                            <div class="col-md-12 col-lg-1 d-grid">
-                                <button type="submit" class="btn btn-dark rounded-pill search-btn">Search Properties</button>
-                            </div>
+        <!-- STATISTICS SECTION -->
+        <section class="stats-section-modern">
+            <div class="container">
+                <div class="row g-4 text-center">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item-modern">
+                            <div class="stat-number-modern">25K+</div>
+                            <div class="stat-label-modern">Happy Clients</div>
                         </div>
-                    </form>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item-modern">
+                            <div class="stat-number-modern">45K+</div>
+                            <div class="stat-label-modern">Properties</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item-modern">
+                            <div class="stat-number-modern">50+</div>
+                            <div class="stat-label-modern">Cities</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-item-modern">
+                            <div class="stat-number-modern">800+</div>
+                            <div class="stat-label-modern">Expert Agents</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="intro-section bg-white">
-            <div class="container text-center py-5 py-lg-6">
-                <div class="section-kicker mb-3">About Real Nest</div>
-                <p class="intro-copy mx-auto mb-0">We are committed to delivering an effortless and enjoyable real estate journey for all our clients. Our platform combines a sleek, minimalistic design with cutting-edge functionality, making the property search process seamless and stress-free.</p>
-            </div>
-        </section>
-
-        <section class="properties-section bg-white" id="properties">
-            <div class="container py-5 py-lg-6">
-                <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3 mb-4 mb-lg-5">
-                    <div>
-                        <div class="section-kicker mb-2">Featured listings</div>
-                        <h2 class="section-title mb-0">Explore our latest property</h2>
-                    </div>
-                    <div class="d-flex flex-wrap gap-2">
-                        <span class="chip active">All Type</span>
-                        <span class="chip">Industrial House</span>
-                        <span class="chip">Apartment</span>
-                        <span class="chip">Villa</span>
-                        <span class="chip">Duplex</span>
-                        <span class="chip">Warehouse</span>
-                        <span class="chip">Resort</span>
-                    </div>
+        <!-- FEATURED PROPERTIES SECTION -->
+        <section class="featured-section-modern" id="properties">
+            <div class="container py-5">
+                <div class="text-center mb-5">
+                    <span class="section-label-modern">CLIENTS TESTIMONIALS</span>
+                    <h2 class="section-title-modern">Investing in Real Estate for Brighter Tomorrow</h2>
                 </div>
 
                 <div class="row g-4">
                     @if (featuredSource.Any())
                     {
-                        foreach (var property in featuredSource.Take(6))
+                        var index = 0;
+                        foreach (var property in featuredSource.Take(3))
                         {
+                            index++;
                             var imageUrl = property.ImageUrls.FirstOrDefault() ?? "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80";
-                            <div class="col-sm-6 col-lg-4">
-                                <article class="property-card h-100 shadow-sm">
-                                    <a asp-controller="Properties" asp-action="Details" asp-route-id="@property.Id" class="text-decoration-none text-reset">
-                                        <div class="property-image ratio ratio-4x3">
-                                            <img src="@imageUrl" alt="@property.Title" class="object-fit-cover w-100 h-100" />
-                                        </div>
-                                        <div class="property-body p-3 p-lg-4">
-                                            <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
-                                                <div>
-                                                    <div class="property-price mb-1">@(property.ListingType == PropertyListingType.Buy ? property.Price.ToString("C0", ph) : property.Price.ToString("C0", ph) + "/mo")</div>
-                                                    <h3 class="property-title mb-0">@property.Title</h3>
-                                                </div>
-                                                <span class="property-badge">View Detail</span>
-                                            </div>
-                                            <p class="property-location mb-3">@property.Location</p>
-                                            <div class="property-meta d-flex flex-wrap gap-3 small text-muted">
-                                                <span>@property.Bedrooms bd</span>
-                                                <span>@property.Bathrooms ba</span>
-                                                <span>@property.ParkingSlots pk</span>
-                                                <span>@property.Sqft sqm</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </article>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="property-card-modern">
+                                    <div class="property-image-modern">
+                                        <img src="@imageUrl" alt="@property.Title" class="w-100 h-100 object-fit-cover">
+                                    </div>
+                                    <div class="property-content-modern">
+                                        <div class="property-number">0@index</div>
+                                        <h4 class="property-title-modern">@property.Title</h4>
+                                        <p class="property-desc-modern">Real Estate is a vast industry that deals with the buying, selling and renting of properties.</p>
+                                    </div>
+                                </div>
                             </div>
                         }
                     }
                     else
                     {
-                        <div class="col-sm-6 col-lg-4">
-                            <article class="property-card h-100 shadow-sm">
-                                <div class="property-image ratio ratio-4x3">
-                                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80" alt="Rosewood Manor" class="object-fit-cover w-100 h-100" />
+                        <div class="col-lg-4 col-md-6">
+                            <div class="property-card-modern">
+                                <div class="property-image-modern">
+                                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80" alt="Luxury Apartment" class="w-100 h-100 object-fit-cover">
                                 </div>
-                                <div class="property-body p-3 p-lg-4">
-                                    <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
-                                        <div>
-                                            <div class="property-price mb-1">₱2,400,000</div>
-                                            <h3 class="property-title mb-0">Rosewood Manor</h3>
-                                        </div>
-                                        <span class="property-badge">View Detail</span>
-                                    </div>
-                                    <p class="property-location mb-3">BGC, Taguig</p>
-                                    <div class="property-meta d-flex flex-wrap gap-3 small text-muted">
-                                        <span>4 bd</span>
-                                        <span>3 ba</span>
-                                        <span>2 pk</span>
-                                        <span>180 sqm</span>
-                                    </div>
+                                <div class="property-content-modern">
+                                    <div class="property-number">01</div>
+                                    <h4 class="property-title-modern">Dream Dwell Properties</h4>
+                                    <p class="property-desc-modern">Real Estate is a vast industry that deals with the buying, selling and renting of properties.</p>
                                 </div>
-                            </article>
+                            </div>
                         </div>
-                        <div class="col-sm-6 col-lg-4">
-                            <article class="property-card h-100 shadow-sm">
-                                <div class="property-image ratio ratio-4x3">
-                                    <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80" alt="Seabreeze Villa" class="object-fit-cover w-100 h-100" />
+                        <div class="col-lg-4 col-md-6">
+                            <div class="property-card-modern">
+                                <div class="property-image-modern">
+                                    <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80" alt="Modern Living" class="w-100 h-100 object-fit-cover">
                                 </div>
-                                <div class="property-body p-3 p-lg-4">
-                                    <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
-                                        <div>
-                                            <div class="property-price mb-1">₱1,500,000</div>
-                                            <h3 class="property-title mb-0">Seabreeze Villa</h3>
-                                        </div>
-                                        <span class="property-badge">View Detail</span>
-                                    </div>
-                                    <p class="property-location mb-3">Cebu City, Cebu</p>
-                                    <div class="property-meta d-flex flex-wrap gap-3 small text-muted">
-                                        <span>3 bd</span>
-                                        <span>2 ba</span>
-                                        <span>1 pk</span>
-                                        <span>140 sqm</span>
-                                    </div>
+                                <div class="property-content-modern">
+                                    <div class="property-number">02</div>
+                                    <h4 class="property-title-modern">Seamless Solutions</h4>
+                                    <p class="property-desc-modern">Real Estate is a vast industry that deals with the buying, selling and renting of properties.</p>
                                 </div>
-                            </article>
+                            </div>
                         </div>
-                        <div class="col-sm-6 col-lg-4">
-                            <article class="property-card h-100 shadow-sm">
-                                <div class="property-image ratio ratio-4x3">
-                                    <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80" alt="Willow Cottage" class="object-fit-cover w-100 h-100" />
+                        <div class="col-lg-4 col-md-6">
+                            <div class="property-card-modern">
+                                <div class="property-image-modern">
+                                    <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1200&q=80" alt="Skyline View" class="w-100 h-100 object-fit-cover">
                                 </div>
-                                <div class="property-body p-3 p-lg-4">
-                                    <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
-                                        <div>
-                                            <div class="property-price mb-1">₱1,600,000</div>
-                                            <h3 class="property-title mb-0">Willow Cottage</h3>
-                                        </div>
-                                        <span class="property-badge">View Detail</span>
-                                    </div>
-                                    <p class="property-location mb-3">Davao City, Davao</p>
-                                    <div class="property-meta d-flex flex-wrap gap-3 small text-muted">
-                                        <span>2 bd</span>
-                                        <span>2 ba</span>
-                                        <span>1 pk</span>
-                                        <span>120 sqm</span>
-                                    </div>
+                                <div class="property-content-modern">
+                                    <div class="property-number">03</div>
+                                    <h4 class="property-title-modern">Skyline Homes Realty</h4>
+                                    <p class="property-desc-modern">Real Estate is a vast industry that deals with the buying, selling and renting of properties.</p>
                                 </div>
-                            </article>
+                            </div>
                         </div>
                     }
                 </div>
             </div>
         </section>
 
-        <section class="contact-section bg-light" id="contact">
-            <div class="container py-5 py-lg-6">
-                <div class="row g-4 align-items-center">
+        <!-- ABOUT SECTION WITH IMAGE COLLAGE -->
+        <section class="about-section-modern">
+            <div class="container">
+                <div class="row align-items-center g-5">
                     <div class="col-lg-5">
-                        <div class="agent-feature-card shadow-lg">
-                            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80" alt="Our agent" />
-                            <div class="agent-feature-overlay">
-                                <div class="agent-tag">Our Agent</div>
-                                <h3>Tailored property solutions for business growth</h3>
-                                <p>Our expert real estate agents are here to guide you every step of the way.</p>
-                                <a class="btn btn-dark rounded-pill px-4" asp-controller="Home" asp-action="Contact">Contact Us</a>
+                        <div class="image-collage-modern">
+                            <div class="collage-item large">
+                                <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=500&q=80" alt="Modern Building" class="w-100 h-100 object-fit-cover rounded-lg">
+                            </div>
+                            <div class="collage-item small rounded">
+                                <img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=300&q=80" alt="Property Interior" class="w-100 h-100 object-fit-cover rounded-circle">
+                            </div>
+                            <div class="collage-item small">
+                                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=300&q=80" alt="Keys" class="w-100 h-100 object-fit-cover rounded-lg">
+                            </div>
+                            <div class="stat-badge-modern">
+                                <div class="stat-number-badge">25K+</div>
+                                <div class="stat-text-badge">Services We Provide</div>
                             </div>
                         </div>
                     </div>
-
                     <div class="col-lg-7">
-                        <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-4">
-                            <div>
-                                <div class="section-kicker mb-2">Contact with our top agents</div>
-                                <h2 class="section-title mb-0">Speak with trusted real estate professionals</h2>
+                        <span class="section-label-modern">ABOUT US</span>
+                        <h2 class="about-title-modern">Unlocking the door to your the new home</h2>
+                        
+                        <div class="about-points">
+                            <div class="point-item">
+                                <i class="fas fa-check"></i>
+                                <span>Prestige Property Management Your Dream Home Awaits</span>
                             </div>
-                            <a class="btn btn-outline-dark rounded-pill px-4" asp-controller="Home" asp-action="Contact">Send a message</a>
+                            <div class="point-item">
+                                <i class="fas fa-check"></i>
+                                <span>Real Estate is a vast industry that deals with the buying, selling</span>
+                            </div>
                         </div>
 
-                        <div class="row g-3">
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="agent-card shadow-sm">
-                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" alt="Jacob" />
-                                    <div class="p-3">
-                                        <div class="fw-semibold">Jacob</div>
-                                        <div class="text-muted small">Agent</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="agent-card shadow-sm">
-                                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80" alt="Kristin" />
-                                    <div class="p-3">
-                                        <div class="fw-semibold">Kristin</div>
-                                        <div class="text-muted small">Agent</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="agent-card shadow-sm">
-                                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80" alt="Robert" />
-                                    <div class="p-3">
-                                        <div class="fw-semibold">Robert</div>
-                                        <div class="text-muted small">Agent</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xl-3">
-                                <div class="agent-card shadow-sm">
-                                    <img src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=600&q=80" alt="Mia" />
-                                    <div class="p-3">
-                                        <div class="fw-semibold">Mia</div>
-                                        <div class="text-muted small">Agent</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <p class="about-description">Real Estate is a vast industry that deals with the buying, selling, and renting of properties. It involves transactions related to residential, commercial, and industrial properties.</p>
+
+                        <a href="#" class="read-more-link">READ MORE <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="journey-section bg-white">
-            <div class="container py-5 py-lg-6 text-center">
-                <h2 class="section-title mb-3">Peace of mind at every step of your journey home</h2>
-                <p class="text-muted mx-auto mb-5 landing-max-w">Simple, transparent guidance from discovery to closing, so every step feels clear and stress-free.</p>
-
-                <div class="row g-4 justify-content-center">
-                    <div class="col-6 col-md-3">
-                        <div class="journey-step">
-                            <div class="step-circle active">1</div>
-                            <div class="step-label">Discover Houses</div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="journey-step">
-                            <div class="step-circle">2</div>
-                            <div class="step-label">Schedule to visit</div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="journey-step">
-                            <div class="step-circle">3</div>
-                            <div class="step-label">Hassle free purchase</div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="journey-step">
-                            <div class="step-circle">4</div>
-                            <div class="step-label">Buy back guarantee</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="trust-section bg-light">
-            <div class="container py-5 py-lg-6">
-                <div class="trust-card shadow-lg overflow-hidden">
-                    <div class="row g-0 align-items-stretch">
-                        <div class="col-lg-5">
-                            <div class="p-4 p-lg-5 h-100 bg-white">
-                                <div class="section-kicker mb-3">100% Trusted</div>
-                                <h2 class="section-title mb-3">We are committed to delivering enjoyable real estate journey</h2>
-                                <p class="text-muted mb-4">Discover a range of residential homes and investment-ready properties with flexible options designed to fit your goals.</p>
-                                <a class="btn btn-dark rounded-pill px-4" asp-controller="Properties" asp-action="Index">Explore all property</a>
-                            </div>
-                        </div>
-                        <div class="col-lg-7">
-                            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=80" alt="Modern property" class="w-100 h-100 object-fit-cover trust-image" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="testimonials-section bg-white">
-            <div class="container py-5 py-lg-6">
+        <!-- PROPERTY GALLERY SECTION -->
+        <section class="gallery-section-modern">
+            <div class="container">
                 <div class="text-center mb-5">
-                    <div class="section-kicker mb-3">Testimonials</div>
-                    <h2 class="section-title mb-0">What client say about us</h2>
+                    <span class="section-label-modern">OUR GALLERY</span>
+                    <h2 class="section-title-modern">Unlocking the door to your a the new home</h2>
                 </div>
 
-                <div class="row g-4 align-items-stretch">
-                    <div class="col-lg-3">
-                        <div class="testimonial-card h-100 shadow-sm">
-                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" alt="Client" />
-                            <div class="p-4">
-                                <p class="mb-3">I was blown away by the level of service. They listened to my needs and answered all my questions.</p>
-                                <div class="fw-semibold">Alex Stone</div>
-                                <div class="text-muted small">Home buyer</div>
-                            </div>
-                        </div>
+                <div class="property-gallery-grid">
+                    <div class="gallery-item gallery-item-large">
+                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80" alt="Modern House with Pool" class="w-100 h-100 object-fit-cover">
                     </div>
-                    <div class="col-lg-6">
-                        <div class="testimonial-card testimonial-card-large h-100 shadow-sm">
-                            <div class="row g-0 h-100">
-                                <div class="col-md-5">
-                                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80" alt="Happy client" class="w-100 h-100 object-fit-cover" />
-                                </div>
-                                <div class="col-md-7 d-flex align-items-center">
-                                    <div class="p-4 p-lg-5">
-                                        <p class="quote-mark mb-3">“</p>
-                                        <p class="mb-4">I was blown away by the level of service. They listened to my needs, answered all my questions, and made the entire process feel smooth and clear.</p>
-                                        <div class="fw-semibold">Jayson Cruz</div>
-                                        <div class="text-muted small">Property investor</div>
+                    <div class="gallery-item gallery-item-large">
+                        <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=600&q=80" alt="Luxury Villa" class="w-100 h-100 object-fit-cover">
+                    </div>
+                    <div class="gallery-item gallery-item-large">
+                        <img src="https://images.unsplash.com/photo-1580587771525-78991c7aef33?auto=format&fit=crop&w=600&q=80" alt="Contemporary Home" class="w-100 h-100 object-fit-cover">
+                    </div>
+                    <div class="gallery-item gallery-item-large">
+                        <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80" alt="Elegant Residence" class="w-100 h-100 object-fit-cover">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LATEST OFFERS SECTION -->
+        <section class="latest-offers-section">
+            <div class="container">
+                <div class="offers-header">
+                    <div>
+                        <span class="section-label-modern">LATEST OFFER</span>
+                        <h2 class="section-title-modern">Live Your Best Life in a New Home</h2>
+                    </div>
+                    <div class="carousel-nav-buttons">
+                        <button class="nav-btn prev-btn" onclick="scrollOffersCarousel(-1)">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="nav-btn next-btn" onclick="scrollOffersCarousel(1)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="offers-carousel-wrapper">
+                    <div class="offers-carousel" id="offersCarousel">
+                        @if (featuredSource.Any())
+                        {
+                            foreach (var property in featuredSource.Take(6))
+                            {
+                                var imageUrl = property.ImageUrls.FirstOrDefault() ?? "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80";
+                                <div class="offer-card">
+                                    <div class="offer-image">
+                                        <img src="@imageUrl" alt="@property.Title" class="w-100 h-100 object-fit-cover">
+                                    </div>
+                                    <div class="offer-content">
+                                        <div class="offer-price">@(property.ListingType == PropertyListingType.Buy ? property.Price.ToString("C0", ph) : property.Price.ToString("C0", ph) + "/month")</div>
+                                        <div class="offer-type">@(property.ListingType == PropertyListingType.Buy ? "For Sale" : property.ListingType == PropertyListingType.Rent ? "For Rent" : "For Lease")</div>
+                                        <h4 class="offer-title">@property.Title</h4>
+                                        <div class="offer-location">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            @property.Location
+                                        </div>
+                                        <div class="offer-details">
+                                            <span class="detail-item">
+                                                <i class="fas fa-bed"></i> @property.Bedrooms Beds
+                                            </span>
+                                            <span class="detail-item">
+                                                <i class="fas fa-bath"></i> @property.Bathrooms Baths
+                                            </span>
+                                        </div>
+                                        <a asp-controller="Properties" asp-action="Details" asp-route-id="@property.Id" class="btn-book-now">BOOK NOW <i class="fas fa-arrow-right"></i></a>
                                     </div>
                                 </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="offer-card">
+                                <div class="offer-image">
+                                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80" alt="Luxury Home 1" class="w-100 h-100 object-fit-cover">
+                                </div>
+                                <div class="offer-content">
+                                    <div class="offer-price">$500.00</div>
+                                    <div class="offer-type">For Sale</div>
+                                    <h4 class="offer-title">Paramount Investments Prestige Property Management</h4>
+                                    <div class="offer-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        66 Brooklyant, New York America
+                                    </div>
+                                    <div class="offer-details">
+                                        <span class="detail-item">
+                                            <i class="fas fa-bed"></i> 3 Beds
+                                        </span>
+                                        <span class="detail-item">
+                                            <i class="fas fa-bath"></i> 3 Baths
+                                        </span>
+                                    </div>
+                                    <a href="#" class="btn-book-now">BOOK NOW <i class="fas fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                            <div class="offer-card">
+                                <div class="offer-image">
+                                    <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=400&q=80" alt="Luxury Home 2" class="w-100 h-100 object-fit-cover">
+                                </div>
+                                <div class="offer-content">
+                                    <div class="offer-price">$500.00</div>
+                                    <div class="offer-type">For Sale</div>
+                                    <h4 class="offer-title">Paramount Investments Prestige Property Management</h4>
+                                    <div class="offer-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        66 Brooklyant, New York America
+                                    </div>
+                                    <div class="offer-details">
+                                        <span class="detail-item">
+                                            <i class="fas fa-bed"></i> 3 Beds
+                                        </span>
+                                        <span class="detail-item">
+                                            <i class="fas fa-bath"></i> 3 Baths
+                                        </span>
+                                    </div>
+                                    <a href="#" class="btn-book-now">BOOK NOW <i class="fas fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                            <div class="offer-card">
+                                <div class="offer-image">
+                                    <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=400&q=80" alt="Luxury Home 3" class="w-100 h-100 object-fit-cover">
+                                </div>
+                                <div class="offer-content">
+                                    <div class="offer-price">$500.00</div>
+                                    <div class="offer-type">For Sale</div>
+                                    <h4 class="offer-title">Paramount Investments Prestige Property Management</h4>
+                                    <div class="offer-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        66 Brooklyant, New York America
+                                    </div>
+                                    <div class="offer-details">
+                                        <span class="detail-item">
+                                            <i class="fas fa-bed"></i> 3 Beds
+                                        </span>
+                                        <span class="detail-item">
+                                            <i class="fas fa-bath"></i> 3 Baths
+                                        </span>
+                                    </div>
+                                    <a href="#" class="btn-book-now">BOOK NOW <i class="fas fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHY CHOOSE US SECTION -->
+        <section class="why-choose-section-modern">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="section-title-modern">Why Choose EstateFlow?</h2>
+                    <p class="section-subtitle-modern">We provide premium real estate solutions with exceptional service</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-box-modern">
+                            <div class="feature-icon-modern">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <h5 class="feature-title-modern">Easy Search</h5>
+                            <p class="feature-text-modern">Advanced filters to find exactly what you're looking for</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-box-modern">
+                            <div class="feature-icon-modern">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h5 class="feature-title-modern">Secure Transactions</h5>
+                            <p class="feature-text-modern">100% verified listings with secure payment protection</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-box-modern">
+                            <div class="feature-icon-modern">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <h5 class="feature-title-modern">24/7 Support</h5>
+                            <p class="feature-text-modern">Expert support team available round the clock</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-box-modern">
+                            <div class="feature-icon-modern">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h5 class="feature-title-modern">Top Agents</h5>
+                            <p class="feature-text-modern">Certified and experienced real estate professionals</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-box-modern">
+                            <div class="feature-icon-modern">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h5 class="feature-title-modern">Quick Process</h5>
+                            <p class="feature-text-modern">Fast approval and paperless documentation</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-box-modern">
+                            <div class="feature-icon-modern">
+                                <i class="fas fa-map-location-dot"></i>
+                            </div>
+                            <h5 class="feature-title-modern">Wide Coverage</h5>
+                            <p class="feature-text-modern">Properties across multiple cities and regions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TESTIMONIALS SECTION -->
+        <section class="testimonials-section-modern">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <span class="section-label-modern">WHAT CLIENTS SAY</span>
+                    <h2 class="section-title-modern">Testimonials from Happy Customers</h2>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <div class="testimonial-card-modern">
+                            <p class="testimonial-text">"Excellent service and professional team. They made the entire process smooth and hassle-free."</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">
+                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="Client">
+                                </div>
+                                <div>
+                                    <div class="author-name">Alex Johnson</div>
+                                    <div class="author-title">Home Buyer</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3">
-                        <div class="testimonial-card h-100 shadow-sm">
-                            <img src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=600&q=80" alt="Client" />
-                            <div class="p-4">
-                                <p class="mb-3">Fast response, great guidance, and an easy experience from first inquiry to viewing.</p>
-                                <div class="fw-semibold">Mica Reyes</div>
-                                <div class="text-muted small">Seller</div>
+                    <div class="col-lg-4">
+                        <div class="testimonial-card-modern">
+                            <p class="testimonial-text">"Best real estate company I've worked with. Highly recommended for anyone looking to buy or sell."</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">
+                                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80" alt="Client">
+                                </div>
+                                <div>
+                                    <div class="author-name">Sarah Williams</div>
+                                    <div class="author-title">Property Investor</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="testimonial-card-modern">
+                            <p class="testimonial-text">"Fast, reliable, and trustworthy. They found us the perfect home within our budget."</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">
+                                    <img src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=100&q=80" alt="Client">
+                                </div>
+                                <div>
+                                    <div class="author-name">Michael Chen</div>
+                                    <div class="author-title">Homeowner</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -384,41 +460,53 @@
             </div>
         </section>
 
-        <footer class="landing-footer bg-light">
-            <div class="container py-5 py-lg-6">
-                <div class="row g-4 align-items-start">
-                    <div class="col-lg-4">
-                        <h4 class="mb-3">Subscribe to our Newsletter</h4>
-                        <p class="text-muted mb-4">To begin the property buying process, simply contact one of our real estate agents.</p>
-                        <form class="d-flex gap-2" asp-controller="Subscriptions" asp-action="Index" method="get">
-                            <input type="email" class="form-control rounded-pill" placeholder="Email address" />
-                            <button type="submit" class="btn btn-dark rounded-pill px-4">Get Started</button>
+        <!-- CTA SECTION -->
+        <section class="cta-section-modern">
+            <div class="container text-center">
+                <h2 class="cta-title">Ready to Find Your Dream Home?</h2>
+                <p class="cta-subtitle">Contact our expert agents today and start your real estate journey</p>
+                <a href="#" class="btn-primary-modern btn-lg">GET IN TOUCH</a>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer-modern">
+            <div class="container">
+                <div class="row g-4 py-5 mb-5">
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-title">About EstateFlow</h5>
+                        <p class="footer-text">Premium real estate solutions for your property needs. Expert agents, verified listings, and seamless transactions.</p>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-title">Quick Links</h5>
+                        <ul class="footer-links">
+                            <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                            <li><a asp-controller="Properties" asp-action="Index">Properties</a></li>
+                            <li><a asp-controller="Agents" asp-action="Index">Our Agents</a></li>
+                            <li><a asp-controller="Home" asp-action="Contact">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-title">Property Types</h5>
+                        <ul class="footer-links">
+                            <li><a asp-controller="Properties" asp-action="Index">Apartments</a></li>
+                            <li><a asp-controller="Properties" asp-action="Index">Houses</a></li>
+                            <li><a asp-controller="Properties" asp-action="Index">Condos</a></li>
+                            <li><a asp-controller="Properties" asp-action="Index">Commercial</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-title">Newsletter</h5>
+                        <p class="footer-text">Subscribe to get latest updates on new properties</p>
+                        <form class="newsletter-form">
+                            <input type="email" placeholder="Your email" class="form-control form-control-sm mb-2">
+                            <button type="submit" class="btn-primary-small w-100">Subscribe</button>
                         </form>
                     </div>
-                    <div class="col-6 col-lg-2">
-                        <h6 class="mb-3">Company</h6>
-                        <div class="footer-links d-flex flex-column gap-2">
-                            <a asp-controller="Home" asp-action="Index">Home</a>
-                            <a asp-controller="Properties" asp-action="Index">Properties</a>
-                            <a asp-controller="Home" asp-action="Contact">Contact</a>
-                        </div>
-                    </div>
-                    <div class="col-6 col-lg-2">
-                        <h6 class="mb-3">Important Link</h6>
-                        <div class="footer-links d-flex flex-column gap-2">
-                            <a asp-controller="Properties" asp-action="Index" asp-route-listingType="Sell">Sell Property</a>
-                            <a asp-controller="Properties" asp-action="Index" asp-route-listingType="Rent">Rent</a>
-                            <a asp-controller="Properties" asp-action="Index">Buy Property</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <h6 class="mb-3">Social Media</h6>
-                        <div class="footer-links d-flex flex-column gap-2">
-                            <a href="#">Instagram</a>
-                            <a href="#">Twitter</a>
-                            <a href="#">LinkedIn</a>
-                        </div>
-                    </div>
+                </div>
+                <hr>
+                <div class="footer-bottom text-center py-3">
+                    <p>&copy; 2024 EstateFlow. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
                 </div>
             </div>
         </footer>
@@ -426,431 +514,1006 @@
 </div>
 
 <style>
-    .realestate-landing {
-        background: #f3f4f6;
+    /* Modern CityScape-Inspired Design */
+    
+    .realestate-landing-modern {
+        background: #fff;
     }
 
-    .hero-section {
+    /* HERO SECTION */
+    .hero-section-modern {
+        background: #f8f9fa;
+        padding: 60px 0;
         position: relative;
         overflow: hidden;
-        background: linear-gradient(180deg, rgba(33, 89, 139, 0.95), rgba(52, 115, 163, 0.9));
-        padding-top: 6.5rem;
     }
 
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: url('https://images.unsplash.com/photo-1560185007-cde436f6a4d0?auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;
-        opacity: 0.42;
-        transform: scale(1.02);
-    }
-
-    .hero-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, rgba(20,45,75,0.25), rgba(20,45,75,0.52));
-        z-index: 1;
-    }
-
-    .hero-pill {
-        display: inline-flex;
+    .hero-content-wrapper {
+        display: flex;
         align-items: center;
-        border: 1px solid rgba(255,255,255,.4);
-        border-radius: 999px;
-        padding: 6px 14px;
-        font-size: 12px;
-        backdrop-filter: blur(10px);
-        background: rgba(255,255,255,.08);
+        padding: 60px 40px;
     }
 
-    .hero-title {
-        font-size: clamp(2.5rem, 5vw, 4.2rem);
-        line-height: 1.02;
-        max-width: 12ch;
-        letter-spacing: -0.04em;
+    .hero-content {
+        max-width: 500px;
+    }
+
+    .hero-label {
+        display: inline-block;
+        color: #16A39E;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+    }
+
+    .hero-title-modern {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.2;
+        color: #1E3A5F;
+        margin-bottom: 20px;
+        font-family: 'Georgia', serif;
     }
 
     .hero-subtitle {
-        max-width: 560px;
-        color: rgba(255,255,255,.88);
         font-size: 1.05rem;
+        color: #6B7280;
+        line-height: 1.8;
+        margin-bottom: 30px;
     }
 
-    .hero-stats .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        line-height: 1;
-    }
-
-    .hero-stats .stat-label {
-        color: rgba(255,255,255,.78);
-        font-size: .9rem;
-    }
-
-    .hero-side-card {
-        border-radius: 28px;
-        overflow: hidden;
-        min-height: 440px;
-        border: 1px solid rgba(255,255,255,.2);
-        background: rgba(255,255,255,.08);
-        backdrop-filter: blur(10px);
-    }
-
-    .hero-side-card img {
-        width: 100%;
-        height: 100%;
-        min-height: 440px;
-        object-fit: cover;
-        display: block;
-    }
-
-    .search-shell {
-        margin-top: 2rem;
-        background: rgba(255,255,255,.96);
-        border-radius: 26px;
-        padding: 0;
-        overflow: hidden;
-    }
-
-    .search-tabs {
-        display: flex;
-        gap: 0;
-        padding-left: 1rem;
-        border-bottom: 1px solid #eef2f7;
-        background: #fff;
-    }
-
-    .search-tabs button {
-        border: 0;
-        background: transparent;
-        padding: 1rem 1.25rem;
-        color: #64748b;
-        font-weight: 600;
-    }
-
-    .search-tabs button.active {
-        color: #0f172a;
-        position: relative;
-    }
-
-    .search-tabs button.active::after {
-        content: '';
-        position: absolute;
-        left: 1rem;
-        right: 1rem;
-        bottom: 0;
-        height: 3px;
-        border-radius: 999px;
-        background: #0f172a;
-    }
-
-    .search-form {
-        padding: 1.25rem;
-    }
-
-    .search-btn {
-        min-height: 54px;
-    }
-
-    .section-kicker {
+    .btn-primary-modern {
         display: inline-block;
-        padding: .4rem .9rem;
-        border-radius: 999px;
-        background: #eef4fb;
-        color: #6b7280;
-        font-size: .85rem;
-        font-weight: 600;
+        background: #16A39E;
+        color: white;
+        padding: 14px 40px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+        border: 2px solid #16A39E;
     }
 
-    .intro-copy {
-        max-width: 920px;
-        font-size: clamp(1.25rem, 2.2vw, 1.9rem);
-        line-height: 1.35;
-        letter-spacing: -0.03em;
+    .btn-primary-modern:hover {
+        background: #0F8B84;
+        border-color: #0F8B84;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(22, 163, 158, 0.3);
     }
 
-    .section-title {
-        font-size: clamp(1.9rem, 3vw, 2.8rem);
-        line-height: 1.1;
-        letter-spacing: -0.04em;
-    }
-
-    .chip {
-        display: inline-flex;
-        align-items: center;
-        border: 1px solid #e5e7eb;
-        border-radius: 999px;
-        padding: .55rem 1rem;
-        background: #f8fafc;
-        font-size: .88rem;
-        color: #475569;
-    }
-
-    .chip.active {
-        background: #0f172a;
-        color: #fff;
-        border-color: #0f172a;
-    }
-
-    .property-card {
-        border-radius: 20px;
-        overflow: hidden;
-        background: #fff;
-        border: 1px solid #eef2f7;
-        transition: transform .2s ease, box-shadow .2s ease;
-    }
-
-    .property-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 .75rem 2rem rgba(15, 23, 42, .08);
-    }
-
-    .property-image img {
-        transition: transform .3s ease;
-    }
-
-    .property-card:hover .property-image img {
-        transform: scale(1.03);
-    }
-
-    .property-price {
-        color: #0f172a;
+    .btn-primary-modern.btn-lg {
+        padding: 16px 50px;
         font-size: 1rem;
-        font-weight: 700;
     }
 
-    .property-title {
-        color: #111827;
-        font-size: 1.1rem;
-        font-weight: 700;
-    }
-
-    .property-location {
-        color: #6b7280;
-        font-size: .95rem;
-    }
-
-    .property-badge {
-        display: inline-flex;
-        align-items: center;
-        padding: .45rem .75rem;
-        border-radius: 999px;
-        border: 1px solid #d1d5db;
-        color: #111827;
-        font-size: .78rem;
+    .btn-primary-small {
+        background: #FF9500;
+        color: white;
+        padding: 8px 20px;
+        border: none;
+        border-radius: 4px;
         font-weight: 600;
-        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.3s;
     }
 
-    .agent-feature-card {
+    .btn-primary-small:hover {
+        background: #FF8C00;
+    }
+
+    .hero-image-wrapper {
         position: relative;
-        border-radius: 24px;
-        overflow: hidden;
-        min-height: 420px;
-        background: #1f2937;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 60px 40px;
     }
 
-    .agent-feature-card img {
-        position: absolute;
-        inset: 0;
+    .hero-image-container {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        max-width: 450px;
+    }
+
+    .hero-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        opacity: .78;
+        border-radius: 12px;
     }
 
-    .agent-feature-overlay {
-        position: relative;
-        z-index: 1;
-        padding: 2rem;
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        min-height: 420px;
-        background: linear-gradient(180deg, rgba(15,23,42,.1), rgba(15,23,42,.7));
-    }
-
-    .agent-tag {
-        align-self: flex-start;
-        background: rgba(255,255,255,.2);
-        border: 1px solid rgba(255,255,255,.25);
-        border-radius: 999px;
-        padding: .35rem .8rem;
-        font-size: .8rem;
-        margin-bottom: 1rem;
-    }
-
-    .agent-feature-overlay h3 {
-        font-size: 1.7rem;
-        max-width: 14ch;
-        line-height: 1.1;
-        margin-bottom: .75rem;
-    }
-
-    .agent-feature-overlay p {
-        color: rgba(255,255,255,.85);
-        max-width: 32ch;
-        margin-bottom: 1.25rem;
-    }
-
-    .agent-card {
-        border-radius: 20px;
-        overflow: hidden;
-        background: #fff;
-        border: 1px solid #eef2f7;
-    }
-
-    .agent-card img {
-        width: 100%;
-        height: 170px;
-        object-fit: cover;
-        display: block;
-    }
-
-    .journey-step {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: .85rem;
-    }
-
-    .step-circle {
-        width: 48px;
-        height: 48px;
+    .hero-shape-overlay {
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(135deg, rgba(255, 149, 0, 0.1), transparent);
         border-radius: 50%;
-        border: 1px solid #d1d5db;
-        display: grid;
-        place-items: center;
-        font-weight: 700;
-        color: #334155;
-        background: #fff;
+        pointer-events: none;
     }
 
-    .step-circle.active {
-        background: #0f172a;
-        color: #fff;
-        border-color: #0f172a;
+    /* STATISTICS SECTION */
+    .stats-section-modern {
+        background: white;
+        padding: 60px 0;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
     }
 
-    .step-label {
-        color: #111827;
-        font-size: .95rem;
+    .stat-item-modern {
+        padding: 20px;
+    }
+
+    .stat-number-modern {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #16A39E;
+        margin-bottom: 10px;
+    }
+
+    .stat-label-modern {
+        font-size: 1rem;
+        color: #6B7280;
         font-weight: 500;
     }
 
-    .trust-card {
-        border-radius: 28px;
+    /* FEATURED PROPERTIES SECTION */
+    .featured-section-modern {
+        background: white;
+        padding: 80px 0;
+    }
+
+    .section-label-modern {
+        display: inline-block;
+        color: #16A39E;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+    }
+
+    .section-title-modern {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: #1E3A5F;
+        margin-bottom: 50px;
+        font-family: 'Georgia', serif;
+    }
+
+    .property-card-modern {
+        background: white;
+        border-radius: 8px;
         overflow: hidden;
-        background: #fff;
+        transition: all 0.3s;
+        border: 1px solid #eee;
     }
 
-    .trust-image {
-        min-height: 320px;
+    .property-card-modern:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(22, 163, 158, 0.15);
     }
 
-    .testimonial-card {
-        border-radius: 22px;
-        overflow: hidden;
-        background: #fff;
-        border: 1px solid #eef2f7;
-    }
-
-    .testimonial-card img {
+    .property-image-modern {
         width: 100%;
-        height: 220px;
+        height: 300px;
+        overflow: hidden;
+        background: #F8F9FA;
+    }
+
+    .property-image-modern img {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
-        display: block;
+        transition: transform 0.3s;
     }
 
-    .testimonial-card-large {
-        min-height: 100%;
+    .property-card-modern:hover .property-image-modern img {
+        transform: scale(1.05);
     }
 
-    .quote-mark {
-        font-size: 4rem;
-        line-height: 1;
-        color: #cbd5e1;
-        margin-bottom: .25rem;
+    .property-content-modern {
+        padding: 30px;
+        text-align: center;
     }
 
-    .landing-footer h4,
-    .landing-footer h6 {
-        color: #111827;
+    .property-number {
+        display: inline-block;
+        background: #E0F2F1;
+        color: #6B7280;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .property-title-modern {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1E3A5F;
+        margin-bottom: 15px;
+    }
+
+    .property-desc-modern {
+        font-size: 0.95rem;
+        color: #6B7280;
+        line-height: 1.6;
+        min-height: 70px;
+    }
+
+    /* ABOUT SECTION */
+    .about-section-modern {
+        background: white;
+        padding: 80px 0;
+    }
+
+    .image-collage-modern {
+        position: relative;
+        height: 500px;
+    }
+
+    .collage-item {
+        position: absolute;
+        overflow: hidden;
+    }
+
+    .collage-item.large {
+        width: 350px;
+        height: 350px;
+        top: 0;
+        left: 0;
+    }
+
+    .collage-item.small {
+        width: 150px;
+        height: 150px;
+    }
+
+    .collage-item.small:nth-of-type(2) {
+        top: 40px;
+        right: 0;
+    }
+
+    .collage-item.small:last-child {
+        bottom: 30px;
+        right: 120px;
+    }
+
+    .stat-badge-modern {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        background: linear-gradient(135deg, #16A39E, #0F8B84);
+        color: white;
+        padding: 20px 25px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(22, 163, 158, 0.3);
+    }
+
+    .stat-number-badge {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 5px;
+    }
+
+    .stat-text-badge {
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .about-title-modern {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1E3A5F;
+        margin-bottom: 30px;
+        font-family: 'Georgia', serif;
+        line-height: 1.3;
+    }
+
+    .about-points {
+        margin: 30px 0;
+    }
+
+    .point-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        font-size: 0.95rem;
+        color: #6B7280;
+    }
+
+    .point-item i {
+        color: #16A39E;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .about-description {
+        font-size: 1rem;
+        color: #6B7280;
+        line-height: 1.8;
+        margin: 25px 0;
+    }
+
+    .read-more-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: #16A39E;
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+    }
+
+    .read-more-link:hover {
+        gap: 15px;
+        color: #0F8B84;
+    }
+
+    /* WHY CHOOSE US SECTION */
+    .why-choose-section-modern {
+        background: #f8f9fa;
+        padding: 80px 0;
+    }
+
+    .section-subtitle-modern {
+        font-size: 1.1rem;
+        color: #999;
+        margin-bottom: 50px;
+    }
+
+    .feature-box-modern {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 8px;
+        text-align: center;
+        transition: all 0.3s;
+        border: 1px solid #eee;
+    }
+
+    .feature-box-modern:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        border-color: #16A39E;
+    }
+
+    .feature-icon-modern {
+        font-size: 2.5rem;
+        color: #FF9500;
+        margin-bottom: 20px;
+    }
+
+    .feature-title-modern {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1E3A5F;
+        margin-bottom: 12px;
+    }
+
+    .feature-text-modern {
+        font-size: 0.95rem;
+        color: #6B7280;
+        line-height: 1.6;
+    }
+
+    /* TESTIMONIALS SECTION */
+    .testimonials-section-modern {
+        background: white;
+        padding: 80px 0;
+    }
+
+    .testimonial-card-modern {
+        background: #F8F9FA;
+        padding: 30px;
+        border-radius: 8px;
+        border-left: 4px solid #16A39E;
+        transition: all 0.3s;
+    }
+
+    .testimonial-card-modern:hover {
+        background: white;
+        box-shadow: 0 10px 30px rgba(22, 163, 158, 0.1);
+    }
+
+    .testimonial-text {
+        font-size: 0.95rem;
+        color: #6B7280;
+        font-style: italic;
+        margin-bottom: 20px;
+        line-height: 1.7;
+    }
+
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .author-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .author-name {
+        font-weight: 700;
+        color: #1E3A5F;
+        font-size: 0.95rem;
+    }
+
+    .author-title {
+        font-size: 0.85rem;
+        color: #6B7280;
+    }
+
+    /* CTA SECTION */
+    .cta-section-modern {
+        background: linear-gradient(135deg, #16A39E 0%, #1E3A5F 100%);
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+    }
+
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+        font-family: 'Georgia', serif;
+    }
+
+    .cta-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+        opacity: 0.95;
+    }
+
+    /* FOOTER */
+    .footer-modern {
+        background: #1a1a1a;
+        color: #ccc;
+        padding: 60px 0 0;
+    }
+
+    .footer-title {
+        color: white;
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .footer-text {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #9CA3AF;
+    }
+
+    .footer-links {
+        list-style: none;
+        padding: 0;
+    }
+
+    .footer-links li {
+        margin-bottom: 12px;
     }
 
     .footer-links a {
-        color: #4b5563;
+        color: #9CA3AF;
         text-decoration: none;
+        transition: color 0.3s;
+        font-size: 0.9rem;
     }
 
     .footer-links a:hover {
-        color: #111827;
+        color: #16A39E;
     }
 
-    .landing-max-w {
-        max-width: 760px;
+    .newsletter-form {
+        margin-top: 15px;
     }
 
+    .footer-bottom {
+        border-top: 1px solid #374151;
+        color: #6B7280;
+        font-size: 0.9rem;
+    }
+
+    .footer-bottom a {
+        color: #16A39E;
+        text-decoration: none;
+    }
+
+    /* RESPONSIVE */
     @@media (max-width: 991.98px) {
-        .hero-section {
-            padding-top: 1rem;
+        .hero-content-wrapper,
+        .hero-image-wrapper {
+            padding: 40px 20px;
         }
 
-        .hero-title {
-            max-width: none;
+        .hero-title-modern {
+            font-size: 2.5rem;
         }
 
-        .hero-side-card,
-        .hero-side-card img {
-            min-height: 340px;
+        .section-title-modern {
+            font-size: 2rem;
         }
 
-        .search-shell {
-            border-radius: 22px;
+        .hero-image-container {
+            max-width: 100%;
+            height: 350px;
+        }
+
+        .about-title-modern {
+            font-size: 2rem;
+        }
+
+        .collage-item.large {
+            width: 250px;
+            height: 250px;
         }
     }
 
     @@media (max-width: 767.98px) {
-        .search-tabs {
-            padding-left: .5rem;
-            overflow-x: auto;
-            white-space: nowrap;
+        .hero-section-modern {
+            padding: 40px 0;
         }
 
-        .search-form {
-            padding: 1rem;
+        .hero-content-wrapper,
+        .hero-image-wrapper {
+            padding: 30px 15px;
         }
 
-        .intro-copy {
-            font-size: 1.1rem;
+        .hero-title-modern {
+            font-size: 1.8rem;
         }
 
-        .agent-feature-overlay {
-            min-height: 360px;
+        .section-title-modern {
+            font-size: 1.6rem;
         }
 
-        .testimonials-section .testimonial-card-large .row > div:first-child {
-            min-height: 220px;
+        .about-title-modern {
+            font-size: 1.5rem;
+        }
+
+        .cta-title {
+            font-size: 1.8rem;
+        }
+
+        .hero-image-container {
+            height: 300px;
+        }
+
+        .image-collage-modern {
+            height: auto;
+            position: relative;
+        }
+
+        .collage-item {
+            position: relative !important;
+            margin-bottom: 20px;
+            width: 100% !important;
+            height: 250px !important;
+        }
+
+        .stat-badge-modern {
+            position: static;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            flex-direction: column;
+            gap: 4px;
         }
     }
 
     @@media (max-width: 575.98px) {
-        .hero-section .btn {
+        .hero-label {
+            font-size: 0.75rem;
+        }
+
+        .hero-title-modern,
+        .section-title-modern {
+            font-size: 1.4rem;
+        }
+
+        .cta-title {
+            font-size: 1.4rem;
+        }
+
+        .about-title-modern {
+            font-size: 1.3rem;
+        }
+
+        .hero-content-wrapper,
+        .hero-image-wrapper {
+            padding: 20px 10px;
+        }
+
+        .btn-primary-modern {
+            padding: 12px 30px;
+            font-size: 0.85rem;
+        }
+    }
+
+    .object-fit-cover {
+        object-fit: cover;
+    }
+
+    .rounded-lg {
+        border-radius: 8px;
+    }
+
+    .rounded-circle {
+        border-radius: 50%;
+    }
+
+    .min-vh-100 {
+        min-height: 100vh;
+    }
+    
+    .w-100 {
+        width: 100%;
+    }
+    
+    .h-100 {
+        height: 100%;
+    }
+    
+    .h-auto {
+        height: auto;
+    }
+    
+    .px-0 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .gap-2 {
+        gap: 0.5rem;
+    }
+    
+    .gap-3 {
+        gap: 1rem;
+    }
+    
+    .gap-4 {
+        gap: 1.5rem;
+    }
+    
+    .gap-5 {
+        gap: 3rem;
+    }
+    
+    .text-center {
+        text-align: center;
+    }
+    
+    .mb-2 {
+        margin-bottom: 0.5rem;
+    }
+    
+    .mb-3 {
+        margin-bottom: 1rem;
+    }
+    
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+    
+    .mb-5 {
+        margin-bottom: 3rem;
+    }
+    
+    .py-2 {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    .py-3 {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    .py-4 {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    .py-5 {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    /* GALLERY SECTION */
+    .gallery-section-modern {
+        background: white;
+        padding: 80px 0;
+    }
+
+    .property-gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-top: 50px;
+    }
+
+    .gallery-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        height: 350px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .gallery-item:hover {
+        transform: scale(1.02);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .gallery-item:hover img {
+        transform: scale(1.05);
+    }
+
+    /* LATEST OFFERS SECTION */
+    .latest-offers-section {
+        background: #f8f9fa;
+        padding: 80px 0;
+    }
+
+    .offers-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 50px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .carousel-nav-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .nav-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        border: 2px solid #16A39E;
+        background: white;
+        color: #16A39E;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        font-size: 1rem;
+    }
+
+    .nav-btn:hover {
+        background: #16A39E;
+        color: white;
+    }
+
+    .offers-carousel-wrapper {
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 20px 0;
+        scroll-behavior: smooth;
+    }
+
+    .offers-carousel-wrapper::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .offers-carousel-wrapper::-webkit-scrollbar-track {
+        background: #eee;
+        border-radius: 10px;
+    }
+
+    .offers-carousel-wrapper::-webkit-scrollbar-thumb {
+        background: #FF9500;
+        border-radius: 10px;
+    }
+
+    .offers-carousel {
+        display: flex;
+        gap: 30px;
+        min-width: min-content;
+        padding: 10px 0;
+    }
+
+    .offer-card {
+        flex: 0 0 350px;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .offer-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .offer-image {
+        width: 100%;
+        height: 250px;
+        overflow: hidden;
+    }
+
+    .offer-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .offer-card:hover .offer-image img {
+        transform: scale(1.08);
+    }
+
+    .offer-content {
+        padding: 25px;
+    }
+
+    .offer-price {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #FF9500;
+        margin-bottom: 5px;
+    }
+
+    .offer-type {
+        display: inline-block;
+        color: #999;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .offer-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 12px;
+        line-height: 1.4;
+    }
+
+    .offer-location {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #FF9500;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+
+    .offer-location i {
+        font-size: 0.85rem;
+    }
+
+    .offer-details {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .detail-item i {
+        color: #FF9500;
+        font-size: 0.95rem;
+    }
+
+    .btn-book-now {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #FF9500;
+        color: white;
+        padding: 10px 24px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+    }
+
+    .btn-book-now:hover {
+        background: #FF8C00;
+        color: white;
+        gap: 12px;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    /* RESPONSIVE GALLERY */
+    @@media (max-width: 767.98px) {
+        .property-gallery-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .gallery-item {
+            height: 250px;
+        }
+
+        .offers-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .offer-card {
+            flex: 0 0 300px;
+        }
+    }
+
+    @@media (max-width: 575.98px) {
+        .property-gallery-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .gallery-item {
+            height: 280px;
+        }
+
+        .offer-card {
+            flex: 0 0 280px;
+        }
+
+        .carousel-nav-buttons {
             width: 100%;
-        }
-
-        .search-btn {
-            width: 100%;
-        }
-
-        .agent-feature-overlay h3 {
-            font-size: 1.45rem;
-        }
-
-        .section-title {
-            font-size: 1.7rem;
+            justify-content: flex-start;
         }
     }
 </style>
+
+<script>
+    // Carousel scrolling functionality
+    function scrollOffersCarousel(direction) {
+        const carousel = document.getElementById('offersCarousel');
+        if (carousel) {
+            const scrollAmount = 400;
+            carousel.parentElement.scrollLeft += direction * scrollAmount;
+        }
+    }
+</script>

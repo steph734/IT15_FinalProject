@@ -1,0 +1,614 @@
+@{
+    ViewData["Title"] = "Shopping Cart - EstateFlow";
+}
+
+<div class="estateflow-page-wrapper">
+    <!-- Page Header -->
+    <section class="page-header-modern">
+        <div class="container">
+            <div class="page-header-content">
+                <span class="page-label">YOUR WISHLIST</span>
+                <h1 class="page-title">Saved Properties</h1>
+                <p class="page-subtitle">Keep track of your favorite properties and compare them easily</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Content -->
+    <section class="cart-section">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Cart Items -->
+                <div class="col-lg-8">
+                    <div class="cart-items-wrapper">
+                        <div class="cart-header">
+                            <h3 class="cart-title">Your Saved Properties (3 items)</h3>
+                            <a href="/Properties" class="link-continue-shopping">
+                                <i class="fas fa-arrow-left"></i> Continue Shopping
+                            </a>
+                        </div>
+
+                        <!-- Cart Item 1 -->
+                        <div class="cart-item">
+                            <div class="cart-item-image">
+                                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80" alt="Property 1">
+                                <span class="item-badge">For Sale</span>
+                            </div>
+                            <div class="cart-item-details">
+                                <div class="item-header">
+                                    <h4 class="item-title">Modern Luxury Apartment</h4>
+                                    <button class="btn-remove-item" title="Remove from cart">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="item-location">
+                                    <i class="fas fa-map-marker-alt"></i> Downtown District, City Center
+                                </p>
+                                <div class="item-features">
+                                    <span><i class="fas fa-bed"></i> 3 Bedrooms</span>
+                                    <span><i class="fas fa-bath"></i> 2 Bathrooms</span>
+                                    <span><i class="fas fa-ruler-combined"></i> 1,800 sqft</span>
+                                </div>
+                                <div class="item-description">
+                                    Premium apartment with modern amenities, contemporary design, and excellent location near shopping and dining.
+                                </div>
+                                <div class="item-footer">
+                                    <div class="item-price">$450,000</div>
+                                    <div class="item-actions">
+                                        <a href="#" class="btn-view-property">View Details</a>
+                                        <a href="#" class="btn-compare">
+                                            <i class="fas fa-compress"></i> Compare
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cart Item 2 -->
+                        <div class="cart-item">
+                            <div class="cart-item-image">
+                                <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=400&q=80" alt="Property 2">
+                                <span class="item-badge">For Rent</span>
+                            </div>
+                            <div class="cart-item-details">
+                                <div class="item-header">
+                                    <h4 class="item-title">Spacious Family Home</h4>
+                                    <button class="btn-remove-item" title="Remove from cart">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="item-location">
+                                    <i class="fas fa-map-marker-alt"></i> Suburban Heights, Peaceful Area
+                                </p>
+                                <div class="item-features">
+                                    <span><i class="fas fa-bed"></i> 4 Bedrooms</span>
+                                    <span><i class="fas fa-bath"></i> 3 Bathrooms</span>
+                                    <span><i class="fas fa-ruler-combined"></i> 2,500 sqft</span>
+                                </div>
+                                <div class="item-description">
+                                    Beautiful family home with large backyard, spacious rooms, and perfect for growing families.
+                                </div>
+                                <div class="item-footer">
+                                    <div class="item-price">$3,500 / month</div>
+                                    <div class="item-actions">
+                                        <a href="#" class="btn-view-property">View Details</a>
+                                        <a href="#" class="btn-compare">
+                                            <i class="fas fa-compress"></i> Compare
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cart Item 3 -->
+                        <div class="cart-item">
+                            <div class="cart-item-image">
+                                <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=400&q=80" alt="Property 3">
+                                <span class="item-badge">For Sale</span>
+                            </div>
+                            <div class="cart-item-details">
+                                <div class="item-header">
+                                    <h4 class="item-title">Cozy Studio Condo</h4>
+                                    <button class="btn-remove-item" title="Remove from cart">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <p class="item-location">
+                                    <i class="fas fa-map-marker-alt"></i> Midtown Plaza, Walking Distance to Transit
+                                </p>
+                                <div class="item-features">
+                                    <span><i class="fas fa-bed"></i> 1 Bedroom</span>
+                                    <span><i class="fas fa-bath"></i> 1 Bathroom</span>
+                                    <span><i class="fas fa-ruler-combined"></i> 600 sqft</span>
+                                </div>
+                                <div class="item-description">
+                                    Perfect starter property or investment, modern amenities, excellent for young professionals.
+                                </div>
+                                <div class="item-footer">
+                                    <div class="item-price">$250,000</div>
+                                    <div class="item-actions">
+                                        <a href="#" class="btn-view-property">View Details</a>
+                                        <a href="#" class="btn-compare">
+                                            <i class="fas fa-compress"></i> Compare
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cart Summary -->
+                <div class="col-lg-4">
+                    <div class="cart-summary-wrapper">
+                        <div class="summary-card">
+                            <h4 class="summary-title">Comparison Summary</h4>
+
+                            <div class="summary-section">
+                                <h5 class="summary-subtitle">Price Range</h5>
+                                <div class="summary-item">
+                                    <span>Min Price:</span>
+                                    <strong>$250,000</strong>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Max Price:</span>
+                                    <strong>$450,000</strong>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Average:</span>
+                                    <strong>$350,000</strong>
+                                </div>
+                            </div>
+
+                            <div class="summary-section">
+                                <h5 class="summary-subtitle">Bedrooms</h5>
+                                <div class="bed-distribution">
+                                    <div class="distribution-bar">
+                                        <div class="bar-segment" style="width: 33.33%;" title="1 Bed"></div>
+                                        <div class="bar-segment" style="width: 33.33%; background: #4DB8AE;" title="3 Beds"></div>
+                                        <div class="bar-segment" style="width: 33.33%;" title="4 Beds"></div>
+                                    </div>
+                                    <small>1 Bed • 3 Beds • 4 Beds</small>
+                                </div>
+                            </div>
+
+                            <div class="summary-actions">
+                                <a href="/Checkout" class="btn-proceed-checkout">
+                                    <i class="fas fa-arrow-right"></i> Proceed to Checkout
+                                </a>
+                                <a href="/Comparison" class="btn-compare-full">
+                                    <i class="fas fa-columns"></i> Compare All
+                                </a>
+                            </div>
+
+                            <div class="summary-tips">
+                                <h5 class="summary-subtitle">💡 Tips</h5>
+                                <ul>
+                                    <li>Compare properties side-by-side</li>
+                                    <li>Schedule viewings directly</li>
+                                    <li>Save your favorites forever</li>
+                                    <li>Get expert recommendations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related CTA -->
+    <section class="cta-section-modern">
+        <div class="container text-center">
+            <h2 class="cta-title">Ready to Make an Offer?</h2>
+            <p class="cta-subtitle">Our agents are ready to help with your next step</p>
+            <a href="#" class="btn-primary-modern btn-lg">Schedule a Viewing</a>
+        </div>
+    </section>
+</div>
+
+<style>
+    .estateflow-page-wrapper {
+        background: #F8F9FA;
+        min-height: 100vh;
+    }
+
+    /* Cart Section */
+    .cart-section {
+        padding: 60px 0;
+    }
+
+    /* Cart Items */
+    .cart-items-wrapper {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #E5E7EB;
+    }
+
+    .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25px;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+    .cart-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1E3A5F;
+        margin: 0;
+    }
+
+    .link-continue-shopping {
+        color: #16A39E;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: color 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .link-continue-shopping:hover {
+        color: #0F8B84;
+    }
+
+    /* Cart Item */
+    .cart-item {
+        display: flex;
+        gap: 25px;
+        padding: 25px;
+        border-bottom: 1px solid #E5E7EB;
+        transition: background 0.3s;
+    }
+
+    .cart-item:hover {
+        background: #F8F9FA;
+    }
+
+    .cart-item-image {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        border-radius: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .cart-item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .item-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #16A39E;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    /* Item Details */
+    .cart-item-details {
+        flex: 1;
+    }
+
+    .item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+
+    .item-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1E3A5F;
+        margin: 0;
+    }
+
+    .btn-remove-item {
+        background: none;
+        border: none;
+        color: #EF4444;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+
+    .btn-remove-item:hover {
+        transform: scale(1.2);
+    }
+
+    .item-location {
+        color: #6B7280;
+        font-size: 0.9rem;
+        margin: 0 0 12px 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .item-features {
+        display: flex;
+        gap: 16px;
+        margin: 12px 0;
+        flex-wrap: wrap;
+    }
+
+    .item-features span {
+        font-size: 0.9rem;
+        color: #6B7280;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .item-features i {
+        color: #FF9500;
+    }
+
+    .item-description {
+        color: #6B7280;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 12px 0;
+    }
+
+    .item-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #E5E7EB;
+    }
+
+    .item-price {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #16A39E;
+    }
+
+    .item-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-view-property,
+    .btn-compare {
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-view-property {
+        background: #16A39E;
+        color: white;
+    }
+
+    .btn-view-property:hover {
+        background: #0F8B84;
+        text-decoration: none;
+    }
+
+    .btn-compare {
+        background: #E0F2F1;
+        color: #16A39E;
+    }
+
+    .btn-compare:hover {
+        background: #D0EAE7;
+        text-decoration: none;
+    }
+
+    /* Summary Card */
+    .cart-summary-wrapper {
+        position: sticky;
+        top: 20px;
+    }
+
+    .summary-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        border: 1px solid #E5E7EB;
+    }
+
+    .summary-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1E3A5F;
+        margin-bottom: 20px;
+    }
+
+    .summary-section {
+        margin-bottom: 25px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+    .summary-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .summary-subtitle {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #16A39E;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .summary-item span {
+        color: #6B7280;
+    }
+
+    .summary-item strong {
+        color: #1E3A5F;
+    }
+
+    .distribution-bar {
+        display: flex;
+        height: 8px;
+        background: #E5E7EB;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        overflow: hidden;
+    }
+
+    .bar-segment {
+        background: #16A39E;
+        flex: 1;
+        transition: opacity 0.3s;
+    }
+
+    .bar-segment:hover {
+        opacity: 0.8;
+    }
+
+    .distribution-bar + small {
+        color: #6B7280;
+        font-size: 0.75rem;
+    }
+
+    /* Summary Actions */
+    .summary-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .btn-proceed-checkout,
+    .btn-compare-full {
+        padding: 12px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-proceed-checkout {
+        background: #16A39E;
+        color: white;
+    }
+
+    .btn-proceed-checkout:hover {
+        background: #0F8B84;
+        text-decoration: none;
+    }
+
+    .btn-compare-full {
+        background: #E0F2F1;
+        color: #16A39E;
+        border: 1px solid #16A39E;
+    }
+
+    .btn-compare-full:hover {
+        background: #D0EAE7;
+        text-decoration: none;
+    }
+
+    /* Tips Section */
+    .summary-tips ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .summary-tips li {
+        padding: 8px 0;
+        color: #6B7280;
+        font-size: 0.9rem;
+        padding-left: 24px;
+        position: relative;
+    }
+
+    .summary-tips li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #16A39E;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 991.98px) {
+        .cart-item {
+            flex-direction: column;
+        }
+
+        .cart-item-image {
+            width: 100%;
+            height: 250px;
+        }
+
+        .cart-summary-wrapper {
+            position: static;
+            margin-top: 30px;
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .cart-header {
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .cart-item {
+            padding: 15px;
+        }
+
+        .cart-item-image {
+            height: 200px;
+        }
+
+        .item-footer {
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .item-actions {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .btn-view-property,
+        .btn-compare {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>

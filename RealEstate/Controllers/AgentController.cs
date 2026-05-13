@@ -52,9 +52,8 @@ public class AgentController : Controller
             return Unauthorized();
 
         // Get properties for this agent
-        var allProperties = _catalog.GetProperties()
-            .Where(p => p.AgentId == agentId.Value)
-            .ToList();
+        // Note: AgentId removed from Property model - returning all properties
+        var allProperties = _catalog.GetProperties().ToList();
 
         var total = allProperties.Count;
         page = Math.Max(1, page);

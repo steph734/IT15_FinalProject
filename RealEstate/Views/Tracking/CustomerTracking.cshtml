@@ -1,0 +1,221 @@
+@{
+    ViewData["Title"] = "Track Your Viewing";
+    var appointment = ViewBag.Appointment as RealEstate.Models.ViewingAppointment;
+    var property = ViewBag.Property as RealEstate.Models.Property;
+}
+
+<div class="container-fluid p-0">
+    <!-- Header -->
+    <div class="tracking-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2><i class="fas fa-map-marker-alt me-2"></i>Live Tracking</h2>
+                    <p class="mb-0">Track your agent and property location in real-time</p>
+                </div>
+                <div class="col-auto">
+                    <button id="startTrackingBtn" class="btn btn-success btn-lg" onclick="startTracking()">
+                        <i class="fas fa-play me-2"></i>Start Tracking
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map" style="height: calc(100vh - 100px); width: 100%;"></div>
+
+    <!-- Info Panel -->
+    <div class="tracking-info-panel">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-info-circle me-2"></i>Viewing Details</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Property:</strong><br>
+                        @property?.Title
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Scheduled:</strong><br>
+                        @appointment?.WhenUtc.ToString("MMM dd, yyyy hh:mm tt")
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Status:</strong><br>
+                        <span id="trackingStatus" class="badge bg-warning">Not Started</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+.tracking-header {
+    background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-navy) 100%);
+    color: white;
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tracking-info-panel {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 600px;
+}
+
+@@media (max-width: 768px) {
+    .tracking-info-panel {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+    }
+}
+</style>
+
+<script>
+let map;
+let customerMarker;
+let agentMarker;
+let propertyMarker;
+let watchId;
+let sessionId;
+let isTracking = false;
+
+const appointmentId = @appointment?.Id;
+const propertyLat = @property?.Latitude ?? 0;
+const propertyLng = @property?.Longitude ?? 0;
+
+// Initialize map
+function initMap() {
+    map = L.map('map').setView([propertyLat, propertyLng], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Add property marker
+    const propertyIcon = L.divIcon({
+        html: '<i class="fas fa-home" style="font-size: 24px; color: #2563EB;"></i>',
+        iconSize: [30, 30],
+        className: 'custom-div-icon'
+    });
+
+    propertyMarker = L.marker([propertyLat, propertyLng], { icon: propertyIcon })
+        .addTo(map)
+        .bindPopup('<b>Property Location</b><br>@property?.Title');
+}
+
+// Start tracking
+function startTracking() {
+    if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser');
+        return;
+    }
+
+    isTracking = true;
+    document.getElementById('startTrackingBtn').innerHTML = '<i class="fas fa-stop me-2"></i>Stop Tracking';
+    document.getElementById('startTrackingBtn').classList.remove('btn-success');
+    document.getElementById('startTrackingBtn').classList.add('btn-danger');
+    document.getElementById('startTrackingBtn').onclick = stopTracking;
+    document.getElementById('trackingStatus').textContent = 'Active';
+    document.getElementById('trackingStatus').classList.remove('bg-warning');
+    document.getElementById('trackingStatus').classList.add('bg-success');
+
+    // Add customer marker
+    const customerIcon = L.divIcon({
+        html: '<i class="fas fa-user" style="font-size: 24px; color: #10B981;"></i>',
+        iconSize: [30, 30],
+        className: 'custom-div-icon'
+    });
+
+    // Start watching position
+    watchId = navigator.geolocation.watchPosition(
+        updatePosition,
+        handleError,
+        { enableHighAccuracy: true, maximumAge: 5000 }
+    );
+
+    // Update location every 5 seconds
+    setInterval(shareLocation, 5000);
+}
+
+// Update position
+function updatePosition(position) {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+
+    if (customerMarker) {
+        customerMarker.setLatLng([lat, lng]);
+    } else {
+        const customerIcon = L.divIcon({
+            html: '<i class="fas fa-user" style="font-size: 24px; color: #10B981;"></i>',
+            iconSize: [30, 30],
+            className: 'custom-div-icon'
+        });
+
+        customerMarker = L.marker([lat, lng], { icon: customerIcon })
+            .addTo(map)
+            .bindPopup('<b>Your Location</b>');
+    }
+
+    map.setView([lat, lng], 15);
+}
+
+// Share location with server
+async function shareLocation() {
+    if (!isTracking || !customerMarker) return;
+
+    const lat = customerMarker.getLatLng().lat;
+    const lng = customerMarker.getLatLng().lng;
+
+    try {
+        const response = await fetch(`/tracking/customer/${appointmentId}/share-location`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ latitude: lat, longitude: lng })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            sessionId = result.sessionId;
+        }
+    } catch (error) {
+        console.error('Error sharing location:', error);
+    }
+}
+
+// Stop tracking
+function stopTracking() {
+    isTracking = false;
+    
+    if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+    }
+
+    document.getElementById('startTrackingBtn').innerHTML = '<i class="fas fa-play me-2"></i>Start Tracking';
+    document.getElementById('startTrackingBtn').classList.remove('btn-danger');
+    document.getElementById('startTrackingBtn').classList.add('btn-success');
+    document.getElementById('startTrackingBtn').onclick = startTracking;
+    document.getElementById('trackingStatus').textContent = 'Stopped';
+    document.getElementById('trackingStatus').classList.remove('bg-success');
+    document.getElementById('trackingStatus').classList.add('bg-secondary');
+}
+
+// Handle errors
+function handleError(error) {
+    console.error('Geolocation error:', error);
+    alert('Unable to get your location. Please enable location services.');
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', initMap);
+</script>

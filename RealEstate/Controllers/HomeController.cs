@@ -83,6 +83,41 @@ namespace RealEstate.Controllers
             return View();
         }
 
+        public IActionResult Cart()
+        {
+            return View();
+        }
+
+        public IActionResult Checkout()
+        {
+            return View();
+        }
+
+        public IActionResult Favorites()
+        {
+            return RedirectToRoute(new { controller = "Favorites", action = "Index" });
+        }
+
+        public IActionResult Comparison()
+        {
+            return View();
+        }
+
+        public IActionResult Guides()
+        {
+            return View();
+        }
+
+        public IActionResult PropertyMap()
+        {
+            return View();
+        }
+
+        public IActionResult Properties()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

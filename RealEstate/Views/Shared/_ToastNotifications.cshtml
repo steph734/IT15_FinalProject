@@ -1,0 +1,114 @@
+@if (TempData["SuccessMessage"] != null || TempData["ErrorMessage"] != null)
+{
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-3">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="toast toast-success transform transition-all duration-300 ease-out translate-x-0" role="alert">
+                <div class="flex items-center gap-3 bg-green-50 border-l-4 border-green-500 rounded-lg shadow-lg p-4 min-w-[320px] max-w-md">
+                    <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-600 text-lg"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-green-800">Success</p>
+                        <p class="text-sm text-green-700">@TempData["SuccessMessage"]</p>
+                    </div>
+                    <button onclick="dismissToast(this)" class="flex-shrink-0 text-green-400 hover:text-green-600 transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        }
+        
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="toast toast-error transform transition-all duration-300 ease-out translate-x-0" role="alert">
+                <div class="flex items-center gap-3 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-lg p-4 min-w-[320px] max-w-md">
+                    <div class="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-times-circle text-red-600 text-lg"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-red-800">Error</p>
+                        <p class="text-sm text-red-700">@TempData["ErrorMessage"]</p>
+                    </div>
+                    <button onclick="dismissToast(this)" class="flex-shrink-0 text-red-400 hover:text-red-600 transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <script>
+        // Auto-dismiss toasts after 5 seconds
+        setTimeout(function() {
+            var toasts = document.querySelectorAll('.toast');
+            toasts.forEach(function(toast) {
+                dismissToastElement(toast);
+            });
+        }, 5000);
+
+        function dismissToast(button) {
+            var toast = button.closest('.toast');
+            dismissToastElement(toast);
+        }
+
+        function dismissToastElement(toast) {
+            if (toast) {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(function() {
+                    toast.remove();
+                }, 300);
+            }
+        }
+    </script>
+
+    <style>
+        /* Tailwind CDN fallback for utility classes */
+        .fixed { position: fixed; }
+        .top-4 { top: 1rem; }
+        .right-4 { right: 1rem; }
+        .z-50 { z-index: 9999; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .gap-3 { gap: 0.75rem; }
+        .items-center { align-items: center; }
+        .flex-1 { flex: 1 1 0%; }
+        .flex-shrink-0 { flex-shrink: 0; }
+        .transform { transform: translateX(0); }
+        .transition-all { transition-property: all; }
+        .duration-300 { transition-duration: 300ms; }
+        .ease-out { transition-timing-function: ease-out; }
+        .translate-x-0 { transform: translateX(0); }
+        .translate-x-full { transform: translateX(100%); }
+        .opacity-0 { opacity: 0; }
+        .bg-green-50 { background-color: #f0fdf4; }
+        .bg-green-100 { background-color: #dcfce7; }
+        .bg-red-50 { background-color: #fef2f2; }
+        .bg-red-100 { background-color: #fee2e2; }
+        .border-l-4 { border-left-width: 4px; }
+        .border-green-500 { border-color: #22c55e; }
+        .border-red-500 { border-color: #ef4444; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .p-4 { padding: 1rem; }
+        .min-w-\[320px\] { min-width: 320px; }
+        .max-w-md { max-width: 28rem; }
+        .w-10 { width: 2.5rem; }
+        .h-10 { height: 2.5rem; }
+        .rounded-full { border-radius: 9999px; }
+        .text-lg { font-size: 1.125rem; }
+        .text-sm { font-size: 0.875rem; }
+        .font-semibold { font-weight: 600; }
+        .text-green-600 { color: #16a34a; }
+        .text-green-700 { color: #15803d; }
+        .text-green-800 { color: #166534; }
+        .text-green-400 { color: #4ade80; }
+        .text-red-600 { color: #dc2626; }
+        .text-red-700 { color: #b91c1c; }
+        .text-red-800 { color: #991b1b; }
+        .text-red-400 { color: #f87171; }
+        .hover\:text-green-600:hover { color: #16a34a; }
+        .hover\:text-red-600:hover { color: #dc2626; }
+        .transition-colors { transition-property: color; transition-duration: 150ms; }
+    </style>
+}

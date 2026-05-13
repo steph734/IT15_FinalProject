@@ -1,0 +1,311 @@
+@{
+    ViewData["Title"] = "Manager Page";
+    Layout = "~/Views/Shared/_BrokerLayout.cshtml";
+    ViewData["UserName"] = (string?)ViewBag.BrokerName ?? "Broker";
+}
+
+<style>
+    .manager-page {
+        background: #f4f6fb;
+        min-height: calc(100vh - 80px);
+        padding: 20px;
+    }
+
+    .manager-shell {
+        background: #ffffff;
+        border: 1px solid #e8edf5;
+        border-radius: 14px;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        display: grid;
+        grid-template-columns: 210px 1fr;
+        overflow: hidden;
+    }
+
+    .manager-nav {
+        border-right: 1px solid #eef2f7;
+        padding: 18px 14px;
+    }
+
+    .logo {
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .mini-profile {
+        padding-bottom: 14px;
+        border-bottom: 1px solid #eef2f7;
+        margin-bottom: 14px;
+    }
+
+    .avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #7c3aed, #6366f1);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .username {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+    .side-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .side-menu li {
+        margin-bottom: 6px;
+    }
+
+    .side-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: #64748b;
+        border-radius: 8px;
+        padding: 9px 10px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .side-menu a.active,
+    .side-menu a:hover {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .manager-content {
+        padding: 16px;
+        background: #f8fafc;
+    }
+
+    .content-top {
+        background: #fff;
+        border: 1px solid #edf2f7;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .title {
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .search {
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 9px 12px;
+        min-width: 240px;
+        font-size: 12px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1.3fr;
+        gap: 12px;
+    }
+
+    .card {
+        background: #fff;
+        border: 1px solid #edf2f7;
+        border-radius: 10px;
+        padding: 14px;
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #1e293b;
+    }
+
+    .task-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .task-box {
+        border: 1px solid #edf2f7;
+        border-radius: 8px;
+        padding: 10px;
+        background: #ffffff;
+    }
+
+    .task-name {
+        font-size: 12px;
+        color: #334155;
+        min-height: 36px;
+        margin-bottom: 8px;
+    }
+
+    .progress {
+        width: 100%;
+        height: 6px;
+        border-radius: 999px;
+        background: #e2e8f0;
+        overflow: hidden;
+    }
+
+    .progress > span {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #7c3aed, #6366f1);
+    }
+
+    .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .bars {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        align-items: end;
+        gap: 8px;
+        height: 140px;
+        margin-top: 8px;
+    }
+
+    .bar {
+        border-radius: 7px 7px 2px 2px;
+        background: #8b5cf6;
+    }
+
+    .timeline {
+        margin-top: 10px;
+    }
+
+    .line {
+        display: grid;
+        grid-template-columns: 90px 1fr 45px;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .pill {
+        border-radius: 999px;
+        padding: 6px 12px;
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        display: inline-block;
+    }
+
+    .p1 { background: linear-gradient(90deg, #f97316, #ef4444); }
+    .p2 { background: linear-gradient(90deg, #06b6d4, #3b82f6); }
+    .p3 { background: linear-gradient(90deg, #22c55e, #14b8a6); }
+    .p4 { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+
+    @@media (max-width: 1200px) {
+        .task-grid { grid-template-columns: repeat(2, 1fr); }
+        .grid, .two-col { grid-template-columns: 1fr; }
+    }
+
+    @@media (max-width: 900px) {
+        .manager-shell { grid-template-columns: 1fr; }
+        .manager-nav { border-right: none; border-bottom: 1px solid #eef2f7; }
+    }
+</style>
+
+<div class="manager-page">
+    <div class="manager-shell">
+        <aside class="manager-nav">
+            <div class="logo">Logo's name</div>
+            <div class="mini-profile">
+                <div class="avatar">A</div>
+                <div class="name">Angela Lee</div>
+                <div class="username">@@anglee</div>
+            </div>
+
+            <ul class="side-menu">
+                <li><a class="active" href="#"><i class="fas fa-table-columns"></i> Dashboard</a></li>
+                <li><a href="#"><i class="far fa-square-check"></i> My Tasks</a></li>
+                <li><a href="#"><i class="far fa-message"></i> Message</a></li>
+                <li><a href="#"><i class="fas fa-bullseye"></i> Goals</a></li>
+                <li><a href="#"><i class="far fa-star"></i> Groups</a></li>
+                <li><a href="#"><i class="fas fa-gear"></i> Settings</a></li>
+                <li><a href="/broker/logout"><i class="fas fa-arrow-right-from-bracket"></i> Log Out</a></li>
+            </ul>
+        </aside>
+
+        <section class="manager-content">
+            <div class="content-top">
+                <div class="title">Task Boards</div>
+                <input class="search" type="text" placeholder="Search..." />
+            </div>
+
+            <div class="card">
+                <div class="card-title">Backlog Tasks</div>
+                <div class="task-grid">
+                    <div class="task-box"><div class="task-name">Page "Order" and "Setting"</div><div class="progress"><span style="width:52%"></span></div></div>
+                    <div class="task-box"><div class="task-name">Create calendar, chat and email app pages</div><div class="progress"><span style="width:61%"></span></div></div>
+                    <div class="task-box"><div class="task-name">Product design sketch and prototype</div><div class="progress"><span style="width:43%"></span></div></div>
+                    <div class="task-box"><div class="task-name">Change email option process</div><div class="progress"><span style="width:36%"></span></div></div>
+                </div>
+            </div>
+
+            <div class="grid" style="margin-top: 12px;">
+                <div class="two-col">
+                    <div class="card">
+                        <div class="card-title">Teams Strength</div>
+                        <div class="bars">
+                            <div class="bar" style="height:72%; background:#22c55e;"></div>
+                            <div class="bar" style="height:82%; background:#f97316;"></div>
+                            <div class="bar" style="height:52%; background:#06b6d4;"></div>
+                            <div class="bar" style="height:96%; background:#3b82f6;"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Employees</div>
+                        <div style="height:140px; border-radius:50%; width:140px; margin:0 auto; background:conic-gradient(#3b82f6 0 78%, #e2e8f0 78% 100%); position:relative;">
+                            <div style="position:absolute; inset:16px; border-radius:50%; background:#fff;"></div>
+                        </div>
+                        <div style="text-align:center; font-size:12px; color:#64748b; margin-top:6px;">Active 6000 / Total 6320</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Timeline</div>
+                    <div class="timeline">
+                        <div class="line"><span>Research</span><span class="pill p1">Meeting</span><span>60%</span></div>
+                        <div class="line"><span>UI Design</span><span class="pill p2">Landing page</span><span>55%</span></div>
+                        <div class="line"><span>Phase QA</span><span class="pill p3">Testing</span><span>47%</span></div>
+                        <div class="line"><span>Development</span><span class="pill p4">Products module</span><span>75%</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

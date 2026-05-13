@@ -1,0 +1,214 @@
+@model List<RealEstate.Models.PaymentTransaction>
+@{
+    ViewData["Title"] = "Transaction History";
+    Layout = "~/Views/Shared/_AccountingLayout.cshtml";
+}
+
+<div class="payroll-page">
+    <section class="payroll-header history-header">
+        <div class="container-fluid px-lg-4">
+            <div class="d-flex justify-content-between align-items-end">
+                <div>
+                    <span class="page-badge">TRANSACTIONS</span>
+                    <h1 class="page-title">Transaction History</h1>
+                    <p class="page-subtitle">All financial transactions and sales records</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-export" onclick="alert('Export feature coming soon')">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container-fluid px-lg-4 py-4">
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="summary-card card-total">
+                    <div class="card-icon"><i class="fas fa-exchange-alt"></i></div>
+                    <div class="card-data">
+                        <div class="card-value">@(Model?.Count ?? 0)</div>
+                        <div class="card-label">Total Transactions</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summary-card card-amount">
+                    <div class="card-icon"><i class="fas fa-coins"></i></div>
+                    <div class="card-data">
+                        <div class="card-value">₱@((Model?.Sum(t => t.Amount) ?? 0).ToString("N0"))</div>
+                        <div class="card-label">Total Amount</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summary-card card-paid">
+                    <div class="card-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="card-data">
+                        <div class="card-value">@(Model?.Count(t => t.Status == "succeeded") ?? 0)</div>
+                        <div class="card-label">Successful</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summary-card card-failed">
+                    <div class="card-icon"><i class="fas fa-times-circle"></i></div>
+                    <div class="card-data">
+                        <div class="card-value">@(Model?.Count(t => t.Status == "failed") ?? 0)</div>
+                        <div class="card-label">Failed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-card">
+            <div class="data-card-header">
+                <div class="header-left">
+                    <h5><i class="fas fa-list-check"></i> Transaction History</h5>
+                    <span class="record-count">@(Model?.Count ?? 0) records</span>
+                </div>
+                <div class="header-right">
+                    <div class="search-input">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchTransactions" placeholder="Search transactions..." />
+                    </div>
+                </div>
+            </div>
+
+            @if (Model?.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="modern-table" id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>Transaction #</th>
+                                <th>Amount</th>
+                                <th>Currency</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="deal-info">
+                                            <div class="deal-icon">💳</div>
+                                            <div class="deal-details">
+                                                <div class="deal-name">TXN-@t.Id.ToString().PadLeft(5, '0')</div>
+                                                <div class="deal-id">@t.PayMongoPaymentIntentId</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="amount gross">₱@t.Amount.ToString("N2")</span></td>
+                                    <td><span class="method-badge">@t.Currency</span></td>
+                                    <td><span class="method-badge">@(t.PaymentMethod ?? "N/A")</span></td>
+                                    <td>
+                                        @if (t.Status == "succeeded")
+                                        {
+                                            <span class="status-pill pill-paid"><i class="fas fa-check"></i> Succeeded</span>
+                                        }
+                                        else if (t.Status == "pending")
+                                        {
+                                            <span class="status-pill pill-pending"><i class="fas fa-clock"></i> Pending</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-pill pill-rejected"><i class="fas fa-ban"></i> @t.Status</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="date-info">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>@t.CreatedDate.ToString("MMM dd, yyyy HH:mm")</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="text-muted">@(t.Description ?? "No description")</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">💳</div>
+                    <h4>No Transactions</h4>
+                    <p>No financial transactions found.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .payroll-page { background: #F1F5F9; min-height: 100vh; }
+    .history-header { background: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%) !important; }
+    .payroll-header { background: linear-gradient(135deg, #1E3A5F 0%, #16A39E 100%); color: white; padding: 40px 0 30px; }
+    .page-badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 6px; }
+    .page-subtitle { font-size: 0.95rem; opacity: 0.9; margin: 0; }
+    .btn-export { display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+    .btn-export:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+    .summary-card { background: white; border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+    .card-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+    .card-total .card-icon { background: #DBEAFE; color: #2563EB; }
+    .card-amount .card-icon { background: #D1FAE5; color: #059669; }
+    .card-paid .card-icon { background: #DCFCE7; color: #16A34A; }
+    .card-failed .card-icon { background: #FEE2E2; color: #DC2626; }
+    .card-value { font-size: 1.4rem; font-weight: 800; color: #1E293B; }
+    .card-label { font-size: 0.85rem; color: #64748B; margin-top: 2px; }
+    .data-card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; overflow: hidden; }
+    .data-card-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #F1F5F9; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-left h5 { margin: 0; font-weight: 700; color: #1E293B; font-size: 1.1rem; }
+    .header-left h5 i { color: #4f46e5; margin-right: 6px; }
+    .record-count { background: #F1F5F9; color: #64748B; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+    .search-input { position: relative; display: flex; align-items: center; }
+    .search-input i { position: absolute; left: 12px; color: #94A3B8; font-size: 0.9rem; }
+    .search-input input { padding: 10px 12px 10px 36px; border: 1px solid #E2E8F0; border-radius: 10px; font-size: 0.9rem; outline: none; width: 240px; }
+    .search-input input:focus { border-color: #4f46e5; }
+    .modern-table { width: 100%; border-collapse: collapse; }
+    .modern-table thead th { background: #F8FAFC; padding: 14px 20px; text-align: left; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748B; border-bottom: 1px solid #E2E8F0; }
+    .modern-table tbody td { padding: 16px 20px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
+    .modern-table tbody tr:hover { background: #FAFBFC; }
+    .modern-table tbody tr:last-child td { border-bottom: none; }
+    .deal-info { display: flex; align-items: center; gap: 12px; }
+    .deal-icon { font-size: 1.5rem; }
+    .deal-name { font-weight: 700; color: #1E293B; font-size: 0.95rem; }
+    .deal-id { font-size: 0.8rem; color: #94A3B8; }
+    .amount { font-weight: 700; font-size: 0.95rem; }
+    .amount.gross { color: #2563EB; }
+    .method-badge { display: inline-flex; align-items: center; gap: 4px; background: #F1F5F9; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: #374151; }
+    .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+    .pill-paid { background: #DCFCE7; color: #166534; }
+    .pill-pending { background: #FEF3C7; color: #92400E; }
+    .pill-rejected { background: #FEE2E2; color: #991B1B; }
+    .date-info { display: flex; align-items: center; gap: 8px; color: #64748B; font-size: 0.9rem; }
+    .date-info i { color: #94A3B8; }
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+    .empty-state h4 { color: #1E293B; font-weight: 700; margin-bottom: 8px; }
+    .empty-state p { color: #64748B; margin: 0; }
+    @@media (max-width: 768px) { .data-card-header { flex-direction: column; gap: 12px; align-items: flex-start; } .search-input input { width: 100%; } }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchTransactions');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const term = this.value.toLowerCase();
+                document.querySelectorAll('#transactionsTable tbody tr').forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                });
+            });
+        }
+    });
+</script>

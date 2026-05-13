@@ -1,0 +1,68 @@
+@model List<RealEstate.Models.CommissionBatch>
+@{
+    ViewData["Title"] = "Payout Batches";
+    Layout = "~/Views/Shared/_AccountingLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h2 class="h4 fw-bold mb-1">Payout Batches</h2>
+            <div class="text-muted small">Batches transferred from Managers for payout processing.</div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string ok && !string.IsNullOrWhiteSpace(ok))
+    {
+        <div class="alert alert-success py-2 small">@ok</div>
+    }
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Batch ID</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Completed</th>
+                            <th style="width:120px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model?.Count > 0)
+                        {
+                            foreach (var b in Model)
+                            {
+                                var badge = b.Status switch
+                                {
+                                    RealEstate.Models.CommissionBatchStatus.AwaitingReview => "bg-secondary",
+                                    RealEstate.Models.CommissionBatchStatus.Processing => "bg-warning text-dark",
+                                    RealEstate.Models.CommissionBatchStatus.Released => "bg-success",
+                                    RealEstate.Models.CommissionBatchStatus.Completed => "bg-dark",
+                                    _ => "bg-secondary"
+                                };
+                                <tr>
+                                    <td class="fw-semibold">@b.BatchId</td>
+                                    <td><span class="badge @badge">@b.Status</span></td>
+                                    <td class="small text-muted">@b.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td class="small text-muted">@b.CompletedAtUtc?.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td class="text-end">
+                                        <a class="btn btn-sm btn-outline-primary" href="/accounting/payout-batches/@b.BatchId">Open</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-muted small">No batches yet.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

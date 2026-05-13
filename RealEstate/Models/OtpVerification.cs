@@ -10,5 +10,5 @@ public class OtpVerification
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
     // Navigation property
-    public User? User { get; set; }
+    public ApplicationUser? User { get; set; }
 }

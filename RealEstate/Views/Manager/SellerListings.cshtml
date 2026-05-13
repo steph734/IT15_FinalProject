@@ -1,0 +1,167 @@
+@model IEnumerable<RealEstate.Models.Property>
+@{
+    ViewData["Title"] = "Seller Listings";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    var currentStatus = ViewBag.CurrentStatus as string ?? "All";
+}
+
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <h2 class="mb-1 d-flex align-items-center">
+            <i class="fas fa-building text-primary me-2"></i> Seller Listings
+        </h2>
+        <p class="text-muted mb-0">Review, approve, and manage property submissions from sellers.</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (ViewBag.CountPending > 0)
+    {
+        <div class="alert alert-warning d-flex align-items-center mb-4 border-0 shadow-sm" style="background-color: #fff8e1; border-left: 4px solid #ffc107 !important;">
+            <i class="fas fa-clock fs-5 text-warning me-3"></i>
+            <div>
+                <strong>@ViewBag.CountPending listing(s) awaiting your review.</strong>
+                <a href="/manager/sellers/listings?status=PendingReview" class="text-warning fw-bold text-decoration-none ms-2">Review Now &rarr;</a>
+            </div>
+        </div>
+    }
+
+    <!-- Tabs -->
+    <ul class="nav nav-pills mb-4 gap-2">
+        <li class="nav-item">
+            <a class="nav-link rounded-pill px-4 @(currentStatus == "All" ? "active bg-white text-primary border border-primary fw-bold" : "text-muted border bg-white")" 
+               href="/manager/sellers/listings?status=All">
+                All (@ViewBag.CountAll)
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-pill px-4 @(currentStatus == "PendingReview" ? "active bg-white text-warning border border-warning fw-bold" : "text-muted border bg-white")" 
+               href="/manager/sellers/listings?status=PendingReview">
+                Pending Review
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-pill px-4 @(currentStatus == "Approved" ? "active bg-white text-success border border-success fw-bold" : "text-muted border bg-white")" 
+               href="/manager/sellers/listings?status=Approved">
+                Approved
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-pill px-4 @(currentStatus == "Rejected" ? "active bg-white text-danger border border-danger fw-bold" : "text-muted border bg-white")" 
+               href="/manager/sellers/listings?status=Rejected">
+                Rejected
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-pill px-4 @(currentStatus == "Sold" ? "active bg-white text-secondary border border-secondary fw-bold" : "text-muted border bg-white")" 
+               href="/manager/sellers/listings?status=Sold">
+                Sold
+            </a>
+        </li>
+    </ul>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-muted small fw-bold text-uppercase">
+                        <tr>
+                            <th class="ps-4 py-3">#</th>
+                            <th class="py-3">Property</th>
+                            <th class="py-3">Seller</th>
+                            <th class="py-3">Type</th>
+                            <th class="py-3">Suggested Price</th>
+                            <th class="py-3">Final Price</th>
+                            <th class="py-3">Status</th>
+                            <th class="py-3">Submitted</th>
+                            <th class="pe-4 py-3 text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr><td colspan="9" class="text-center py-5 text-muted">No properties found.</td></tr>
+                        }
+                        else
+                        {
+                            int index = 1;
+                            foreach (var p in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 text-muted">@index.ToString("D2")</td>
+                                    <td>
+                                        <div class="fw-bold text-dark">@p.Title</div>
+                                        <div class="small text-muted"><i class="fas fa-map-marker-alt me-1"></i>@p.Location</div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-dark">@(p.Seller?.SellerName ?? "Unknown")</span>
+                                    </td>
+                                    <td>@p.PropertyType</td>
+                                    <td class="fw-bold text-primary">₱@p.SuggestedPrice?.ToString("N0")</td>
+                                    <td class="text-muted">
+                                        @(p.FinalPrice.HasValue ? $"₱{p.FinalPrice.Value.ToString("N0")}" : "—")
+                                    </td>
+                                    <td>
+                                        @if (p.Status == "Inspection")
+                                        {
+                                            <span class="badge rounded-pill bg-info text-dark px-3 py-2 border border-info" style="background-color: #e3f2fd !important;">Under Inspection</span>
+                                        }
+                                        else if (p.Status == "PendingReview")
+                                        {
+                                            <span class="badge rounded-pill bg-warning text-dark px-3 py-2 border border-warning" style="background-color: #fff8e1 !important;">Pending Review</span>
+                                        }
+                                        else if (p.Status == "Approved")
+                                        {
+                                            <span class="badge rounded-pill bg-success text-success px-3 py-2 border border-success" style="background-color: #e8f5e9 !important;">Approved</span>
+                                        }
+                                        else if (p.Status == "Rejected")
+                                        {
+                                            <span class="badge rounded-pill bg-danger text-danger px-3 py-2 border border-danger" style="background-color: #ffebee !important;">Rejected</span>
+                                        }
+                                        else if (p.Status == "Sold")
+                                        {
+                                            <span class="badge rounded-pill bg-secondary text-secondary px-3 py-2 border border-secondary" style="background-color: #f5f5f5 !important;">Sold</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill bg-light text-dark px-3 py-2 border">@p.Status</span>
+                                        }
+                                    </td>
+                                    <td class="text-muted">@p.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                    <td class="pe-4 text-end">
+                                        @if (p.Status == "PendingReview" || p.Status == "Inspection")
+                                        {
+                                            <a href="/manager/properties/@p.PropertyId" class="btn btn-sm btn-outline-warning rounded-pill px-3 fw-bold">
+                                                <i class="fas fa-eye me-1"></i> Review
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="/manager/properties/@p.PropertyId" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

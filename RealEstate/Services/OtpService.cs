@@ -66,6 +66,21 @@ public class OtpService
     {
         try
         {
+            // Debug logging
+            _logger.LogInformation($"VerifyOtpAsync called - UserId: {userId}, OtpCode: '{otpCode}', UtcNow: {DateTime.UtcNow}");
+            
+            // Check all OTPs for this user
+            var allOtps = await _context.OtpVerifications
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+            
+            _logger.LogInformation($"Found {allOtps.Count} OTPs for UserId {userId}");
+            foreach (var o in allOtps)
+            {
+                _logger.LogInformation($"OTP in DB - Id: {o.Id}, Code: '{o.OtpCode}', IsUsed: {o.IsUsed}, ExpiresAt: {o.ExpiresAt}");
+            }
+            
             var otp = await _context.OtpVerifications
                 .FirstOrDefaultAsync(o => 
                     o.UserId == userId && 
@@ -75,7 +90,7 @@ public class OtpService
 
             if (otp == null)
             {
-                _logger.LogWarning($"Invalid or expired OTP provided for UserId: {userId}");
+                _logger.LogWarning($"Invalid or expired OTP provided for UserId: {userId}, OtpCode: '{otpCode}'");
                 return false;
             }
 

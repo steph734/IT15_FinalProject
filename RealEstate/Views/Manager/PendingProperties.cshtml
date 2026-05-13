@@ -1,0 +1,83 @@
+@model IEnumerable<RealEstate.Models.Property>
+@{
+    ViewData["Title"] = "Pending Properties";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-tasks text-primary me-2"></i> Pending Property Reviews</h2>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Property</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                            <th>Suggested Price</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr><td colspan="6" class="text-center py-4 text-muted">No pending properties found.</td></tr>
+                        }
+                        else
+                        {
+                            foreach (var p in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold">@p.Title</div>
+                                        <small class="text-muted">@p.PropertyType • @p.Bedrooms Beds • @p.Bathrooms Baths</small>
+                                    </td>
+                                    <td>@p.Location</td>
+                                    <td>
+                                        @if (p.Status == "Inspection")
+                                        {
+                                            <span class="badge bg-warning text-dark"><i class="fas fa-search me-1"></i> Under Inspection</span>
+                                            @if(p.InspectionScheduledDate.HasValue)
+                                            {
+                                                <div class="small text-muted mt-1">Due: @p.InspectionScheduledDate.Value.ToString("MMM dd")</div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-info text-dark"><i class="fas fa-clock me-1"></i> Pending Review</span>
+                                        }
+                                    </td>
+                                    <td>@p.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                    <td class="fw-bold text-success">₱@p.SuggestedPrice?.ToString("N0")</td>
+                                    <td class="text-end">
+                                        <a href="/manager/properties/@p.PropertyId" class="btn btn-sm btn-outline-primary">Review Details</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

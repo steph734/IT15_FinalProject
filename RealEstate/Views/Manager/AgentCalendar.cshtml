@@ -1,0 +1,145 @@
+@{
+    ViewData["Title"] = "Agent Calendar";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<style>
+    .calendar-page { padding: 20px; background: #f5f7fb; min-height: calc(100vh - 80px); }
+    .calendar-shell { background: #fff; border: 1px solid #e9edf5; border-radius: 10px; overflow: hidden; }
+    .calendar-header { display: grid; grid-template-columns: 250px 1fr; border-bottom: 1px solid #eef2f7; }
+    .calendar-left { padding: 12px; border-right: 1px solid #eef2f7; }
+    .calendar-right { padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .toolbar-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .title { font-weight: 700; color: #475569; min-width: 180px; text-align: center; flex: 1; }
+    .btn-primary { border: none; border-radius: 8px; background: linear-gradient(135deg, #7c3aed, #6366f1); color: #fff; padding: 10px 12px; font-size: 12px; }
+    .btn-mini { border: 1px solid #e2e8f0; background: #fff; color: #64748b; border-radius: 6px; padding: 6px 10px; font-size: 11px; cursor: pointer; }
+    .btn-mini.active { background: #6366f1; border-color: #6366f1; color: #fff; }
+    .calendar-body { display: grid; grid-template-columns: 250px 1fr; min-height: 620px; }
+    .sidebar { padding: 12px; border-right: 1px solid #eef2f7; }
+    .hint { font-size: 11px; color: #94a3b8; margin-bottom: 8px; }
+    .tag { padding: 7px 9px; border-radius: 7px; font-size: 12px; margin-bottom: 8px; }
+    .t1 { background: #ede9fe; } .t2 { background: #cffafe; } .t3 { background: #dcfce7; } .t4 { background: #fee2e2; }
+    .views { overflow: auto; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .month-grid { min-width: 820px; display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid #eef2f7; border-left: 1px solid #eef2f7; }
+    .weekday, .day { border-right: 1px solid #eef2f7; border-bottom: 1px solid #eef2f7; }
+    .weekday { height: 36px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #64748b; background: #fbfcfe; }
+    .day { min-height: 96px; padding: 6px; }
+    .day-num { font-size: 11px; text-align: right; color: #94a3b8; }
+    .day-num.current { color: #111827; font-weight: 700; }
+    .ev { margin-top: 4px; border-radius: 5px; padding: 3px 6px; font-size: 10px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .purple { background: #7c3aed; } .orange { background: #fb923c; } .green { background: #22c55e; }
+    .week-grid { min-width: 900px; display: grid; grid-template-columns: 72px repeat(7, 1fr); border-top: 1px solid #eef2f7; border-left: 1px solid #eef2f7; }
+    .wh, .wt, .wc { border-right: 1px solid #eef2f7; border-bottom: 1px solid #eef2f7; }
+    .wh { height: 36px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #64748b; background: #fbfcfe; }
+    .wt { height: 40px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #64748b; }
+    .wc { height: 40px; position: relative; }
+    .wev { position: absolute; left: 4px; right: 4px; top: 4px; border-radius: 4px; padding: 2px 5px; font-size: 10px; color: #fff; }
+    .day-grid { min-width: 620px; display: grid; grid-template-columns: 72px 1fr; border-top: 1px solid #eef2f7; border-left: 1px solid #eef2f7; }
+    .dh { grid-column: 1 / span 2; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #64748b; border-right: 1px solid #eef2f7; border-bottom: 1px solid #eef2f7; background: #fbfcfe; }
+    .dt, .ds { border-right: 1px solid #eef2f7; border-bottom: 1px solid #eef2f7; height: 40px; }
+    .dt { display: flex; align-items: center; justify-content: center; font-size: 10px; color: #64748b; }
+    .ds { position: relative; }
+    .dev { position: absolute; left: 6px; right: 6px; top: 5px; border-radius: 5px; padding: 3px 6px; font-size: 10px; color: #fff; }
+    .list { padding: 10px; min-width: 620px; }
+    .lday { font-size: 12px; font-weight: 700; color: #475569; margin: 8px 0; }
+    .li { display: grid; grid-template-columns: 110px 1fr; gap: 10px; border: 1px solid #e9edf5; border-radius: 8px; padding: 8px; margin-bottom: 8px; }
+    .lt { font-size: 11px; color: #64748b; font-weight: 700; } .ls { font-size: 12px; color: #334155; }
+    @@media (max-width: 1000px) { .calendar-header, .calendar-body { grid-template-columns: 1fr; } .calendar-left, .sidebar { border-right: none; border-bottom: 1px solid #eef2f7; } .calendar-right { flex-direction: column; align-items: stretch; } .title { text-align: left; } }
+</style>
+
+<div class="calendar-page">
+    <div class="calendar-shell">
+        <div class="calendar-header">
+            <div class="calendar-left">
+                <button class="btn-primary" type="button"><i class="fas fa-plus"></i> Add Agent Schedule</button>
+            </div>
+            <div class="calendar-right">
+                <div class="toolbar-group">
+                    <button class="btn-mini" id="prevBtn" type="button">Prev</button>
+                    <button class="btn-mini" id="nextBtn" type="button">Next</button>
+                    <button class="btn-mini active" id="todayBtn" type="button">Today</button>
+                </div>
+                <div class="title" id="titleText"></div>
+                <div class="toolbar-group">
+                    <button class="btn-mini active" data-view="month" type="button">Month</button>
+                    <button class="btn-mini" data-view="week" type="button">Week</button>
+                    <button class="btn-mini" data-view="day" type="button">Day</button>
+                    <button class="btn-mini" data-view="list" type="button">List</button>
+                </div>
+            </div>
+        </div>
+        <div class="calendar-body">
+            <aside class="sidebar">
+                <div class="hint">Synced to your computer date/time.</div>
+                <div class="tag t1">Agent Interview</div>
+                <div class="tag t2">Property Tour</div>
+                <div class="tag t3">Client Call</div>
+                <div class="tag t4">Training Session</div>
+            </aside>
+            <div class="views">
+                <div class="panel active" id="monthPanel"></div>
+                <div class="panel" id="weekPanel"></div>
+                <div class="panel" id="dayPanel"></div>
+                <div class="panel" id="listPanel"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const title = document.getElementById('titleText');
+        const viewButtons = document.querySelectorAll('[data-view]');
+        const panels = { month: document.getElementById('monthPanel'), week: document.getElementById('weekPanel'), day: document.getElementById('dayPanel'), list: document.getElementById('listPanel') };
+        const todayBtn = document.getElementById('todayBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const now = new Date();
+        let cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        let currentView = 'month';
+
+        function eventsForDate(date) {
+            const d = date.getDay();
+            const list = [];
+            if (d === 5) list.push({ time: '11:09', title: 'Interview', cls: 'purple' }, { time: '14:46', title: 'Meeting', cls: 'orange' });
+            if (d === 1) list.push({ time: '09:45', title: 'Phone Screen', cls: 'green' });
+            if (date.getDate() === now.getDate()) list.push({ time: '16:00', title: 'Today Task', cls: 'purple' });
+            return list;
+        }
+        function formatWeekRange(date) { const s = new Date(date); s.setDate(date.getDate() - date.getDay()); const e = new Date(s); e.setDate(s.getDate() + 6); return `${monthNames[s.getMonth()].slice(0,3)} ${s.getDate()} - ${e.getDate()}, ${e.getFullYear()}`; }
+        function setActiveView(view) { currentView = view; Object.keys(panels).forEach(v => panels[v].classList.toggle('active', v === view)); viewButtons.forEach(b => b.classList.toggle('active', b.getAttribute('data-view') === view)); render(); }
+        function renderMonth() {
+            const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1); const start = new Date(first); start.setDate(first.getDate() - first.getDay());
+            let html = '<div class="month-grid">'; dayNames.forEach(d => html += `<div class="weekday">${d}</div>`);
+            for (let i = 0; i < 42; i++) { const d = new Date(start); d.setDate(start.getDate() + i); const inMonth = d.getMonth() === cursor.getMonth(); const isToday = d.toDateString() === now.toDateString(); html += `<div class="day"><div class="day-num ${isToday ? 'current' : ''}" style="${inMonth ? '' : 'opacity:.45;'}">${d.getDate()}</div>`; eventsForDate(d).slice(0,2).forEach(ev => html += `<div class="ev ${ev.cls}">${ev.time} ${ev.title}</div>`); html += '</div>'; }
+            panels.month.innerHTML = html + '</div>';
+        }
+        function renderWeek() {
+            const s = new Date(cursor); s.setDate(cursor.getDate() - cursor.getDay()); const hours = ['all-day','7am','8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm']; let html = '<div class="week-grid"><div class="wh"></div>';
+            for (let i = 0; i < 7; i++) { const d = new Date(s); d.setDate(s.getDate()+i); html += `<div class="wh">${dayNames[d.getDay()]} ${d.getMonth()+1}/${d.getDate()}</div>`; }
+            hours.forEach((h, idx) => { html += `<div class="wt">${h}</div>`; for (let i = 0; i < 7; i++) { const d = new Date(s); d.setDate(s.getDate()+i); const evs = eventsForDate(d).filter(e => idx === 5 && e.time.startsWith('11') || idx === 8 && e.time.startsWith('14') || idx === 10 && e.time.startsWith('16')); html += '<div class="wc">'; evs.forEach(ev => html += `<div class="wev ${ev.cls}">${ev.time} ${ev.title}</div>`); html += '</div>'; } });
+            panels.week.innerHTML = html + '</div>';
+        }
+        function renderDay() {
+            const hours = ['all-day','7am','8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm']; let html = `<div class="day-grid"><div class="dh">${cursor.toLocaleDateString()}</div>`;
+            hours.forEach((h, idx) => { html += `<div class="dt">${h}</div><div class="ds">`; eventsForDate(cursor).forEach(ev => { const show = (idx === 5 && ev.time.startsWith('11')) || (idx === 8 && ev.time.startsWith('14')) || (idx === 10 && ev.time.startsWith('16')); if (show) html += `<div class="dev ${ev.cls}">${ev.time} ${ev.title}</div>`; }); html += '</div>'; });
+            panels.day.innerHTML = html + '</div>';
+        }
+        function renderList() {
+            const s = new Date(cursor); s.setDate(cursor.getDate() - cursor.getDay()); let html = '<div class="list">';
+            for (let i = 0; i < 7; i++) { const d = new Date(s); d.setDate(s.getDate() + i); const evs = eventsForDate(d); if (!evs.length) continue; html += `<div class="lday">${d.toDateString()}</div>`; evs.forEach(ev => html += `<div class="li"><div class="lt">${ev.time}</div><div class="ls">${ev.title}</div></div>`); }
+            panels.list.innerHTML = html + '</div>';
+        }
+        function renderTitle() { if (currentView === 'month') title.textContent = `${monthNames[cursor.getMonth()]} ${cursor.getFullYear()}`; else if (currentView === 'week') title.textContent = formatWeekRange(cursor); else if (currentView === 'day') title.textContent = cursor.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }); else title.textContent = `${monthNames[cursor.getMonth()]} ${cursor.getFullYear()}`; }
+        function render() { renderTitle(); renderMonth(); renderWeek(); renderDay(); renderList(); }
+        prevBtn.addEventListener('click', function () { if (currentView === 'month' || currentView === 'list') cursor.setMonth(cursor.getMonth() - 1); else if (currentView === 'week') cursor.setDate(cursor.getDate() - 7); else cursor.setDate(cursor.getDate() - 1); cursor = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate()); render(); });
+        nextBtn.addEventListener('click', function () { if (currentView === 'month' || currentView === 'list') cursor.setMonth(cursor.getMonth() + 1); else if (currentView === 'week') cursor.setDate(cursor.getDate() + 7); else cursor.setDate(cursor.getDate() + 1); cursor = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate()); render(); });
+        todayBtn.addEventListener('click', function () { cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate()); render(); });
+        viewButtons.forEach(btn => btn.addEventListener('click', function () { setActiveView(this.getAttribute('data-view')); }));
+        setActiveView('month');
+    });
+</script>

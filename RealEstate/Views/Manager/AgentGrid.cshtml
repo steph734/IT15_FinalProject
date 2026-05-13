@@ -1,0 +1,64 @@
+@model List<RealEstate.Models.Agent>
+@{
+    ViewData["Title"] = "Agent Grid";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="agent-grid-page">
+    <div class="top-actions">
+        <span>Showing all 311 Agent</span>
+        <div>
+            <button class="btn-lite">More Setting</button>
+            <button class="btn-lite">Filters</button>
+            <button class="btn-main" data-bs-toggle="modal" data-bs-target="#newBrokerModal">+ New Agent</button>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string okMsg && !string.IsNullOrWhiteSpace(okMsg))
+    {
+        <div class="alert alert-success py-2 small">@okMsg</div>
+    }
+    @if (TempData["ErrorMessage"] is string errMsg && !string.IsNullOrWhiteSpace(errMsg))
+    {
+        <div class="alert alert-danger py-2 small">@errMsg</div>
+    }
+
+    <div class="row g-3">
+        @if (Model?.Count > 0)
+        {
+            foreach (var a in Model)
+            {
+                <div class="col-lg-4">
+                    <div class="agent-card">
+                        <div class="head">
+                            <img src="https://i.pravatar.cc/50?u=@a.Email" />
+                            <div>
+                                <strong>@a.DisplayName</strong>
+                                <div>@a.Email</div>
+                            </div>
+                        </div>
+                        <p>@a.YearsOfExperience year(s) experience</p>
+                        <div class="btns">
+                            <a class="call text-center text-decoration-none" href="@a.ResumeFilePath" target="_blank">Resume</a>
+                            <a class="text-center text-decoration-none" href="@a.ValidIdFilePath" target="_blank">Valid ID</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-muted small">No agents yet. Click “+ New Agent” to add one.</div>
+        }
+    </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Manager/_NewAgentModal.cshtml")
+
+<style>
+    .top-actions{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:.8rem;color:#64748b}.top-actions>div{display:flex;gap:8px}
+    .btn-lite,.btn-main{border-radius:8px;padding:8px 12px;font-size:.74rem;border:1px solid #dbe3ef;background:#fff}.btn-main{background:#22c55e;color:#fff;border-color:#22c55e}
+    .agent-card{background:#fff;border:1px solid #e9edf5;border-radius:10px;padding:12px}
+    .agent-card .head{display:flex;gap:10px;align-items:center;margin-bottom:8px}.agent-card img{width:40px;height:40px;border-radius:8px}.agent-card strong{font-size:.85rem}.agent-card p{font-size:.75rem;color:#64748b}
+    .btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns button{border:1px solid #e2e8f0;border-radius:8px;background:#fff;padding:8px;font-size:.72rem}.btns .call{background:#6d5efc;color:#fff;border-color:#6d5efc}
+</style>

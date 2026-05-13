@@ -1,0 +1,93 @@
+@model List<RealEstate.Models.CommissionDeal>
+@{
+    ViewData["Title"] = "Sales Pipeline";
+    Layout = "~/Views/Shared/_BrokerLayout.cshtml";
+    ViewData["UserName"] = (string?)ViewBag.BrokerName ?? "Broker";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h2 class="h4 fw-bold mb-1">Sales Pipeline</h2>
+            <div class="text-muted small">Mark deals as closed to trigger commission approval.</div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string msg && !string.IsNullOrWhiteSpace(msg))
+    {
+        <div class="alert alert-success py-2 small">@msg</div>
+    }
+
+    <div class="row g-3">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">Close a Deal</h6>
+                    <form method="post" action="/broker/sales/close" class="row g-2">
+                        <div class="col-12">
+                            <label class="form-label small">Property / Deal Label</label>
+                            <input name="propertyLabel" class="form-control" placeholder="e.g. House BGC - Client Santos" required />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small">Gross Commission Amount</label>
+                            <input name="grossCommission" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" required />
+                            <div class="form-text small">Auto-split applied: 70% Agent / 30% Company.</div>
+                        </div>
+                        <div class="col-12 d-grid mt-2">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-check me-2"></i>Mark Closed
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h6 class="fw-bold mb-0">Recent Closed Deals</h6>
+                        <span class="badge bg-light text-dark">Last 20</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Deal</th>
+                                    <th>Gross</th>
+                                    <th>Agent Payout</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model?.Count > 0)
+                                {
+                                    foreach (var d in Model)
+                                    {
+                                        <tr>
+                                            <td class="fw-semibold">@d.PropertyLabel</td>
+                                            <td>@d.GrossCommission.ToString("N2")</td>
+                                            <td class="text-success fw-semibold">@d.AgentPayoutAmount.ToString("N2")</td>
+                                            <td>
+                                                <span class="badge @(d.Status == RealEstate.Models.CommissionDealStatus.PendingManagerApproval ? "bg-warning text-dark" : "bg-success")">
+                                                    @d.Status
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-muted small">No closed deals yet.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

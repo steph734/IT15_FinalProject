@@ -1,0 +1,116 @@
+@* filepath: c:\Users\ADMIN\source\repos\real\RealEstate\Views\SuperAdmin\Settings.cshtml *@
+@model RealEstate.Models.SystemSettings
+@{
+    ViewData["Title"] = "System Settings";
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="table-card">
+            <div class="table-header">
+                <h5 style="font-weight: 700; margin: 0;">System Configuration</h5>
+            </div>
+            
+            <div class="p-4">
+                <form method="post" action="/superadmin/settings">
+                    @Html.AntiForgeryToken()
+                    
+                    <h6 class="fw-bold mb-3" style="color: #7c3aed;">
+                        <i class="fas fa-globe me-2"></i>General Settings
+                    </h6>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Site Name</label>
+                            <input type="text" name="SiteName" class="form-control" value="@(Model?.SiteName ?? "EstateFlow")" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Site Description</label>
+                            <input type="text" name="SiteDescription" class="form-control" value="@(Model?.SiteDescription ?? "")" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Contact Email</label>
+                            <input type="email" name="ContactEmail" class="form-control" value="@(Model?.ContactEmail ?? "")" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Support Phone</label>
+                            <input type="tel" name="SupportPhone" class="form-control" value="@(Model?.SupportPhone ?? "")" />
+                        </div>
+                    </div>
+                    
+                    <h6 class="fw-bold mb-3" style="color: #7c3aed;">
+                        <i class="fas fa-dollar-sign me-2"></i>Financial Settings
+                    </h6>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Default Commission Rate (%)</label>
+                            <input type="number" name="DefaultCommissionRate" class="form-control" step="0.1" value="@(Model?.DefaultCommissionRate ?? 5.0m)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Minimum Property Price ($)</label>
+                            <input type="number" name="MinimumPropertyPrice" class="form-control" value="@(Model?.MinimumPropertyPrice ?? 10000)" />
+                        </div>
+                    </div>
+                    
+                    <h6 class="fw-bold mb-3" style="color: #7c3aed;">
+                        <i class="fas fa-shield-alt me-2"></i>System Controls
+                    </h6>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input type="checkbox" name="EnableRegistration" class="form-check-input" value="true" @(Model?.EnableRegistration == true ? "checked" : "") />
+                                <label class="form-check-label fw-semibold">Enable Public Registration</label>
+                            </div>
+                            <small class="text-muted">Allow new users to register on the platform</small>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input type="checkbox" name="MaintenanceMode" class="form-check-input" value="true" @(Model?.MaintenanceMode == true ? "checked" : "") />
+                                <label class="form-check-label fw-semibold">Maintenance Mode</label>
+                            </div>
+                            <small class="text-muted">Temporarily disable the site for maintenance</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn-primary-custom">
+                            <i class="fas fa-save me-2"></i>Save Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="stat-card mb-4">
+            <h6 class="fw-bold mb-3" style="color: #7c3aed;">
+                <i class="fas fa-info-circle me-2"></i>System Info
+            </h6>
+            <div class="mb-2">
+                <small class="text-muted">Version:</small>
+                <div class="fw-semibold">1.0.0</div>
+            </div>
+            <div class="mb-2">
+                <small class="text-muted">Last Updated:</small>
+                <div class="fw-semibold">@(Model?.UpdatedAt?.ToString("MMM dd, yyyy HH:mm") ?? "Never")</div>
+            </div>
+            <div>
+                <small class="text-muted">Environment:</small>
+                <div class="fw-semibold">Production</div>
+            </div>
+        </div>
+        
+        <div class="stat-card" style="background: #fef3c7; border: 1px solid #fcd34d;">
+            <h6 class="fw-bold mb-2" style="color: #d97706;">
+                <i class="fas fa-exclamation-triangle me-2"></i>Warning
+            </h6>
+            <p class="small mb-0" style="color: #92400e;">
+                Changing system settings may affect all users. Please review changes carefully before saving.
+            </p>
+        </div>
+    </div>
+</div>

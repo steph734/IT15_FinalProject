@@ -1,0 +1,226 @@
+@model RealEstate.Models.SupportTicket
+
+@{
+    ViewData["Title"] = "Support Ticket Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Support Ticket #@Model.TicketId</h2>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.TicketId" class="btn btn-warning">
+                <i class="fas fa-edit me-2"></i>Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>@Model.Subject</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Status:</strong>
+                            @switch (Model.Status)
+                            {
+                                case "Open":
+                                    <span class="badge bg-primary">@Model.Status</span>
+                                    break;
+                                case "In Progress":
+                                    <span class="badge bg-info">@Model.Status</span>
+                                    break;
+                                case "Resolved":
+                                    <span class="badge bg-success">@Model.Status</span>
+                                    break;
+                                case "Closed":
+                                    <span class="badge bg-secondary">@Model.Status</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-light text-dark">@Model.Status</span>
+                                    break;
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Priority:</strong>
+                            @switch (Model.Priority)
+                            {
+                                case "Critical":
+                                    <span class="badge bg-danger">@Model.Priority</span>
+                                    break;
+                                case "High":
+                                    <span class="badge bg-warning text-dark">@Model.Priority</span>
+                                    break;
+                                case "Medium":
+                                    <span class="badge bg-info text-dark">@Model.Priority</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-secondary">@Model.Priority</span>
+                                    break;
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Category:</strong> @Model.Category
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Created:</strong> @Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Customer:</strong> @Model.Customer?.FullName ?? "N/A"
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Assigned To:</strong> @Model.AssignedEmployee?.User?.FullName ?? "Unassigned"
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Due Date:</strong> @(Model.DueDate?.ToString("MMM dd, yyyy HH:mm") ?? "Not set")
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Related Property:</strong> @Model.RelatedProperty?.Title ?? "N/A"
+                        </div>
+                    </div>
+
+                    @if (Model.ResolvedAt.HasValue)
+                    {
+                        <div class="alert alert-success">
+                            <strong>Resolved At:</strong> @Model.ResolvedAt.Value.ToString("MMM dd, yyyy HH:mm")
+                        </div>
+                    }
+
+                    @if (Model.ClosedAt.HasValue)
+                    {
+                        <div class="alert alert-secondary">
+                            <strong>Closed At:</strong> @Model.ClosedAt.Value.ToString("MMM dd, yyyy HH:mm")
+                        </div>
+                    }
+
+                    <hr>
+
+                    <h6 class="mb-3">Description</h6>
+                    <p>@Model.Description</p>
+
+                    @if (!string.IsNullOrEmpty(Model.Resolution))
+                    {
+                        <hr>
+                        <h6 class="mb-3">Resolution</h6>
+                        <p>@Model.Resolution</p>
+                    }
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-comments me-2"></i>Comments</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Comments != null && Model.Comments.Any())
+                    {
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <div class="card mb-2 @(comment.IsInternal ? "border-warning" : "")">
+                                <div class="card-body py-2">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>@comment.AuthorType</strong>
+                                        <small class="text-muted">@comment.CreatedAt.ToString("MMM dd, yyyy HH:mm")</small>
+                                    </div>
+                                    <p class="mb-0 mt-2">@comment.Comment</p>
+                                    @if (comment.IsInternal)
+                                    {
+                                        <small class="text-warning"><i class="fas fa-lock me-1"></i>Internal Note</small>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No comments yet.</p>
+                    }
+
+                    <hr>
+
+                    <form asp-action="AddComment" method="post">
+                        <input type="hidden" name="ticketId" value="@Model.TicketId" />
+                        <div class="mb-3">
+                            <label class="form-label">Add Comment</label>
+                            <textarea name="comment" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="isInternal" class="form-check-input" id="isInternal">
+                            <label class="form-check-label" for="isInternal">Internal Note (not visible to customer)</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Add Comment
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-paperclip me-2"></i>Attachments</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Attachments != null && Model.Attachments.Any())
+                    {
+                        @foreach (var attachment in Model.Attachments)
+                        {
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-file me-2 text-primary"></i>
+                                <a href="@attachment.FileUrl" target="_blank" class="text-decoration-none">@attachment.FileName</a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No attachments.</p>
+                    }
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Timeline</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-circle text-success me-2" style="font-size: 8px;"></i>
+                            <strong>Created:</strong> @Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                        </li>
+                        @if (Model.ResolvedAt.HasValue)
+                        {
+                            <li class="mb-2">
+                                <i class="fas fa-circle text-success me-2" style="font-size: 8px;"></i>
+                                <strong>Resolved:</strong> @Model.ResolvedAt.Value.ToString("MMM dd, yyyy HH:mm")
+                            </li>
+                        }
+                        @if (Model.ClosedAt.HasValue)
+                        {
+                            <li class="mb-2">
+                                <i class="fas fa-circle text-secondary me-2" style="font-size: 8px;"></i>
+                                <strong>Closed:</strong> @Model.ClosedAt.Value.ToString("MMM dd, yyyy HH:mm")
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

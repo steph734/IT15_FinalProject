@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_AccountingLayout.cshtml";
+}
+
+<div class="payroll-page">
+    <section class="payroll-header profile-header">
+        <div class="container-fluid px-lg-4">
+            <div class="d-flex justify-content-between align-items-end">
+                <div>
+                    <span class="page-badge">ACCOUNT</span>
+                    <h1 class="page-title">My Profile</h1>
+                    <p class="page-subtitle">View and manage your profile information</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container-fluid px-lg-4 py-4">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="data-card text-center p-4">
+                    <div class="profile-avatar mx-auto mb-3">
+                        @((ViewData["UserName"] as string ?? "A")[0])
+                    </div>
+                    <h5 class="fw-bold mb-1">@(ViewData["UserName"] as string ?? "Accounting User")</h5>
+                    <span class="badge bg-success">Accounting</span>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <div class="header-left">
+                            <h5><i class="fas fa-user-circle"></i> Profile Details</h5>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" value="@(ViewData["UserName"] as string ?? "Accounting User")" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" placeholder="accounting@estateflow.com" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" class="form-control" placeholder="+63 912 345 6789" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Department</label>
+                                <input type="text" class="form-control" value="Accounting & Finance" readonly />
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button class="btn-save">Update Profile</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payroll-page { background: #F1F5F9; min-height: 100vh; }
+    .profile-header { background: linear-gradient(135deg, #4b5563 0%, #9ca3af 100%) !important; }
+    .payroll-header { background: linear-gradient(135deg, #1E3A5F 0%, #16A39E 100%); color: white; padding: 40px 0 30px; }
+    .page-badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 6px; }
+    .page-subtitle { font-size: 0.95rem; opacity: 0.9; margin: 0; }
+    .data-card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; overflow: hidden; }
+    .data-card-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #F1F5F9; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-left h5 { margin: 0; font-weight: 700; color: #1E293B; font-size: 1.1rem; }
+    .header-left h5 i { color: #6b7280; margin-right: 6px; }
+    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 32px; }
+    .form-label { font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .form-control { padding: 10px 14px; border: 1px solid #E2E8F0; border-radius: 10px; font-size: 0.9rem; }
+    .form-control:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+    .btn-save { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: linear-gradient(135deg, #10B981, #059669); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+</style>

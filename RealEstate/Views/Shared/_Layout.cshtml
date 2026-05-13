@@ -12,35 +12,34 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RealEstate.styles.css" asp-append-version="true" />
+    <style>
+        /* Mobile Responsive Styles for Layout */
+        @@media (max-width: 768px) {
+            .site-footer .row {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .site-footer .col-md-6 {
+                margin-bottom: 1rem;
+            }
+
+            .site-footer .text-md-end {
+                text-align: center !important;
+            }
+        }
+    </style>
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="@(isHomeLanding ? "landing-body" : "site-inner-body")">
     @if (!isHomeLanding)
     {
-        <header class="site-header border-bottom bg-white sticky-top">
-            <nav class="navbar navbar-expand-lg navbar-light py-3">
-                <div class="container">
-                    <a class="navbar-brand d-flex align-items-center py-1" asp-controller="Home" asp-action="Index">
-                        <img src="~/images/estateflow-logo.png" alt="EstateFlow" class="brand-logo-img" width="160" height="48" />
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="siteNav">
-                        <ul class="navbar-nav ms-auto my-2 my-lg-0 gap-lg-1">
-                            <li class="nav-item"><a class="nav-link text-site-dark fw-medium px-lg-3" asp-controller="Home" asp-action="Index">Home</a></li>
-                            <li class="nav-item"><a class="nav-link text-site-muted fw-medium px-lg-3" asp-controller="Properties" asp-action="Index">Properties</a></li>
-                            <li class="nav-item"><a class="nav-link text-site-muted fw-medium px-lg-3" asp-controller="Agents" asp-action="Index">Agents</a></li>
-                            <li class="nav-item"><a class="nav-link text-site-muted fw-medium px-lg-3" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>
+        <partial name="_LandingNavbar" />
     }
-    <div class="@(isHomeLanding ? "" : "container-fluid px-0")">
+    <div class="@(isHomeLanding ? "" : "container-fluid px-0")" style="@(isHomeLanding ? "" : "padding-top: 80px;")">
         <main role="main" class="@(isHomeLanding ? "pb-0" : "pb-4")">
             @RenderBody()
         </main>
@@ -68,6 +67,11 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- SignalR and PeerJS for Video Calling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

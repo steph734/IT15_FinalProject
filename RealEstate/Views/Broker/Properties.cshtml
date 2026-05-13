@@ -89,12 +89,12 @@
                             <tr>
                                 <td style="font-weight: 600;">@property.Title</td>
                                 <td>@property.Location</td>
-                                <td style="color: #10b981; font-weight: 600;">₱@property.Price.ToString("N0")</td>
-                                <td>@property.ListingType</td>
+                                <td style="color: #10b981; font-weight: 600;">₱@property.BasePrice.ToString("N0")</td>
+                                <td>@property.PropertyType</td>
                                 <td>@property.Bedrooms/@property.Bathrooms</td>
                                 <td><span class="badge">Active</span></td>
                                 <td style="color: #667eea; font-weight: 600;">24</td>
-                                <td><a href="@Url.Action("Details", "Properties", new { id = property.Id })" style="color: #667eea; text-decoration: none; font-weight: 600;">View</a></td>
+                                <td><a href="@Url.Action("Details", "Properties", new { id = property.PropertyId })" style="color: #667eea; text-decoration: none; font-weight: 600;">View</a></td>
                             </tr>
                         }
                     </tbody>

@@ -1,247 +1,183 @@
+@model RealEstate.Controllers.SuperAdminDashboardStats
 @{
-    ViewData["Title"] = "SuperAdmin Dashboard - EstateFlow";
-    Layout = null;
-    var userName = ViewData["UserName"] as string ?? "SuperAdmin";
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"]</title>
-    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <style>
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: #f5f7fa;
-        }
-
-        .navbar-custom {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-custom .navbar-brand {
-            color: white !important;
-            font-weight: 700;
-            font-size: 20px;
-        }
-
-        .navbar-custom .nav-link {
-            color: rgba(255, 255, 255, 0.8) !important;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-custom .nav-link:hover {
-            color: white !important;
-        }
-
-        .sidebar {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-
-        .sidebar-title {
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 10px;
-        }
-
-        .sidebar-menu a {
-            display: block;
-            padding: 10px 15px;
-            color: #666;
-            text-decoration: none;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-menu a:hover {
-            background-color: #f0f0f0;
-            color: #dc2626;
-        }
-
-        .card-stat {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-            border-left: 4px solid #dc2626;
-        }
-
-        .card-stat h5 {
-            color: #666;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .card-stat .number {
-            font-size: 28px;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .welcome-section {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-
-        .welcome-section h2 {
-            color: #333;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .welcome-section p {
-            color: #666;
-            margin-bottom: 0;
-        }
-
-        .btn-logout {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            border: none;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-logout:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
-        }
-
-        .role-badge {
-            display: inline-block;
-            background: #fee2e2;
-            color: #7f1d1d;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-left: 10px;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="~/images/estateflow-logo.png" alt="EstateFlow" style="height: 30px;" />
-                EstateFlow
-            </a>
-            <div class="ms-auto">
-                <span class="text-white me-3">
-                    Welcome, @userName
-                    <span class="role-badge">SuperAdmin</span>
-                </span>
-                <form method="post" asp-action="Logout" style="display: inline;">
-                    <button type="submit" class="btn btn-logout">Logout</button>
-                </form>
+<div class="row g-4">
+    <!-- Statistics Cards -->
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #dbeafe; color: #2563eb;">
+                <i class="fas fa-users"></i>
             </div>
+            <div class="stat-value">@Model.TotalUsers</div>
+            <div class="stat-label">Total Users</div>
         </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container py-4">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3">
-                <div class="sidebar">
-                    <div class="sidebar-title">Menu</div>
-                    <ul class="sidebar-menu">
-                        <li><a href="#overview">📊 Dashboard</a></li>
-                        <li><a href="#users">👥 Users</a></li>
-                        <li><a href="#system">⚙️ System</a></li>
-                        <li><a href="#reports">📈 Reports</a></li>
-                        <li><a href="#settings">🔒 Settings</a></li>
-                    </ul>
-                </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #d1fae5; color: #059669;">
+                <i class="fas fa-user-check"></i>
             </div>
+            <div class="stat-value">@Model.ActiveUsers</div>
+            <div class="stat-label">Active Users</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #fef3c7; color: #d97706;">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="stat-value">@Model.TotalProperties</div>
+            <div class="stat-label">Total Properties</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #fce7f3; color: #c026d3;">
+                <i class="fas fa-list"></i>
+            </div>
+            <div class="stat-value">@Model.TotalListings</div>
+            <div class="stat-label">Total Listings</div>
+        </div>
+    </div>
+</div>
 
-            <!-- Main Content Area -->
-            <div class="col-md-9">
-                <!-- Welcome Section -->
-                <div class="welcome-section" id="overview">
-                    <h2>Welcome to SuperAdmin Portal</h2>
-                    <p>Full system access and administration. You are logged in as <strong>@userName</strong> (SuperAdmin).</p>
-                </div>
+<div class="row g-4 mt-2">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #fee2e2; color: #dc2626;">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-value">@Model.PendingReviews</div>
+            <div class="stat-label">Pending Reviews</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #e0e7ff; color: #4f46e5;">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-value">@Model.TotalSales</div>
+            <div class="stat-label">Total Sales</div>
+        </div>
+    </div>
+</div>
 
-                <!-- Statistics Row -->
-                <div class="row">
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card-stat">
-                            <h5>Total Users</h5>
-                            <div class="number">0</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card-stat">
-                            <h5>System Health</h5>
-                            <div class="number">100%</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card-stat">
-                            <h5>Active Sessions</h5>
-                            <div class="number">0</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card-stat">
-                            <h5>Database Size</h5>
-                            <div class="number">0 MB</div>
-                        </div>
-                    </div>
-                </div>
+<!-- Recent Activity -->
+<div class="row mt-4">
+    <div class="col-lg-6">
+        <div class="table-card">
+            <div class="table-header">
+                <h5 style="font-weight: 700; margin: 0;">Recent Users</h5>
+            </div>
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.RecentUsers.Any())
+                    {
+                        @foreach (var user in Model.RecentUsers)
+                        {
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600;">@user.FullName</div>
+                                    <small style="color: #64748b;">@user.Email</small>
+                                </td>
+                                <td><span class="badge bg-secondary">@user.Role</span></td>
+                                <td>@user.CreatedAt.ToString("MMM dd, yyyy")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">No recent users</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="table-card">
+            <div class="table-header">
+                <h5 style="font-weight: 700; margin: 0;">Recent Activity</h5>
+            </div>
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>User</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.RecentActivity.Any())
+                    {
+                        @foreach (var log in Model.RecentActivity)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="badge @(log.Action.Contains("DELETE") ? "bg-danger" : log.Action.Contains("CREATE") ? "bg-success" : "bg-info")">
+                                        @log.Action
+                                    </span>
+                                </td>
+                                <td>@(log.User?.Email ?? "System")</td>
+                                <td>@log.CreatedAt.ToString("HH:mm")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">No recent activity</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-                <!-- Quick Actions -->
-                <div class="card" style="border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); border-radius: 8px; padding: 20px;">
-                    <h5 style="color: #333; font-weight: 700; margin-bottom: 15px;">Quick Actions</h5>
-                    <div class="row">
-                        <div class="col-md-4 mb-2">
-                            <a href="#" class="btn btn-sm btn-outline-primary w-100">Manage Users</a>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <a href="#" class="btn btn-sm btn-outline-primary w-100">System Settings</a>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <a href="#" class="btn btn-sm btn-outline-primary w-100">View Logs</a>
-                        </div>
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="table-card">
+            <div class="table-header">
+                <h5 style="font-weight: 700; margin: 0;">Quick Actions</h5>
+            </div>
+            <div class="p-4">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="/superadmin/users/create" class="btn-primary-custom text-decoration-none d-block text-center py-3">
+                            <i class="fas fa-user-plus me-2"></i>Add New User
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/superadmin/users" class="btn btn-outline-primary d-block text-center py-3">
+                            <i class="fas fa-users me-2"></i>Manage Users
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/superadmin/audit-logs" class="btn btn-outline-primary d-block text-center py-3">
+                            <i class="fas fa-history me-2"></i>View Audit Logs
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/superadmin/settings" class="btn btn-outline-primary d-block text-center py-3">
+                            <i class="fas fa-cog me-2"></i>System Settings
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</div>

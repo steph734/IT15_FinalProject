@@ -1,0 +1,201 @@
+@model RealEstate.Controllers.EarningsReportViewModel
+@{
+    ViewData["Title"] = "Earnings Report";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="payroll-page">
+    <section class="payroll-header" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);">
+        <div class="container-fluid px-lg-4">
+            <div class="d-flex justify-content-between align-items-end">
+                <div>
+                    <span class="page-badge">FINANCIAL</span>
+                    <h1 class="page-title">Earnings Report</h1>
+                    <p class="page-subtitle">Commission payouts and broker earnings overview</p>
+                </div>
+                <a href="/manager/commission-rules" class="btn btn-outline-light">
+                    <i class="fas fa-cog me-2"></i>Commission Rules
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container-fluid px-lg-4 py-4">
+        <!-- Summary Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="stats-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <div class="stats-icon"><i class="fas fa-handshake"></i></div>
+                    <div class="stats-value">@Model.TotalSales</div>
+                    <div class="stats-label">Total Sales</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                    <div class="stats-icon"><i class="fas fa-peso-sign"></i></div>
+                    <div class="stats-value">₱@Model.TotalSalesValue.ToString("N0")</div>
+                    <div class="stats-label">Total Sales Value</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    <div class="stats-icon"><i class="fas fa-building"></i></div>
+                    <div class="stats-value">₱@Model.TotalBrokerEarnings.ToString("N0")</div>
+                    <div class="stats-label">Company Earnings (60%)</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                    <div class="stats-icon"><i class="fas fa-users"></i></div>
+                    <div class="stats-value">₱@Model.TotalAgentPayouts.ToString("N0")</div>
+                    <div class="stats-label">Agent Payouts (40%)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Commission Pool Summary -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <div class="header-left">
+                            <h5><i class="fas fa-chart-pie me-2"></i>Commission Distribution</h5>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="text-muted small">Total Commission Pool (5% of Sales)</label>
+                                    <h3 class="text-primary fw-bold">₱@Model.TotalCommissionPool.ToString("N2")</h3>
+                                </div>
+                                <div class="progress" style="height: 30px; border-radius: 15px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 60%; background: linear-gradient(90deg, #f59e0b, #d97706);">
+                                        Broker 60%
+                                    </div>
+                                    <div class="progress-bar" role="progressbar" style="width: 40%; background: linear-gradient(90deg, #8b5cf6, #7c3aed);">
+                                        Agent 40%
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-around text-center">
+                                    <div>
+                                        <div class="text-muted small mb-1">Broker Share</div>
+                                        <div class="h4 text-warning fw-bold">₱@Model.TotalBrokerEarnings.ToString("N0")</div>
+                                        <div class="badge bg-warning text-dark">60%</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-muted small mb-1">Agent Share</div>
+                                        <div class="h4 text-purple fw-bold" style="color: #8b5cf6;">₱@Model.TotalAgentPayouts.ToString("N0")</div>
+                                        <div class="badge" style="background: #8b5cf6;">40%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Sales Table -->
+        <div class="row">
+            <div class="col-12">
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <div class="header-left">
+                            <h5><i class="fas fa-list me-2"></i>Recent Sales</h5>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Property</th>
+                                    <th>Sale Price</th>
+                                    <th>Commission Pool</th>
+                                    <th>Broker (60%)</th>
+                                    <th>Agent (40%)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RecentSales.Any())
+                                {
+                                    @foreach (var sale in Model.RecentSales)
+                                    {
+                                        <tr>
+                                            <td>@sale.TransactionDate.ToString("MMM dd, yyyy")</td>
+                                            <td>
+                                                <div class="fw-bold">@(sale.Property?.Title ?? "N/A")</div>
+                                                <small class="text-muted">@(sale.Property?.Location ?? "")</small>
+                                            </td>
+                                            <td class="fw-bold">₱@sale.TotalContractPrice.ToString("N0")</td>
+                                            <td>₱@sale.CommissionPool.ToString("N0")</td>
+                                            <td class="text-warning fw-bold">₱@sale.BrokerEarnings.ToString("N0")</td>
+                                            <td class="fw-bold" style="color: #8b5cf6;">₱@sale.AgentEarnings.ToString("N0")</td>
+                                            <td>
+                                                <span class="badge @GetStatusBadgeClass(sale.Status)">@sale.Status</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4 text-muted">
+                                            <i class="fas fa-inbox fa-2x mb-2"></i>
+                                            <p>No sales recorded yet.</p>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stats-card {
+        border-radius: 16px;
+        padding: 24px;
+        color: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .stats-icon {
+        font-size: 2rem;
+        margin-bottom: 12px;
+        opacity: 0.9;
+    }
+    .stats-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    .stats-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    .progress-bar {
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 30px;
+    }
+</style>
+
+@functions {
+    string GetStatusBadgeClass(string status)
+    {
+        return status?.ToLower() switch
+        {
+            "approved" => "bg-success",
+            "paid" => "bg-primary",
+            "pending" => "bg-warning text-dark",
+            _ => "bg-secondary"
+        };
+    }
+}

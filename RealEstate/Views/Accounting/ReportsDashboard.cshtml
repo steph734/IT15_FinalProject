@@ -1,0 +1,160 @@
+@{
+    ViewData["Title"] = "Reports Dashboard";
+    Layout = "~/Views/Shared/_AccountingLayout.cshtml";
+}
+
+<div class="payroll-page">
+    <section class="payroll-header reports-header">
+        <div class="container-fluid px-lg-4">
+            <div class="d-flex justify-content-between align-items-end">
+                <div>
+                    <span class="page-badge">FINANCIAL REPORTS</span>
+                    <h1 class="page-title">Reports Dashboard</h1>
+                    <p class="page-subtitle">Revenue, payout, and commission reports</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container-fluid px-lg-4 py-4">
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="summary-card card-revenue">
+                    <div class="card-icon"><i class="fas fa-coins"></i></div>
+                    <div class="card-data">
+                        <div class="card-value">₱@(((decimal)ViewBag.TotalRevenue).ToString("N0"))</div>
+                        <div class="card-label">Total Revenue</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summary-card card-payouts">
+                    <div class="card-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                    <div class="card-data">
+                        <div class="card-value">₱@(((decimal)ViewBag.TotalPayouts).ToString("N0"))</div>
+                        <div class="card-label">Total Payouts</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summary-card card-commission">
+                    <div class="card-icon"><i class="fas fa-percentage"></i></div>
+                    <div class="card-data">
+                        <div class="card-value">₱@(((decimal)ViewBag.TotalCommissions).ToString("N0"))</div>
+                        <div class="card-label">Total Commissions</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summary-card card-monthly">
+                    <div class="card-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="card-data">
+                        <div class="card-value">₱@(((decimal)ViewBag.MonthlyRevenue).ToString("N0"))</div>
+                        <div class="card-label">This Month Revenue</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="data-card h-100">
+                    <div class="data-card-header">
+                        <div class="header-left">
+                            <h5><i class="fas fa-chart-line"></i> Revenue Report</h5>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-muted mb-3">Export all revenue transactions to CSV format.</p>
+                        <div class="report-stat mb-3">
+                            <span class="text-muted">Transactions</span>
+                            <span class="fw-bold">@((int)ViewBag.TransactionCount)</span>
+                        </div>
+                        <a href="/accounting/reports/export-csv?reportType=revenue" class="btn-export-report">
+                            <i class="fas fa-download"></i> Export Revenue CSV
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="data-card h-100">
+                    <div class="data-card-header">
+                        <div class="header-left">
+                            <h5><i class="fas fa-hand-holding-usd"></i> Payout Report</h5>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-muted mb-3">Export all completed payouts to CSV format.</p>
+                        <div class="report-stat mb-3">
+                            <span class="text-muted">Completed Deals</span>
+                            <span class="fw-bold">@((int)ViewBag.CompletedDealCount)</span>
+                        </div>
+                        <a href="/accounting/reports/export-csv?reportType=payouts" class="btn-export-report">
+                            <i class="fas fa-download"></i> Export Payouts CSV
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="data-card h-100">
+                    <div class="data-card-header">
+                        <div class="header-left">
+                            <h5><i class="fas fa-percentage"></i> Commission Report</h5>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-muted mb-3">Export all commission deals to CSV format.</p>
+                        <div class="report-stat mb-3">
+                            <span class="text-muted">Total Deals</span>
+                            <span class="fw-bold">@((int)ViewBag.DealCount)</span>
+                        </div>
+                        <a href="/accounting/reports/export-csv?reportType=commissions" class="btn-export-report">
+                            <i class="fas fa-download"></i> Export Commissions CSV
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-card">
+            <div class="data-card-header">
+                <div class="header-left">
+                    <h5><i class="fas fa-file-csv"></i> Full Export</h5>
+                </div>
+            </div>
+            <div class="p-4">
+                <p class="text-muted mb-3">Download a comprehensive report including revenue, payouts, and commissions.</p>
+                <a href="/accounting/reports/export-csv?reportType=all" class="btn-export-all">
+                    <i class="fas fa-download"></i> Export Complete Report
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payroll-page { background: #F1F5F9; min-height: 100vh; }
+    .reports-header { background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%) !important; }
+    .payroll-header { background: linear-gradient(135deg, #1E3A5F 0%, #16A39E 100%); color: white; padding: 40px 0 30px; }
+    .page-badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 6px; }
+    .page-subtitle { font-size: 0.95rem; opacity: 0.9; margin: 0; }
+    .summary-card { background: white; border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+    .card-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+    .card-revenue .card-icon { background: #DBEAFE; color: #2563EB; }
+    .card-payouts .card-icon { background: #D1FAE5; color: #059669; }
+    .card-commission .card-icon { background: #FEF3C7; color: #D97706; }
+    .card-monthly .card-icon { background: #E0E7FF; color: #4F46E5; }
+    .card-value { font-size: 1.4rem; font-weight: 800; color: #1E293B; }
+    .card-label { font-size: 0.85rem; color: #64748B; margin-top: 2px; }
+    .data-card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; overflow: hidden; }
+    .data-card-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #F1F5F9; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-left h5 { margin: 0; font-weight: 700; color: #1E293B; font-size: 1.1rem; }
+    .header-left h5 i { color: #f59e0b; margin-right: 6px; }
+    .report-stat { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #F1F5F9; }
+    .btn-export-report { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 0.9rem; text-decoration: none; }
+    .btn-export-report:hover { color: white; opacity: 0.9; }
+    .btn-export-all { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: linear-gradient(135deg, #10B981, #059669); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 1rem; text-decoration: none; }
+    .btn-export-all:hover { color: white; opacity: 0.9; }
+</style>

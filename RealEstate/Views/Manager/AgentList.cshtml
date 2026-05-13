@@ -1,0 +1,430 @@
+@model List<RealEstate.Models.Agent>
+@{
+    ViewData["Title"] = "Agent List";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="agent-list-page">
+    <div class="toolbar">
+        <div class="search-wrap">
+            <i class="fas fa-search"></i>
+            <input id="agentSearch" type="text" placeholder="Search Agent" oninput="filterAgents()" />
+        </div>
+        <span class="count" id="agentCount">@(Model?.Count(a => !a.IsArchived) ?? 0) Agent</span>
+        <div class="actions">
+            <button class="btn-lite" onclick="toggleArchived()"><i class="fas fa-archive"></i> <span id="archiveBtnLabel">Show Archived</span></button>
+            <button class="btn-main" data-bs-toggle="modal" data-bs-target="#newBrokerModal"><i class="fas fa-plus"></i> New Agent</button>
+        </div>
+    </div>
+
+    <div class="card-list">
+        <div class="card-head">
+            <h6>All Agent List</h6>
+            <span>This Month</span>
+        </div>
+
+        @if (TempData["SuccessMessage"] is string okMsg && !string.IsNullOrWhiteSpace(okMsg))
+        {
+            <div class="alert alert-success py-2 small mx-3 mt-2 mb-0">@okMsg</div>
+        }
+        @if (TempData["ErrorMessage"] is string errMsg && !string.IsNullOrWhiteSpace(errMsg))
+        {
+            <div class="alert alert-danger py-2 small mx-3 mt-2 mb-0">@errMsg</div>
+        }
+
+        <div class="table-responsive">
+            <table class="table align-middle mb-0" id="agentTable">
+                <thead>
+                    <tr>
+                        <th>Agent Photo &amp; Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Experience</th>
+                        <th>Date Added</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model?.Count > 0)
+                    {
+                        foreach (var a in Model)
+                        {
+                            var photoSrc = !string.IsNullOrWhiteSpace(a.ProfilePhotoPath)
+                                ? a.ProfilePhotoPath
+                                : $"https://i.pravatar.cc/40?u={a.Email}";
+
+                            <tr class="agent-row @(a.IsArchived ? "archived-row" : "active-row")" data-name="@a.DisplayName.ToLower()" data-archived="@a.IsArchived.ToString().ToLower()" style="@(a.IsArchived ? "opacity:0.5;display:none;" : "")">
+                                <td>
+                                    <div class="person">
+                                        <img src="@photoSrc" alt="@a.DisplayName" />
+                                        <div>
+                                            <div class="person-name">@a.DisplayName</div>
+                                            <div class="person-license">@a.LicenseNumber</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@a.Email</td>
+                                <td>@a.PhoneNumber</td>
+                                <td>@a.YearsOfExperience yr@(a.YearsOfExperience != 1 ? "s" : "")</td>
+                                <td class="text-muted small">@a.CreatedAtUtc.ToString("dd MMM yyyy")</td>
+                                <td>
+                                    @if (a.IsArchived)
+                                    {
+                                        <span class="badge-archived">Archived</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-active">Active</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="row-actions">
+                                        <!-- View Agent Details -->
+                                        <button class="act-btn act-view"
+                                                title="View Agent Details"
+                                                onclick="openViewModal(@a.Id, '@Html.Raw(a.DisplayName)', '@Html.Raw(a.Email)', '@Html.Raw(a.PhoneNumber)', @a.YearsOfExperience, '@Html.Raw(a.LicenseNumber)', '@photoSrc', '@Html.Raw(a.ResumeFilePath)', '@Html.Raw(a.ValidIdFilePath)', '@a.CreatedAtUtc.ToString("dd MMM yyyy")', '@(a.IsArchived ? "Archived" : "Active")')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <!-- Edit -->
+                                        <button class="act-btn act-edit"
+                                                title="Update Agent"
+                                                onclick="openEditModal(@a.Id, '@Html.Raw(a.FirstName)', '@Html.Raw(a.MiddleName ?? "")', '@Html.Raw(a.LastName)', '@Html.Raw(a.Email)', '@Html.Raw(a.PhoneNumber)', @a.YearsOfExperience, '@Html.Raw(a.LicenseNumber)', '@photoSrc')">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                        <!-- Archive / Restore -->
+                                        @if (!a.IsArchived)
+                                        {
+                                            <form method="post" action="/manager/agents/@a.Id/archive" style="display:inline;" onsubmit="return confirm('Archive this agent?')">
+                                                <button type="submit" class="act-btn act-archive" title="Archive Agent">
+                                                    <i class="fas fa-box-archive"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form method="post" action="/manager/agents/@a.Id/restore" style="display:inline;">
+                                                <button type="submit" class="act-btn act-restore" title="Restore Agent">
+                                                    <i class="fas fa-rotate-left"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        <!-- Delete (only for archived agents) -->
+                                        @if (a.IsArchived)
+                                        {
+                                            <form method="post" action="/manager/agents/@a.Id/delete" style="display:inline;" onsubmit="return confirm('Permanently delete this agent? This action cannot be undone.')">
+                                                <button type="submit" class="act-btn act-delete" title="Delete Agent Permanently">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="7" class="text-muted small text-center py-4">No agents yet. Click "+ New Agent" to add one.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Manager/_NewAgentModal.cshtml")
+
+<!-- Edit Agent Modal -->
+<div class="modal fade" id="editAgentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content ef-modal">
+            <div class="ef-modal-header">
+                <div class="ef-modal-title">
+                    <div class="ef-badge"><i class="fas fa-pen"></i></div>
+                    <div>
+                        <h5 class="modal-title mb-0">Update Agent</h5>
+                        <div class="ef-subtitle">Edit agent details and save changes.</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editAgentForm" method="post" action="" enctype="multipart/form-data">
+                <div class="modal-body ef-modal-body">
+                    <div class="row g-3">
+                        <!-- Photo preview -->
+                        <div class="col-12 d-flex align-items-center gap-3 mb-1">
+                            <img id="editPhotoPreview" src="" alt="Agent" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;" />
+                            <div>
+                                <label class="form-label mb-1">Profile Photo <span class="text-muted" style="font-weight:400">(optional, leave blank to keep current)</span></label>
+                                <input id="editPhotoInput" type="file" name="profilePhoto" accept="image/*" class="form-control form-control-sm" style="max-width:280px;" onchange="previewEditPhoto(this)" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">First name</label>
+                            <input class="form-control" name="firstName" id="editFirstName" type="text" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Middle name</label>
+                            <input class="form-control" name="middleName" id="editMiddleName" type="text" placeholder="(Optional)" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Last name</label>
+                            <input class="form-control" name="lastName" id="editLastName" type="text" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input class="form-control" name="email" id="editEmail" type="email" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone number</label>
+                            <input class="form-control" name="phoneNumber" id="editPhone" type="tel" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Years of experience</label>
+                            <input class="form-control" name="yearsOfExperience" id="editYears" type="number" min="0" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">License number</label>
+                            <input class="form-control" name="licenseNumber" id="editLicense" type="text" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background:#fff;border-top:1px solid #eef2f7;padding:12px 16px;">
+                    <button type="button" class="btn ef-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn ef-btn-primary"><i class="fas fa-check"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Agent Details Modal -->
+<div class="modal fade" id="viewAgentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content ef-modal">
+            <div class="ef-modal-header">
+                <div class="ef-modal-title">
+                    <div class="ef-badge"><i class="fas fa-eye"></i></div>
+                    <div>
+                        <h5 class="modal-title mb-0">Agent Details</h5>
+                        <div class="ef-subtitle">View complete agent profile and documents.</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body ef-modal-body">
+                <div class="row g-3">
+                    <!-- Profile Section -->
+                    <div class="col-12">
+                        <div class="ef-section">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <img id="viewPhotoPreview" src="" alt="Agent" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #e2e8f0;" />
+                                <div>
+                                    <h4 id="viewAgentName" style="margin:0;font-size:1.2rem;font-weight:700;color:#0f172a;"></h4>
+                                    <span id="viewAgentStatus" class="badge-active" style="font-size:.7rem;padding:4px 12px;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="col-md-6">
+                        <div class="ef-section h-100">
+                            <div class="ef-section-head">
+                                <div class="ef-section-icon"><i class="fas fa-user"></i></div>
+                                <div>
+                                    <div class="ef-section-title">Personal Information</div>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label style="font-size:.7rem;color:#64748b;font-weight:600;margin:0;">Email</label>
+                                <div id="viewEmail" style="font-size:.85rem;font-weight:600;color:#0f172a;margin-top:2px;"></div>
+                            </div>
+                            <div class="mb-2">
+                                <label style="font-size:.7rem;color:#64748b;font-weight:600;margin:0;">Phone Number</label>
+                                <div id="viewPhone" style="font-size:.85rem;font-weight:600;color:#0f172a;margin-top:2px;"></div>
+                            </div>
+                            <div>
+                                <label style="font-size:.7rem;color:#64748b;font-weight:600;margin:0;">Date Added</label>
+                                <div id="viewDateAdded" style="font-size:.85rem;font-weight:600;color:#0f172a;margin-top:2px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Professional Details -->
+                    <div class="col-md-6">
+                        <div class="ef-section h-100">
+                            <div class="ef-section-head">
+                                <div class="ef-section-icon"><i class="fas fa-briefcase"></i></div>
+                                <div>
+                                    <div class="ef-section-title">Professional Details</div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label style="font-size:.7rem;color:#64748b;font-weight:600;margin:0;">Years of Experience</label>
+                                <div id="viewExperience" style="font-size:.85rem;font-weight:600;color:#0f172a;margin-top:2px;"></div>
+                            </div>
+                            <div>
+                                <label style="font-size:.7rem;color:#64748b;font-weight:600;margin:0;">License Number</label>
+                                <div id="viewLicense" style="font-size:.85rem;font-weight:600;color:#0f172a;margin-top:2px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documents -->
+                    <div class="col-12">
+                        <div class="ef-section">
+                            <div class="ef-section-head">
+                                <div class="ef-section-icon"><i class="fas fa-file-alt"></i></div>
+                                <div>
+                                    <div class="ef-section-title">Documents</div>
+                                    <div class="ef-section-desc">Click to view or download uploaded files.</div>
+                                </div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <a id="viewResumeLink" href="" target="_blank" style="text-decoration:none;">
+                                        <div style="border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-align:center;transition:all .2s;background:#fff;cursor:pointer;" onmouseover="this.style.borderColor='#f97316';this.style.background='#fff7ed'" onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#fff'">
+                                            <i class="fas fa-file-pdf" style="font-size:2rem;color:#f97316;margin-bottom:8px;"></i>
+                                            <div style="font-size:.78rem;font-weight:700;color:#0f172a;">Resume</div>
+                                            <div style="font-size:.68rem;color:#64748b;margin-top:2px;">Click to view</div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a id="viewIdLink" href="" target="_blank" style="text-decoration:none;">
+                                        <div style="border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-align:center;transition:all .2s;background:#fff;cursor:pointer;" onmouseover="this.style.borderColor='#6d5efc';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#fff'">
+                                            <i class="fas fa-id-card" style="font-size:2rem;color:#6d5efc;margin-bottom:8px;"></i>
+                                            <div style="font-size:.78rem;font-weight:700;color:#0f172a;">Valid ID</div>
+                                            <div style="font-size:.68rem;color:#64748b;margin-top:2px;">Click to view</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background:#fff;border-top:1px solid #eef2f7;padding:12px 16px;">
+                <button type="button" class="btn ef-btn-cancel" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .agent-list-page .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+    .search-wrap{position:relative;min-width:230px}.search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8}
+    .search-wrap input{padding:8px 10px 8px 32px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;width:100%}
+    .count{font-size:.8rem;color:#64748b}
+    .actions{margin-left:auto;display:flex;gap:8px}
+    .btn-lite{border-radius:8px;padding:7px 13px;font-size:.74rem;border:1px solid #dbe3ef;background:#fff;cursor:pointer;display:flex;align-items:center;gap:5px}
+    .btn-main{border-radius:8px;padding:7px 13px;font-size:.74rem;border:none;background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:700}
+
+    .card-list{background:#fff;border:1px solid #e9edf5;border-radius:10px}
+    .card-head{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #eef2f7}
+    .card-head h6{margin:0;font-size:.82rem;font-weight:700}.card-head span{font-size:.72rem;color:#94a3b8}
+
+    .table th{font-size:.68rem;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:10px 12px;background:#f8fafc;}
+    .table td{font-size:.78rem;padding:10px 12px;vertical-align:middle;}
+    .table tbody tr{border-bottom:1px solid #f1f5f9;}
+    .table tbody tr:last-child{border-bottom:none;}
+    .table tbody tr:hover{background:#fafbff;}
+
+    .person{display:flex;align-items:center;gap:10px}
+    .person img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;flex-shrink:0}
+    .person-name{font-weight:700;font-size:.78rem;color:#0f172a}
+    .person-license{font-size:.68rem;color:#94a3b8;margin-top:1px}
+
+    .badge-active{font-size:.62rem;padding:3px 9px;border-radius:20px;background:#dcfce7;color:#166534;font-weight:700}
+    .badge-archived{font-size:.62rem;padding:3px 9px;border-radius:20px;background:#f1f5f9;color:#64748b;font-weight:700}
+
+    .row-actions{display:flex;align-items:center;gap:5px;flex-wrap:nowrap}
+    .act-btn{width:30px;height:30px;border-radius:7px;border:1px solid #e2e8f0;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.72rem;cursor:pointer;transition:all .15s;text-decoration:none;color:#475569;padding:0}
+    .act-btn:hover{border-color:#cbd5e1;background:#f8fafc}
+    .act-edit:hover{border-color:#f97316;color:#f97316;background:#fff7ed}
+    .act-archive:hover{border-color:#ef4444;color:#ef4444;background:#fef2f2}
+    .act-restore:hover{border-color:#22c55e;color:#22c55e;background:#f0fdf4}
+    .act-delete:hover{border-color:#dc2626;color:#dc2626;background:#fef2f2}
+    .act-view:hover{border-color:#6d5efc;color:#6d5efc;background:#f5f3ff}
+
+    /* Edit modal reuse ef-modal styles from partial */
+    .ef-btn-cancel{border:1px solid #e5e7eb;background:#fff;color:#334155;font-weight:700;border-radius:10px;padding:10px 14px}
+    .ef-btn-cancel:hover{background:#f8fafc}
+    .ef-btn-primary{border:none;border-radius:10px;padding:10px 14px;font-weight:800;color:#fff;background:linear-gradient(135deg,#f97316,#ea580c);display:inline-flex;align-items:center;gap:8px}
+</style>
+
+<script>
+    var showingArchived = false;
+
+    function filterAgents() {
+        var q = document.getElementById('agentSearch').value.toLowerCase();
+        var rows = document.querySelectorAll('.agent-row');
+        var count = 0;
+        rows.forEach(function (row) {
+            var isArchived = row.dataset.archived === 'true';
+            var nameMatch = row.dataset.name.includes(q);
+            var visible = nameMatch && (showingArchived ? true : !isArchived);
+            row.style.display = visible ? '' : 'none';
+            if (visible && !isArchived) count++;
+        });
+        document.getElementById('agentCount').textContent = count + ' Agent';
+    }
+
+    function toggleArchived() {
+        showingArchived = !showingArchived;
+        document.getElementById('archiveBtnLabel').textContent = showingArchived ? 'Hide Archived' : 'Show Archived';
+        filterAgents();
+    }
+
+    function openEditModal(id, firstName, middleName, lastName, email, phone, years, license, photoSrc) {
+        document.getElementById('editFirstName').value  = firstName;
+        document.getElementById('editMiddleName').value = middleName;
+        document.getElementById('editLastName').value   = lastName;
+        document.getElementById('editEmail').value      = email;
+        document.getElementById('editPhone').value      = phone;
+        document.getElementById('editYears').value      = years;
+        document.getElementById('editLicense').value    = license;
+        document.getElementById('editPhotoPreview').src = photoSrc;
+        document.getElementById('editAgentForm').action = '/manager/agents/' + id + '/update';
+        document.getElementById('editPhotoInput').value = '';
+        var modal = new bootstrap.Modal(document.getElementById('editAgentModal'));
+        modal.show();
+    }
+
+    function openViewModal(id, name, email, phone, years, license, photoSrc, resumeUrl, validIdUrl, dateAdded, status) {
+        document.getElementById('viewAgentName').textContent = name;
+        document.getElementById('viewEmail').textContent = email;
+        document.getElementById('viewPhone').textContent = phone;
+        document.getElementById('viewExperience').textContent = years + ' year' + (years != 1 ? 's' : '');
+        document.getElementById('viewLicense').textContent = license;
+        document.getElementById('viewDateAdded').textContent = dateAdded;
+        document.getElementById('viewPhotoPreview').src = photoSrc;
+        document.getElementById('viewResumeLink').href = resumeUrl;
+        document.getElementById('viewIdLink').href = validIdUrl;
+        
+        // Set status badge
+        var statusBadge = document.getElementById('viewAgentStatus');
+        if (status === 'Archived') {
+            statusBadge.textContent = 'Archived';
+            statusBadge.className = 'badge-archived';
+        } else {
+            statusBadge.textContent = 'Active';
+            statusBadge.className = 'badge-active';
+        }
+        
+        var modal = new bootstrap.Modal(document.getElementById('viewAgentModal'));
+        modal.show();
+    }
+
+    function previewEditPhoto(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('editPhotoPreview').src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

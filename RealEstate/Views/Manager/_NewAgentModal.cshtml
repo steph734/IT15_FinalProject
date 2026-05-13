@@ -1,0 +1,407 @@
+<div class="modal fade" id="newBrokerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content ef-modal">
+            <div class="ef-modal-header">
+                <div class="ef-modal-title">
+                    <div class="ef-badge">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title mb-0">Add New Agent</h5>
+                        <div class="ef-subtitle">Create an agent profile and upload required documents.</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="newAgentForm" method="post" action="/manager/agents/create" enctype="multipart/form-data">
+                <div class="modal-body ef-modal-body">
+                    <!-- File-size error banner (shown by JS only) -->
+                    <div id="agentFormSizeError" style="display:none; align-items:center; gap:10px; background:#fef2f2; border:1px solid #fca5a5; border-radius:10px; padding:10px 14px; margin-bottom:10px; color:#991b1b; font-size:0.82rem; font-weight:600;">
+                        <i class="fas fa-circle-exclamation" style="color:#ef4444; font-size:1rem;"></i>
+                        <span></span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <div class="ef-section">
+                                <div class="ef-section-head">
+                                    <div class="ef-section-icon"><i class="fas fa-id-card"></i></div>
+                                    <div>
+                                        <div class="ef-section-title">Personal information</div>
+                                        <div class="ef-section-desc">Make sure the name matches government ID.</div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">First name</label>
+                                        <div class="input-group ef-input">
+                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                            <input class="form-control" name="firstName" type="text" placeholder="Juan" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Middle name</label>
+                                        <div class="input-group ef-input">
+                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                            <input class="form-control" name="middleName" type="text" placeholder="(Optional)" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Last name</label>
+                                        <div class="input-group ef-input">
+                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                            <input class="form-control" name="lastName" type="text" placeholder="Dela Cruz" required />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email</label>
+                                        <div class="input-group ef-input">
+                                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                            <input class="form-control" name="email" type="email" placeholder="agent@email.com" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone number</label>
+                                        <div class="input-group ef-input">
+                                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                            <input class="form-control" name="phoneNumber" type="tel" placeholder="+63 9xx xxx xxxx" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ef-section">
+                                <div class="ef-section-head">
+                                    <div class="ef-section-icon"><i class="fas fa-briefcase"></i></div>
+                                    <div>
+                                        <div class="ef-section-title">Professional details</div>
+                                        <div class="ef-section-desc">Used to validate eligibility and assignment.</div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Years of experience</label>
+                                        <div class="input-group ef-input">
+                                            <span class="input-group-text"><i class="fas fa-chart-line"></i></span>
+                                            <input class="form-control" name="yearsOfExperience" type="number" min="0" step="1" placeholder="0" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">License number</label>
+                                        <div class="input-group ef-input">
+                                            <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                                            <input class="form-control" name="licenseNumber" type="text" placeholder="PRC / License #" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-5">
+                            <div class="ef-section h-100">
+                                <div class="ef-section-head">
+                                    <div class="ef-section-icon"><i class="fas fa-file-arrow-up"></i></div>
+                                    <div>
+                                        <div class="ef-section-title">Documents</div>
+                                        <div class="ef-section-desc">Upload clear, readable files.</div>
+                                    </div>
+                                </div>
+
+                                <label class="form-label">Profile Photo <span style="font-weight:400;color:#94a3b8">(optional)</span></label>
+                                <div class="ef-photo-upload mb-3">
+                                    <div class="ef-photo-preview" id="newPhotoPreview">
+                                        <i class="fas fa-user" id="newPhotoIcon"></i>
+                                        <img id="newPhotoImg" src="" alt="" style="display:none;" />
+                                    </div>
+                                    <div class="ef-photo-info">
+                                        <div class="ef-photo-label">Agent Photo</div>
+                                        <div class="ef-photo-hint">JPG, PNG, WEBP &mdash; max 5 MB</div>
+                                        <label class="ef-photo-btn" for="profilePhotoInput">Choose Photo</label>
+                                        <input id="profilePhotoInput" type="file" name="profilePhoto" accept="image/*" style="display:none" onchange="previewNewPhoto(this)" />
+                                    </div>
+                                </div>
+
+                                <label class="form-label">Resume</label>
+                                <div class="ef-dropzone mb-3" id="resumeDropzone" onclick="document.getElementById('resumeFileInput').click()">
+                                    <input id="resumeFileInput" class="form-control" name="resumeFile" type="file" accept=".pdf,.doc,.docx" required onchange="updateDropzone('resumeDropzone', this)" />
+                                    <div class="ef-dropzone-inner">
+                                        <div class="ef-drop-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                                        <div class="ef-drop-title" id="resumeDropTitle">Drop resume here, or <span>click to browse</span></div>
+                                        <div class="ef-drop-meta" id="resumeDropMeta">PDF, DOC, DOCX</div>
+                                    </div>
+                                </div>
+
+                                <label class="form-label">Valid ID</label>
+                                <div class="ef-dropzone" id="validIdDropzone" onclick="document.getElementById('validIdFileInput').click()">
+                                    <input id="validIdFileInput" class="form-control" name="validIdFile" type="file" accept="image/*,.pdf" required onchange="updateDropzone('validIdDropzone', this)" />
+                                    <div class="ef-dropzone-inner">
+                                        <div class="ef-drop-icon"><i class="fas fa-id-card"></i></div>
+                                        <div class="ef-drop-title" id="validIdDropTitle">Drop valid ID here, or <span>click to browse</span></div>
+                                        <div class="ef-drop-meta" id="validIdDropMeta">Image or PDF</div>
+                                    </div>
+                                </div>
+
+                                <div class="ef-note mt-3">
+                                    <i class="fas fa-circle-info"></i>
+                                    Files are only used for verification.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer ef-modal-footer">
+                    <button type="button" class="btn ef-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn ef-btn-primary">
+                        <i class="fas fa-check"></i>
+                        Create Agent
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ef-modal { border: 1px solid #e5e7eb; border-radius: 14px; overflow: hidden; }
+    .ef-modal-header {
+        padding: 16px 18px;
+        background: radial-gradient(1100px 250px at 20% -10%, rgba(255,122,89,0.35) 0%, rgba(255,122,89,0) 55%),
+                    linear-gradient(135deg, #1a1f3a 0%, #141a33 50%, #0f172a 100%);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .ef-modal-title { display: flex; align-items: center; gap: 12px; }
+    .ef-badge {
+        width: 42px; height: 42px; border-radius: 12px;
+        background: rgba(255,255,255,0.10);
+        border: 1px solid rgba(255,255,255,0.14);
+        display: flex; align-items: center; justify-content: center;
+        color: #ff7a59;
+    }
+    .ef-subtitle { font-size: 0.78rem; color: rgba(255,255,255,0.75); margin-top: 2px; }
+
+    .ef-modal-body { padding: 16px; background: #f7f8fc; }
+    .ef-modal-footer { background: #fff; border-top: 1px solid #eef2f7; padding: 12px 16px; }
+
+    .ef-section {
+        background: #fff;
+        border: 1px solid #e9edf5;
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+    }
+    .ef-section + .ef-section { margin-top: 12px; }
+
+    .ef-section-head { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+    .ef-section-icon {
+        width: 36px; height: 36px; border-radius: 10px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #f97316;
+        display: flex; align-items: center; justify-content: center;
+        flex: 0 0 auto;
+    }
+    .ef-section-title { font-weight: 800; font-size: 0.88rem; color: #0f172a; }
+    .ef-section-desc { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+
+    .ef-input .input-group-text { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
+    .ef-input .form-control { border-color: #e2e8f0; }
+    .ef-input .form-control:focus {
+        border-color: #f97316;
+        box-shadow: 0 0 0 0.2rem rgba(249, 115, 22, 0.12);
+    }
+    .form-label { font-size: 0.78rem; font-weight: 700; color: #334155; margin-bottom: 6px; }
+
+    .ef-dropzone { width: 100%; display: block; margin: 0; cursor: pointer; position: relative; }
+    .ef-dropzone.has-file .ef-dropzone-inner { border-color: #22c55e; background: #f0fdf4; }
+    .ef-dropzone.has-file .ef-drop-icon { color: #22c55e; }
+    .ef-file-error {
+        display: flex; align-items: center; gap: 6px;
+        margin-top: 6px; padding: 7px 10px;
+        border-radius: 8px; border: 1px solid #fca5a5;
+        background: #fef2f2; color: #991b1b;
+        font-size: 0.75rem; font-weight: 600;
+    }
+    .ef-file-error i { color: #ef4444; }
+
+    /* Photo upload widget */
+    .ef-photo-upload { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1.5px dashed #dbe3ef; border-radius: 12px; background: #fbfcff; }
+    .ef-photo-preview { width: 56px; height: 56px; border-radius: 50%; background: #f1f5f9; border: 2px solid #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; color: #94a3b8; font-size: 20px; }
+    .ef-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .ef-photo-info { flex: 1; min-width: 0; }
+    .ef-photo-label { font-size: 0.78rem; font-weight: 700; color: #0f172a; }
+    .ef-photo-hint { font-size: 0.7rem; color: #94a3b8; margin-top: 1px; margin-bottom: 6px; }
+    .ef-photo-btn { display: inline-block; padding: 5px 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; font-size: 0.72rem; font-weight: 700; color: #f97316; cursor: pointer; transition: all .15s; }
+    .ef-photo-btn:hover { border-color: #f97316; background: #fff7ed; }
+
+    .ef-dropzone input[type="file"] { display: none; }
+    .ef-dropzone-inner {
+        border: 1.5px dashed #dbe3ef;
+        background: #fbfcff;
+        border-radius: 12px;
+        padding: 14px;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+    .ef-dropzone:hover .ef-dropzone-inner {
+        border-color: #f97316;
+        box-shadow: 0 0 0 0.2rem rgba(249, 115, 22, 0.10);
+        background: #fffaf5;
+    }
+    .ef-drop-icon { font-size: 20px; color: #6d5efc; margin-bottom: 6px; }
+    .ef-drop-title { font-size: 0.8rem; font-weight: 700; color: #0f172a; }
+    .ef-drop-title span { color: #f97316; }
+    .ef-drop-meta { font-size: 0.72rem; color: #64748b; margin-top: 2px; }
+
+    .ef-note {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #e9edf5;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.78rem;
+    }
+    .ef-note i { color: #6d5efc; }
+
+    .ef-btn-cancel { border: 1px solid #e5e7eb; background: #fff; color: #334155; font-weight: 700; border-radius: 10px; padding: 10px 14px; }
+    .ef-btn-cancel:hover { background: #f8fafc; }
+
+    .ef-btn-primary {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 800;
+        color: #fff;
+        background: linear-gradient(135deg, #f97316, #ea580c);
+        box-shadow: 0 12px 22px rgba(249, 115, 22, 0.22);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .ef-btn-primary:hover { filter: brightness(0.98); }
+
+    @@media (max-width: 991.98px) {
+        .ef-modal-body { padding: 12px; }
+        .ef-modal-header { padding: 14px 14px; }
+    }
+</style>
+
+<script>
+    var MAX_FILE_MB = 90; // keep comfortably under the 100 MB server limit
+    var MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
+
+    // -- Dropzone UI feedback --
+    function updateDropzone(dropzoneId, input) {
+        var dropzone = document.getElementById(dropzoneId);
+        if (!dropzone) return;
+
+        // Remove any previous inline error
+        var prev = dropzone.parentElement.querySelector('.ef-file-error');
+        if (prev) prev.remove();
+
+        if (input.files && input.files.length > 0) {
+            var file = input.files[0];
+
+            // Client-side size check per file
+            if (file.size > MAX_FILE_BYTES) {
+                input.value = '';
+                dropzone.classList.remove('has-file');
+                resetDropzoneText(dropzone, dropzoneId);
+                showFileError(dropzone, 'File too large. Max ' + MAX_FILE_MB + ' MB per file.');
+                return;
+            }
+
+            var name = file.name;
+            var size = file.size >= 1024 * 1024
+                ? (file.size / (1024 * 1024)).toFixed(2) + ' MB'
+                : (file.size / 1024).toFixed(1) + ' KB';
+
+            var titleEl = dropzone.querySelector('[id$="DropTitle"]');
+            var metaEl  = dropzone.querySelector('[id$="DropMeta"]');
+            var iconEl  = dropzone.querySelector('.ef-drop-icon i');
+
+            if (titleEl) titleEl.innerHTML = '&#10003; <span>' + name + '</span>';
+            if (metaEl)  metaEl.textContent = size;
+            if (iconEl)  iconEl.className = 'fas fa-check-circle';
+
+            dropzone.classList.add('has-file');
+        } else {
+            dropzone.classList.remove('has-file');
+            resetDropzoneText(dropzone, dropzoneId);
+        }
+    }
+
+    function resetDropzoneText(dropzone, dropzoneId) {
+        var titleEl = dropzone.querySelector('[id$="DropTitle"]');
+        var metaEl  = dropzone.querySelector('[id$="DropMeta"]');
+        var iconEl  = dropzone.querySelector('.ef-drop-icon i');
+        if (dropzoneId === 'resumeDropzone') {
+            if (titleEl) titleEl.innerHTML = 'Drop resume here, or <span>click to browse</span>';
+            if (metaEl)  metaEl.textContent = 'PDF, DOC, DOCX';
+            if (iconEl)  iconEl.className = 'fas fa-cloud-upload-alt';
+        } else {
+            if (titleEl) titleEl.innerHTML = 'Drop valid ID here, or <span>click to browse</span>';
+            if (metaEl)  metaEl.textContent = 'Image or PDF';
+            if (iconEl)  iconEl.className = 'fas fa-id-card';
+        }
+    }
+
+    function showFileError(dropzone, msg) {
+        var el = document.createElement('div');
+        el.className = 'ef-file-error';
+        el.innerHTML = '<i class="fas fa-triangle-exclamation"></i> ' + msg;
+        dropzone.parentElement.insertBefore(el, dropzone.nextSibling);
+    }
+
+    // -- Form submit guard --
+    document.getElementById('newAgentForm').addEventListener('submit', function (e) {
+        var resumeInput  = document.getElementById('resumeFileInput');
+        var validIdInput = document.getElementById('validIdFileInput');
+        var totalBytes   = 0;
+        var errors       = [];
+
+        if (resumeInput && resumeInput.files.length > 0)  totalBytes += resumeInput.files[0].size;
+        if (validIdInput && validIdInput.files.length > 0) totalBytes += validIdInput.files[0].size;
+
+        if (totalBytes > MAX_FILE_BYTES) {
+            e.preventDefault();
+            var banner = document.getElementById('agentFormSizeError');
+            if (banner) {
+                banner.style.display = 'flex';
+                banner.querySelector('span').textContent =
+                    'Total upload size is ' + (totalBytes / (1024*1024)).toFixed(1) +
+                    ' MB, which exceeds the ' + MAX_FILE_MB + ' MB limit. Please use smaller files.';
+            }
+        }
+    });
+
+    function previewNewPhoto(input) {
+        var MAX_PHOTO_MB = 5;
+        if (!input.files || input.files.length === 0) return;
+        var file = input.files[0];
+        if (file.size > MAX_PHOTO_MB * 1024 * 1024) {
+            input.value = '';
+            alert('Photo is too large. Maximum size is ' + MAX_PHOTO_MB + ' MB.');
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var img  = document.getElementById('newPhotoImg');
+            var icon = document.getElementById('newPhotoIcon');
+            img.src = e.target.result;
+            img.style.display = 'block';
+            if (icon) icon.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+</script>

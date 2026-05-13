@@ -1,0 +1,286 @@
+<mxfile host="app.diagrams.net" modified="2026-05-13T00:00:00.000Z" agent="EstateFlow" version="22.1.0" type="device">
+  <diagram name="Transaction Use Cases" id="tx-full-uc">
+    <mxGraphModel dx="1260" dy="860" grid="1" gridSize="10" guides="1" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="2000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="sys" value="&lt;b&gt;EstateFlow — Transactions &amp; Payments&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;color:#444;&quot;&gt;Sale / reservation / commissions / payouts&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=top;spacingTop=8;fillColor=#fafafa;strokeColor=#1a1a2e;strokeWidth=2;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="180" y="24" width="1240" height="1850" as="geometry" />
+        </mxCell>
+
+        <mxCell id="h_buyer" value="Buyer / Visitor" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=1;fontSize=12;fontColor=#0d47a1;" vertex="1" parent="1">
+          <mxGeometry x="48" y="120" width="120" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="h_broker" value="Broker / Agent" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontStyle=1;fontSize=12;fontColor=#ef6c00;" vertex="1" parent="1">
+          <mxGeometry x="1450" y="120" width="120" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="h_mgr" value="Manager" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontStyle=1;fontSize=12;fontColor=#c2185b;" vertex="1" parent="1">
+          <mxGeometry x="1450" y="380" width="90" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="h_acc" value="Accounting" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontStyle=1;fontSize=12;fontColor=#4527a0;" vertex="1" parent="1">
+          <mxGeometry x="1450" y="560" width="100" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="h_paymongo" value="&lt;&lt;external system&gt;&gt; PayMongo" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=2;fontSize=11;fontColor=#00695c;" vertex="1" parent="1">
+          <mxGeometry x="728" y="1888" width="160" height="28" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a_buyer" value="" style="umlActor;html=1;outlineConnect=0;fillColor=#0d47a1;verticalAlign=top;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="94" y="152" height="54" width="28" as="geometry" />
+        </mxCell>
+        <mxCell id="a_broker" value="" style="umlActor;html=1;outlineConnect=0;fillColor=#ef6c00;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1496" y="152" height="54" width="28" as="geometry" />
+        </mxCell>
+        <mxCell id="a_mgr" value="" style="umlActor;html=1;outlineConnect=0;fillColor=#c2185b;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1498" y="412" height="54" width="28" as="geometry" />
+        </mxCell>
+        <mxCell id="a_acc" value="" style="umlActor;html=1;outlineConnect=0;fillColor=#4527a0;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="594" height="54" width="28" as="geometry" />
+        </mxCell>
+        <mxCell id="a_ext" value="" style="ellipse;aspect=fixed;whiteSpace=wrap;html=1;fillColor=#b2dfdb;strokeColor=#00695c;" vertex="1" parent="1">
+          <mxGeometry x="768" y="1810" width="80" height="44" as="geometry" />
+        </mxCell>
+
+        <mxCell id="z1" value="Viewing &amp; reservation access" style="swimlane;horizontal=1;startSize=22;fillColor=#e3f2fd;strokeColor=#1565c0;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="218" y="68" width="340" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="uc1" parent="z1" value="Open property viewing request" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="22" y="36" width="138" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc2" parent="z1" value="Submit viewing &amp; staging session for checkout" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="22" y="92" width="138" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc3" parent="z1" value="Start viewing booking fee (checkout redirect)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="178" y="36" width="138" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc4" parent="z1" value="Finish booking after paid return URL" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="178" y="92" width="138" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc5" parent="z1" value="Cancel booking checkout / abandon flow" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="178" y="148" width="138" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc6" parent="z1" value="Open reservation / fee summary (charges)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="22" y="200" width="138" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc7" parent="z1" value="Confirm reservation deposit &amp; release session" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="22" y="256" width="138" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc8" parent="z1" value="View reservation success &amp; reference" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="22" y="312" width="138" height="48" as="geometry" />
+        </mxCell>
+
+        <mxCell id="z2" value="Property purchase submissions" style="swimlane;horizontal=1;startSize=22;fillColor=#fff3e0;strokeColor=#ef6c00;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="218" y="468" width="340" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="uc9" parent="z2" value="Submit buy request (persist Transaction)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="40" width="280" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc10" parent="z2" value="Submit buy via API (Customer + Payment record)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="112" width="280" height="48" as="geometry" />
+        </mxCell>
+
+        <mxCell id="z3" value="Broker / Agent — CRM &amp; commissions" style="swimlane;horizontal=1;startSize=22;fillColor=#fff8e1;strokeColor=#f9a825;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="590" y="68" width="380" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="uc11" parent="z3" value="Create customer &amp; PayMongo payment intent (PaymentTransaction)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="20" y="36" width="168" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="uc12" parent="z3" value="Browse payment confirmation (customer)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="206" y="36" width="154" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="uc13" parent="z3" value="Finalize payment (retrieve PayMongo intent status)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="20" y="100" width="168" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="uc14" parent="z3" value="Inbound PayMongo webhook (update PaymentTransaction)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="206" y="100" width="154" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="uc15" parent="z3" value="Report closed sale (CommissionDeal workflow)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="22" y="168" width="338" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc16" parent="z3" value="Inspect sales pipeline (commission deals list)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="22" y="226" width="338" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc17" parent="z3" value="Demonstrate commissions grid (sandbox samples)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#eceff1;" vertex="1">
+          <mxGeometry x="22" y="292" width="338" height="48" as="geometry" />
+        </mxCell>
+
+        <mxCell id="z4" value="Manager — staged sale costing" style="swimlane;horizontal=1;startSize=22;fillColor=#fce4ec;strokeColor=#c2185b;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="590" y="478" width="380" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="uc18" parent="z4" value="Record process-sale (SaleTransaction splits &amp; readiness)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="38" width="328" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="uc19" parent="z4" value="Maintain commission rule rates (basis for splits)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#eceff1;" vertex="1">
+          <mxGeometry x="26" y="100" width="328" height="48" as="geometry" />
+        </mxCell>
+
+        <mxCell id="z5" value="Accounting — collections &amp; disbursements" style="swimlane;horizontal=1;startSize=22;fillColor=#ede7f6;strokeColor=#4527a0;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="998" y="68" width="390" height="880" as="geometry" />
+        </mxCell>
+        <mxCell id="uc20" parent="z5" value="Approve or reject PayMongo-backed capture (manual validation)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="36" width="338" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="uc21" parent="z5" value="Filtered payment validation queue" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="94" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc22" parent="z5" value="Accounting dashboard (revenue &amp; payout KPI cards)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="146" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc23" parent="z5" value="Invoices and invoice tracking (PaymentTransaction)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="198" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc24" parent="z5" value="Succeeded-payment receipts list and printable receipt" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="250" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc25" parent="z5" value="Unified transaction history (PaymentTransaction ledger)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="302" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc26" parent="z5" value="Commission deal records / breakdown aggregates" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="354" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc27" parent="z5" value="Queue payout-ready commission deals and pay agent" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="406" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc28" parent="z5" value="Completed payout ledger (posted deals)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="458" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc29" parent="z5" value="Operate payout batches and per-deal payout status" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="510" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc30" parent="z5" value="Finalize entire batch payouts (CommissionBatch)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="562" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc31" parent="z5" value="Reject commission deal from accounting lane" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="614" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc32" parent="z5" value="Finance reports dashboard and CSV export" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="666" width="338" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="uc33" parent="z5" value="Sold property revenue rollup" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;aspect=fixed;fillColor=#ffffff;" vertex="1">
+          <mxGeometry x="26" y="718" width="338" height="44" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note" value="CommissionDeal: PendingManagerApproval to ApprovedForPayroll or Locked, then Completed or RejectedByAccounting.&lt;br&gt;Legacy entity Transaction (with Invoices / Commissions) is separate from SaleTransaction and PaymentTransaction." style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#fffde7;strokeColor=#f9a825;align=left;fontSize=10;spacingLeft=6;" vertex="1" parent="1">
+          <mxGeometry x="218" y="700" width="752" height="72" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_b_u1" style="endArrow=block;html=1;strokeColor=#0d47a1;strokeWidth=1;" edge="1" parent="1" source="a_buyer" target="uc1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_b_u2" style="endArrow=block;html=1;strokeColor=#0d47a1;strokeWidth=1;" edge="1" parent="1" source="a_buyer" target="uc2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_b_u3" style="endArrow=block;html=1;strokeColor=#0d47a1;strokeWidth=1;" edge="1" parent="1" source="a_buyer" target="uc3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_b_u4" style="endArrow=block;html=1;strokeColor=#0d47a1;strokeWidth=1;" edge="1" parent="1" source="a_buyer" target="uc4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_b_u5" style="endArrow=block;html=1;strokeColor=#0d47a1;strokeWidth=1;" edge="1" parent="1" source="a_buyer" target="uc5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_b_u6" style="endArrow=block;html=1;strokeColor=#0d47a1;strokeWidth=1;" edge="1" parent="1" source="a_buyer" target="uc6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_b_u7" style="endArrow=block;html=1;strokeColor=#0d47a1;strokeWidth=1;" edge="1" parent="1" source="a_buyer" target="uc7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_b_u8" style="endArrow=block;html=1;strokeColor=#0d47a1;strokeWidth=1;" edge="1" parent="1" source="a_buyer" target="uc8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_b_u9" style="endArrow=block;html=1;strokeColor=#0d47a1;strokeWidth=1;" edge="1" parent="1" source="a_buyer" target="uc9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_b_u10" style="endArrow=block;html=1;strokeColor=#0d47a1;strokeWidth=1;" edge="1" parent="1" source="a_buyer" target="uc10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_br_11" style="endArrow=block;html=1;strokeColor=#ef6c00;" edge="1" parent="1" source="a_broker" target="uc11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_br_12" style="endArrow=block;html=1;strokeColor=#ef6c00;" edge="1" parent="1" source="a_broker" target="uc12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_br_13" style="endArrow=block;html=1;strokeColor=#ef6c00;" edge="1" parent="1" source="a_broker" target="uc13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_br_15" style="endArrow=block;html=1;strokeColor=#ef6c00;" edge="1" parent="1" source="a_broker" target="uc15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_br_16" style="endArrow=block;html=1;strokeColor=#ef6c00;" edge="1" parent="1" source="a_broker" target="uc16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_br_17" style="endArrow=block;html=1;strokeColor=#ef6c00;dashed=1;" edge="1" parent="1" source="a_broker" target="uc17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_m18" style="endArrow=block;html=1;strokeColor=#c2185b;" edge="1" parent="1" source="a_mgr" target="uc18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_m19" style="endArrow=block;html=1;strokeColor=#c2185b;dashed=1;" edge="1" parent="1" source="a_mgr" target="uc19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_acc20" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc21" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc22" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc23" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc24" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc25" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc26" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc27" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc28" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc29" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc30" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc31" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc32" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_acc33" style="endArrow=block;html=1;strokeColor=#4527a0;" edge="1" parent="1" source="a_acc" target="uc33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_pay_3" style="endArrow=block;html=1;strokeColor=#00695c;dashed=1;" edge="1" parent="1" source="a_ext" target="uc3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_pay_4" style="endArrow=block;html=1;strokeColor=#00695c;dashed=1;" edge="1" parent="1" source="a_ext" target="uc4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_pay_11" style="endArrow=block;html=1;strokeColor=#00695c;dashed=1;" edge="1" parent="1" source="a_ext" target="uc11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_pay_13" style="endArrow=block;html=1;strokeColor=#00695c;dashed=1;" edge="1" parent="1" source="a_ext" target="uc13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_pay_14" style="endArrow=block;html=1;strokeColor=#00695c;dashed=1;" edge="1" parent="1" source="a_ext" target="uc14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

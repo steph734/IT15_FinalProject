@@ -18,63 +18,271 @@
         :root {
             --primary-color: #10b981;
             --primary-dark: #059669;
-            --accent-color: #ff7a59;
+            --accent-color: #34d399;
+            --sidebar-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             background-color: #f5f7fa;
             font-family: 'Inter', sans-serif;
+            display: flex;
         }
 
-        .bg-site-primary {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        .manager-main-wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
         }
 
-        .text-site-muted {
-            color: #9ca3af;
+        .manager-content-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        .bg-site-soft {
-            background-color: #f9fafb;
+        .manager-header {
+            background: white;
+            padding: 16px 32px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-search {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 10px 16px;
+            width: 220px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .header-search:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: none;
+            background: #f3f4f6;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .header-action-btn:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .manager-content {
+            padding: 1rem;
+            flex: 1;
+        }
+
+        .site-footer {
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            margin-top: auto;
+            padding: 24px 32px;
+        }
+
+        .brand-estate {
+            color: var(--accent-color);
+        }
+
+        .brand-flow {
+            color: #333;
+        }
+
+        main {
+            overflow-y: auto;
+        }
+
+        /* Mobile Sidebar Toggle */
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #1f2937;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        @@media (max-width: 768px) {
+            :root {
+                --sidebar-width: 0;
+            }
+
+            .sidebar-toggle {
+                display: block;
+            }
+
+            .manager-content-wrapper {
+                margin-left: 0;
+            }
+
+            .manager-header {
+                padding: 12px 16px;
+            }
+
+            .header-search {
+                width: 160px;
+                font-size: 12px;
+            }
+
+            .header-title h1 {
+                font-size: 18px;
+            }
+
+            .accounting-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1001;
+            }
+
+            .accounting-sidebar.mobile-open {
+                transform: translateX(0);
+            }
         }
     </style>
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="site-inner-body d-flex flex-column" style="min-height: 100vh;">
-    <!-- Accounting Navigation -->
-    @if (isAccounting)
-    {
-        @await Html.PartialAsync("~/Views/Accounting/_AccountingNav.cshtml", ViewData)
-    }
-
-    <div class="container-fluid px-0 flex-grow-1">
-        <main role="main" class="pb-4">
-            @RenderBody()
-        </main>
-    </div>
-
-    <!-- Footer -->
-    <footer class="site-footer border-top bg-site-soft mt-auto py-4">
-        <div class="container">
-            <div class="row g-3 align-items-center">
-                <div class="col-md-6">
-                    <span class="brand-wordmark brand-wordmark--footer small">
-                        <span class="brand-estate" style="color: var(--accent-color); font-weight: 700;">Estate</span><span class="brand-flow" style="color: #333; font-weight: 700;">Flow</span>
-                    </span>
-                    <span class="text-site-muted small ms-2">&copy; @DateTime.UtcNow.Year</span>
+<body>
+    @await Html.PartialAsync("~/Views/Shared/_ToastNotifications.cshtml")
+    <div class="manager-main-wrapper">
+        @if (isAccounting)
+        {
+            @await Html.PartialAsync("~/Views/Accounting/_AccountingNav.cshtml", ViewData)
+        }
+        <div class="manager-content-wrapper">
+            <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+            <header class="manager-header">
+                <div class="header-title">
+                    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>@ViewData["Title"]</h1>
                 </div>
-                <div class="col-md-6 text-md-end small">
-                    <a class="text-site-muted text-decoration-none me-3" href="#">Support</a>
-                    <a class="text-site-muted text-decoration-none me-3" href="#">Documentation</a>
-                    <a class="text-site-muted text-decoration-none" href="#">Settings</a>
+                <div class="header-right">
+                    <input type="text" class="header-search" placeholder="Search..." />
+                    <div class="header-actions">
+                        <button class="header-action-btn" title="Notifications">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                        <button class="header-action-btn" title="Settings">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                    <div class="user-avatar">
+                        @((ViewData["UserName"] as string ?? "A")[0])
+                    </div>
                 </div>
-            </div>
+            </header>
+
+            <main role="main" class="manager-content">
+                @RenderBody()
+            </main>
+
+            <footer class="site-footer">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-6">
+                        <span class="brand-wordmark brand-wordmark--footer small">
+                            <span class="brand-estate">Estate</span><span class="brand-flow">Flow</span>
+                        </span>
+                        <span class="text-site-muted small ms-2">&copy; @DateTime.UtcNow.Year</span>
+                    </div>
+                    <div class="col-md-6 text-md-end small">
+                        <a class="text-site-muted text-decoration-none me-3" href="#">Support</a>
+                        <a class="text-site-muted text-decoration-none me-3" href="#">Documentation</a>
+                        <a class="text-site-muted text-decoration-none" href="#">Settings</a>
+                    </div>
+                </div>
+            </footer>
         </div>
-    </footer>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.accounting-sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) {
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
+            }
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

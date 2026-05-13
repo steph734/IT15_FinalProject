@@ -1,0 +1,751 @@
+@{
+    ViewData["Title"] = "Property Map - EstateFlow";
+}
+
+<div class="estateflow-page-wrapper">
+    <!-- Page Header -->
+    <section class="page-header-modern">
+        <div class="container">
+            <div class="page-header-content">
+                <span class="page-label">EXPLORE LOCATIONS</span>
+                <h1 class="page-title">Property Map</h1>
+                <p class="page-subtitle">Discover properties on an interactive map and explore neighborhoods</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="container-fluid px-0">
+            <div class="row g-0">
+                <!-- Map Container -->
+                <div class="col-lg-8 position-relative">
+                    <div class="map-container" id="propertyMap">
+                        <!-- Placeholder for actual map - using Leaflet or Google Maps -->
+                        <div class="map-placeholder">
+                            <div class="map-content">
+                                <i class="fas fa-map"></i>
+                                <p>Interactive Map</p>
+                                <small>Integrate Leaflet.js or Google Maps API here</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Sample Map Markers (Visualization) -->
+                        <div class="map-markers-demo">
+                            <button class="map-marker" style="top: 30%; left: 25%;" data-property="1">
+                                <i class="fas fa-map-pin"></i>
+                                <div class="marker-popup">
+                                    <strong>Modern Apartment</strong>
+                                    <p>$450,000</p>
+                                </div>
+                            </button>
+                            <button class="map-marker" style="top: 50%; left: 55%;" data-property="2">
+                                <i class="fas fa-map-pin"></i>
+                                <div class="marker-popup">
+                                    <strong>Family Home</strong>
+                                    <p>$3,500/mo</p>
+                                </div>
+                            </button>
+                            <button class="map-marker" style="top: 65%; left: 40%;" data-property="3">
+                                <i class="fas fa-map-pin"></i>
+                                <div class="marker-popup">
+                                    <strong>Studio Condo</strong>
+                                    <p>$250,000</p>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Map Controls -->
+                        <div class="map-controls">
+                            <button class="map-control-btn" title="Zoom In">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="map-control-btn" title="Zoom Out">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button class="map-control-btn" title="Center Map">
+                                <i class="fas fa-compass"></i>
+                            </button>
+                        </div>
+
+                        <!-- Location Search -->
+                        <div class="map-search">
+                            <input type="text" placeholder="Search location..." class="search-input">
+                            <button class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4 bg-white">
+                    <div class="map-sidebar">
+                        <!-- Filter Options -->
+                        <div class="sidebar-section">
+                            <h4 class="sidebar-title">Filters</h4>
+                            
+                            <div class="filter-option">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked>
+                                    <span>For Sale</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked>
+                                    <span>For Rent</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox">
+                                    <span>For Lease</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Price Range Slider -->
+                        <div class="sidebar-section">
+                            <h4 class="sidebar-title">Price Range</h4>
+                            <div class="price-range-slider">
+                                <input type="range" min="0" max="1000000" value="250000" class="slider" id="priceSlider">
+                                <div class="price-display">
+                                    <span>Up to: <strong id="priceValue">$250,000</strong></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Neighborhoods -->
+                        <div class="sidebar-section">
+                            <h4 class="sidebar-title">Neighborhoods</h4>
+                            <div class="neighborhoods-list">
+                                <button class="neighborhood-btn active" data-area="downtown">
+                                    <span class="area-icon">📍</span>
+                                    <div class="area-info">
+                                        <div class="area-name">Downtown District</div>
+                                        <small>45 properties</small>
+                                    </div>
+                                </button>
+                                <button class="neighborhood-btn" data-area="suburban">
+                                    <span class="area-icon">🏘️</span>
+                                    <div class="area-info">
+                                        <div class="area-name">Suburban Heights</div>
+                                        <small>32 properties</small>
+                                    </div>
+                                </button>
+                                <button class="neighborhood-btn" data-area="midtown">
+                                    <span class="area-icon">🏙️</span>
+                                    <div class="area-info">
+                                        <div class="area-name">Midtown Plaza</div>
+                                        <small>28 properties</small>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Property List -->
+                        <div class="sidebar-section">
+                            <h4 class="sidebar-title">Properties Near You</h4>
+                            <div class="properties-list">
+                                <div class="property-list-item">
+                                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=150&q=80" alt="Property">
+                                    <div class="item-info">
+                                        <div class="item-name">Modern Apartment</div>
+                                        <div class="item-price">$450,000</div>
+                                        <small>Downtown District</small>
+                                    </div>
+                                </div>
+                                <div class="property-list-item">
+                                    <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=150&q=80" alt="Property">
+                                    <div class="item-info">
+                                        <div class="item-name">Family Home</div>
+                                        <div class="item-price">$3,500/mo</div>
+                                        <small>Suburban Heights</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CTA -->
+                        <a href="/Checkout" class="btn-map-cta">
+                            <i class="fas fa-arrow-right"></i> Schedule Viewing
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Area Information Section -->
+    <section class="area-info-section">
+        <div class="container">
+            <h2 class="section-title">Popular Areas</h2>
+            <div class="areas-grid">
+                <div class="area-card">
+                    <div class="area-header">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <h4>Downtown District</h4>
+                    </div>
+                    <p>Urban living at its finest with modern amenities and vibrant nightlife.</p>
+                    <ul class="area-benefits">
+                        <li>✓ Shopping & Dining</li>
+                        <li>✓ Public Transport</li>
+                        <li>✓ Entertainment</li>
+                    </ul>
+                </div>
+                <div class="area-card">
+                    <div class="area-header">
+                        <i class="fas fa-tree"></i>
+                        <h4>Suburban Heights</h4>
+                    </div>
+                    <p>Quiet residential area perfect for families seeking peaceful living.</p>
+                    <ul class="area-benefits">
+                        <li>✓ Family-Friendly</li>
+                        <li>✓ Parks & Schools</li>
+                        <li>✓ Spacious Homes</li>
+                    </ul>
+                </div>
+                <div class="area-card">
+                    <div class="area-header">
+                        <i class="fas fa-building"></i>
+                        <h4>Midtown Plaza</h4>
+                    </div>
+                    <p>Mixed community combining city convenience with residential comfort.</p>
+                    <ul class="area-benefits">
+                        <li>✓ Modern Infrastructure</li>
+                        <li>✓ Business District</li>
+                        <li>✓ Walkable Streets</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .map-section {
+        padding: 0;
+        margin-top: -60px;
+    }
+
+    /* Map Container */
+    .map-container {
+        position: relative;
+        width: 100%;
+        height: 600px;
+        background: #f0f0f0;
+        overflow: hidden;
+        border: 1px solid #E5E7EB;
+    }
+
+    .map-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #E0F2F1, #F8F9FA);
+    }
+
+    .map-content {
+        text-align: center;
+        color: #6B7280;
+    }
+
+    .map-content i {
+        font-size: 3rem;
+        color: #16A39E;
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .map-content p {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    /* Map Markers -->
+    .map-markers-demo {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+    }
+
+    .map-marker {
+        position: absolute;
+        background: #16A39E;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 3px solid white;
+        cursor: pointer;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(22, 163, 158, 0.3);
+    }
+
+    .map-marker:hover {
+        transform: scale(1.3);
+        background: #0F8B84;
+    }
+
+    .marker-popup {
+        display: none;
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 12px;
+        border-radius: 6px;
+        white-space: nowrap;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+        z-index: 100;
+    }
+
+    .marker-popup::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 6px solid transparent;
+        border-top-color: white;
+    }
+
+    .marker-popup strong {
+        color: #1E3A5F;
+        display: block;
+        font-size: 0.9rem;
+    }
+
+    .marker-popup p {
+        color: #16A39E;
+        font-weight: 600;
+        margin: 4px 0 0 0;
+    }
+
+    .map-marker:hover .marker-popup {
+        display: block;
+    }
+
+    /* Map Controls -->
+    .map-controls {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 20;
+    }
+
+    .map-control-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
+        background: white;
+        border: 1px solid #E5E7EB;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #1E3A5F;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .map-control-btn:hover {
+        background: #16A39E;
+        color: white;
+        border-color: #16A39E;
+    }
+
+    /* Map Search -->
+    .map-search {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        display: flex;
+        gap: 8px;
+        z-index: 20;
+    }
+
+    .search-input {
+        width: 250px;
+        padding: 10px 15px;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        font-size: 0.9rem;
+    }
+
+    .search-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        background: #16A39E;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .search-btn:hover {
+        background: #0F8B84;
+    }
+
+    /* Sidebar -->
+    .map-sidebar {
+        padding: 25px;
+        overflow-y: auto;
+        max-height: 600px;
+    }
+
+    .sidebar-section {
+        margin-bottom: 25px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+    .sidebar-section:last-child {
+        border-bottom: none;
+    }
+
+    .sidebar-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1E3A5F;
+        margin-bottom: 15px;
+    }
+
+    /* Filter Options -->
+    .filter-option {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #16A39E;
+        cursor: pointer;
+    }
+
+    .checkbox-item span {
+        color: #6B7280;
+        font-size: 0.9rem;
+    }
+
+    /* Price Range Slider -->
+    .price-range-slider {
+        padding: 10px 0;
+    }
+
+    .slider {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: #E5E7EB;
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #16A39E;
+        cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #16A39E;
+        cursor: pointer;
+        border: none;
+    }
+
+    .price-display {
+        margin-top: 12px;
+        font-size: 0.9rem;
+        color: #6B7280;
+    }
+
+    .price-display strong {
+        color: #16A39E;
+    }
+
+    /* Neighborhoods -->
+    .neighborhoods-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .neighborhood-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .neighborhood-btn:hover {
+        border-color: #16A39E;
+        background: #E0F2F1;
+    }
+
+    .neighborhood-btn.active {
+        background: #16A39E;
+        color: white;
+        border-color: #16A39E;
+    }
+
+    .area-icon {
+        font-size: 1.5rem;
+    }
+
+    .area-info {
+        text-align: left;
+    }
+
+    .area-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .neighborhood-btn small {
+        opacity: 0.7;
+        font-size: 0.8rem;
+    }
+
+    /* Properties List -->
+    .properties-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .property-list-item {
+        display: flex;
+        gap: 12px;
+        padding: 12px;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .property-list-item:hover {
+        border-color: #16A39E;
+        background: #E0F2F1;
+    }
+
+    .property-list-item img {
+        width: 60px;
+        height: 60px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-name {
+        font-weight: 600;
+        color: #1E3A5F;
+        font-size: 0.9rem;
+    }
+
+    .item-price {
+        color: #16A39E;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .property-list-item small {
+        color: #6B7280;
+    }
+
+    /* CTA Button -->
+    .btn-map-cta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 12px;
+        background: #16A39E;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        margin-top: 10px;
+        transition: all 0.3s;
+    }
+
+    .btn-map-cta:hover {
+        background: #0F8B84;
+        text-decoration: none;
+    }
+
+    /* Area Info Section -->
+    .area-info-section {
+        padding: 60px 0;
+        background: white;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1E3A5F;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .areas-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+    }
+
+    .area-card {
+        background: #F8F9FA;
+        padding: 25px;
+        border-radius: 12px;
+        border: 1px solid #E5E7EB;
+        transition: all 0.3s;
+    }
+
+    .area-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(22, 163, 158, 0.1);
+    }
+
+    .area-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .area-header i {
+        font-size: 1.5rem;
+        color: #16A39E;
+    }
+
+    .area-header h4 {
+        margin: 0;
+        color: #1E3A5F;
+        font-weight: 700;
+    }
+
+    .area-card p {
+        color: #6B7280;
+        font-size: 0.95rem;
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .area-benefits {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .area-benefits li {
+        color: #16A39E;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    @@media (max-width: 991.98px) {
+        .map-container {
+            height: 400px;
+        }
+
+        .map-sidebar {
+            max-height: 400px;
+        }
+
+        .search-input {
+            width: 180px;
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .map-container {
+            height: 300px;
+        }
+
+        .map-sidebar {
+            max-height: 300px;
+            padding: 15px;
+        }
+
+        .search-input {
+            width: 120px;
+            font-size: 0.8rem;
+        }
+
+        .areas-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Price slider functionality
+        const slider = document.getElementById('priceSlider');
+        const priceValue = document.getElementById('priceValue');
+        
+        if (slider) {
+            slider.addEventListener('input', function() {
+                const value = (this.value / 1000000).toFixed(2);
+                priceValue.textContent = '$' + (this.value / 1000).toLocaleString() + 'K';
+            });
+        }
+
+        // Neighborhood button functionality
+        const neighborhoodBtns = document.querySelectorAll('.neighborhood-btn');
+        neighborhoodBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                neighborhoodBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Property list item click
+        const propertyItems = document.querySelectorAll('.property-list-item');
+        propertyItems.forEach(item => {
+            item.addEventListener('click', function() {
+                console.log('Property selected');
+            });
+        });
+    });
+</script>

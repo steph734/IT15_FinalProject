@@ -1,0 +1,733 @@
+@model IReadOnlyList<RealEstate.Models.Property>
+@using RealEstate.Models
+@{
+    ViewData["Title"] = "My Listings";
+    Layout = "~/Views/Shared/_SellerLayout.cshtml";
+    var filter = ViewBag.StatusFilter as string ?? "";
+    var showDeleted = ViewBag.ShowDeleted as bool? ?? false;
+    var showArchived = ViewBag.ShowArchived as bool? ?? false;
+    var viewMode = showDeleted ? "deleted" : showArchived ? "archived" : "active";
+}
+
+@section Styles {
+<style>
+    .page-header-section {
+        margin-bottom: 32px;
+    }
+    
+    .page-title {
+        font-size: 32px;
+        font-weight: 800;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #1f2937;
+        margin: 0 0 8px 0;
+    }
+    
+    .page-subtitle {
+        color: #6b7280;
+        font-size: 15px;
+        margin: 0;
+    }
+    
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    }
+    
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+        color: white;
+    }
+    
+    .filter-tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 28px;
+        padding: 16px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+    
+    .filter-tab {
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 2px solid #e5e7eb;
+        color: #6b7280;
+        transition: all 0.2s;
+        background: white;
+    }
+    
+    .filter-tab:hover {
+        border-color: #0ea5e9;
+        color: #0ea5e9;
+        background: rgba(14, 165, 233, 0.05);
+    }
+    
+    .filter-tab.active {
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        border-color: transparent;
+        color: white;
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    }
+    
+    .listings-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .listing-card {
+        background: white;
+        border-radius: 14px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    }
+    
+    .listing-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border-color: rgba(14, 165, 233, 0.2);
+    }
+    
+    .listing-cover {
+        width: 120px;
+        height: 90px;
+        border-radius: 12px;
+        object-fit: cover;
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(99, 102, 241, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 32px;
+        color: #0ea5e9;
+    }
+    
+    .listing-body {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .listing-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    .listing-meta {
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 12px;
+    }
+    
+    .listing-meta span {
+        margin-right: 14px;
+        display: inline-block;
+    }
+    
+    .listing-meta i {
+        color: #0ea5e9;
+        margin-right: 4px;
+    }
+    
+    .listing-price {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0ea5e9;
+        margin-bottom: 8px;
+    }
+    
+    .status-pill {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .status-pendingreview { background: #fef3c7; color: #d97706; }
+    .status-approved { background: #d1fae5; color: #059669; }
+    .status-rejected { background: #fee2e2; color: #dc2626; }
+    .status-sold { background: #dbeafe; color: #2563eb; }
+    
+    .manager-note {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, rgba(254, 243, 199, 0.5), rgba(254, 243, 199, 0.3));
+        border-left: 4px solid #f59e0b;
+        font-size: 13px;
+        color: #92400e;
+    }
+    
+    .listing-date {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-bottom: 8px;
+    }
+    
+    .btn-view-details {
+        border: 2px solid #0ea5e9;
+        color: #0ea5e9;
+        background: transparent;
+        padding: 8px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.2s;
+    }
+    
+    .btn-view-details:hover {
+        background: #0ea5e9;
+        color: white;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+    
+    .empty-state i {
+        font-size: 64px;
+        margin-bottom: 20px;
+        color: #e5e7eb;
+    }
+    
+    .empty-state h5 {
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+    }
+    
+    .empty-state p {
+        color: #6b7280;
+        margin-bottom: 24px;
+    }
+
+    .view-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .view-tab {
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        color: #6b7280;
+        background: #f3f4f6;
+        transition: all 0.2s;
+        border: none;
+    }
+
+    .view-tab:hover {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    .view-tab.active {
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        color: white;
+    }
+
+    .btn-archive {
+        border: 2px solid #6b7280;
+        color: #6b7280;
+        background: transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 6px 14px;
+    }
+
+    .btn-archive:hover {
+        background: #6b7280;
+        color: white;
+    }
+
+    .btn-soft-delete {
+        border: 2px solid #f59e0b;
+        color: #f59e0b;
+        background: transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 6px 14px;
+    }
+
+    .btn-soft-delete:hover {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .btn-restore {
+        border: 2px solid #10b981;
+        color: #10b981;
+        background: transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 6px 14px;
+    }
+
+    .btn-restore:hover {
+        background: #10b981;
+        color: white;
+    }
+
+    .btn-permanent-delete {
+        border: 2px solid #dc2626;
+        color: #dc2626;
+        background: transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 6px 14px;
+    }
+
+    .btn-permanent-delete:hover {
+        background: #dc2626;
+        color: white;
+    }
+
+    .status-deleted {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .status-archived {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    /* Modal Styles */
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .custom-modal-overlay.active {
+        display: flex;
+    }
+
+    .custom-modal {
+        background: white;
+        border-radius: 16px;
+        padding: 28px;
+        max-width: 420px;
+        width: 90%;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
+
+    .custom-modal-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        font-size: 28px;
+    }
+
+    .custom-modal-icon.warning {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .custom-modal-icon.danger {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .custom-modal-icon.info {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    .custom-modal-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+    }
+
+    .custom-modal-text {
+        font-size: 15px;
+        color: #6b7280;
+        margin-bottom: 24px;
+        line-height: 1.5;
+    }
+
+    .custom-modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+
+    .custom-modal-btn {
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .custom-modal-btn.cancel {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    .custom-modal-btn.cancel:hover {
+        background: #e5e7eb;
+    }
+
+    .custom-modal-btn.confirm {
+        color: white;
+    }
+
+    .custom-modal-btn.confirm.warning {
+        background: #f59e0b;
+    }
+
+    .custom-modal-btn.confirm.warning:hover {
+        background: #d97706;
+    }
+
+    .custom-modal-btn.confirm.danger {
+        background: #dc2626;
+    }
+
+    .custom-modal-btn.confirm.danger:hover {
+        background: #b91c1c;
+    }
+
+    .custom-modal-btn.confirm.success {
+        background: #10b981;
+    }
+
+    .custom-modal-btn.confirm.success:hover {
+        background: #059669;
+    }
+
+    .custom-modal-btn.confirm.info {
+        background: #0ea5e9;
+    }
+
+    .custom-modal-btn.confirm.info:hover {
+        background: #0284c7;
+    }
+</style>
+}
+
+<!-- Page Header -->
+<div class="page-header-section">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+        <div>
+            <h1 class="page-title"><i class="fas fa-building me-2" style="color:#0ea5e9;"></i>My Listings</h1>
+            <p class="page-subtitle">Track all your submitted properties and their approval status.</p>
+        </div>
+        <a href="/seller/submit" class="btn btn-primary-gradient">
+            <i class="fas fa-plus me-2"></i>New Listing
+        </a>
+    </div>
+</div>
+
+<!-- Alert Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4" style="border-radius:10px; border:none; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4" style="border-radius:10px; border:none; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <i class="fas fa-times-circle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- View Tabs (Active / Archived / Trash) -->
+<div class="view-tabs">
+    <a href="/seller/my-listings" class="view-tab @(viewMode == "active" ? "active" : "")">
+        <i class="fas fa-folder-open me-2"></i>Active
+    </a>
+    <a href="/seller/my-listings?showArchived=true" class="view-tab @(viewMode == "archived" ? "active" : "")">
+        <i class="fas fa-archive me-2"></i>Archived
+    </a>
+    <a href="/seller/my-listings?showDeleted=true" class="view-tab @(viewMode == "deleted" ? "active" : "")">
+        <i class="fas fa-trash-alt me-2"></i>Trash
+    </a>
+</div>
+
+<!-- Status Filter Tabs (only show for Active view) -->
+@if (viewMode == "active")
+{
+    <div class="filter-tabs">
+        <a href="/seller/my-listings" class="filter-tab @(string.IsNullOrEmpty(filter) ? "active" : "")">All</a>
+        <a href="/seller/my-listings?status=PendingReview" class="filter-tab @(filter == "PendingReview" ? "active" : "")">Pending Review</a>
+        <a href="/seller/my-listings?status=Approved" class="filter-tab @(filter == "Approved" ? "active" : "")">Approved</a>
+        <a href="/seller/my-listings?status=Rejected" class="filter-tab @(filter == "Rejected" ? "active" : "")">Rejected</a>
+        <a href="/seller/my-listings?status=Sold" class="filter-tab @(filter == "Sold" ? "active" : "")">Sold</a>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <i class="fas fa-building d-block"></i>
+        <h5 class="fw-bold mt-2">No listings found</h5>
+        <p>You have no properties in this category.</p>
+        <a href="/seller/submit" class="btn btn-primary-gradient">
+            <i class="fas fa-plus-circle me-2"></i>Submit Your First Property
+        </a>
+    </div>
+}
+else
+{
+    <div class="listings-container">
+    @foreach (var l in Model)
+    {
+        <div class="listing-card">
+            @if (!string.IsNullOrEmpty(l.CoverImage))
+            {
+                <img src="@l.CoverImage" class="listing-cover" alt="@l.Title" />
+            }
+            else
+            {
+                <div class="listing-cover">
+                    <i class="fas fa-@(l.PropertyType == "Condo" ? "city" : l.PropertyType == "Villa" ? "umbrella-beach" : "house")"></i>
+                </div>
+            }
+            <div class="listing-body">
+                <div class="listing-title">@l.Title</div>
+                <div class="listing-meta mt-2">
+                    <span><i class="fas fa-location-dot"></i>@l.Location</span>
+                    <span><i class="fas fa-tag"></i>@l.PropertyType</span>
+                    <span><i class="fas fa-bed"></i>@l.Bedrooms bd</span>
+                    <span><i class="fas fa-bath"></i>@l.Bathrooms ba</span>
+                    <span><i class="fas fa-ruler-combined"></i>@l.Sqft sqm</span>
+                </div>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <div class="listing-price">₱@(l.SuggestedPrice?.ToString("N0") ?? "0")</div>
+                    @if (l.FinalPrice.HasValue)
+                    {
+                        <div class="text-success fw-semibold" style="font-size:14px;">
+                            <i class="fas fa-check-circle me-1"></i>Final: ₱@l.FinalPrice.Value.ToString("N0")
+                        </div>
+                    }
+                    @if (l.IsRejected)
+                    {
+                        <span class="status-pill status-rejected"><i class="fas fa-times me-1"></i>Rejected</span>
+                    }
+                    else if (l.IsApproved)
+                    {
+                        <span class="status-pill status-approved"><i class="fas fa-check me-1"></i>Approved</span>
+                    }
+                    else
+                    {
+                        <span class="status-pill status-pending"><i class="fas fa-clock me-1"></i>@l.Status</span>
+                    }
+                </div>
+                @if (!string.IsNullOrEmpty(l.ManagerNotes))
+                {
+                    <div class="manager-note">
+                        <i class="fas fa-comment me-1"></i><strong>Manager Note:</strong> @l.ManagerNotes
+                    </div>
+                }
+            </div>
+            <div class="text-end flex-shrink-0">
+                <div class="listing-date">
+                    @l.CreatedAt.ToString("MMM dd, yyyy")
+                </div>
+                <div class="d-flex flex-column gap-2">
+                    <a href="/seller/listing/@l.PropertyId" class="btn btn-view-details btn-sm">
+                        <i class="fas fa-eye me-1"></i>View
+                    </a>
+
+                    @* ACTIVE LISTINGS - Archive, Edit, Soft Delete *@
+                    @if (viewMode == "active")
+                    {
+                        @if (!l.IsApproved && !l.IsRejected)
+                        {
+                            <a href="/seller/listing/@l.PropertyId/edit" class="btn btn-sm" style="border:2px solid #f59e0b;color:#f59e0b;background:transparent;border-radius:8px;font-weight:600;font-size:13px;">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </a>
+                        }
+                        <button type="button" class="btn-archive btn-sm" onclick="showArchiveModal(@l.PropertyId, '@l.Title.Replace("'", "\\'")')">
+                            <i class="fas fa-archive me-1"></i>Archive
+                        </button>
+                        <button type="button" class="btn-soft-delete btn-sm" onclick="showSoftDeleteModal(@l.PropertyId, '@l.Title.Replace("'", "\\'")')">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </button>
+                    }
+
+                    @* ARCHIVED LISTINGS - Unarchive, Soft Delete *@
+                    @if (viewMode == "archived")
+                    {
+                        <form method="post" action="/seller/listing/@l.PropertyId/unarchive" style="display:inline;">
+                            <button type="submit" class="btn-restore btn-sm w-100">
+                                <i class="fas fa-undo me-1"></i>Unarchive
+                            </button>
+                        </form>
+                        <button type="button" class="btn-soft-delete btn-sm" onclick="showSoftDeleteModal(@l.PropertyId, '@l.Title.Replace("'", "\\'")')">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </button>
+                    }
+
+                    @* DELETED LISTINGS - Restore, Permanent Delete *@
+                    @if (viewMode == "deleted")
+                    {
+                        <form method="post" action="/seller/listing/@l.PropertyId/restore" style="display:inline;">
+                            <button type="submit" class="btn-restore btn-sm w-100">
+                                <i class="fas fa-undo me-1"></i>Restore
+                            </button>
+                        </form>
+                        <button type="button" class="btn-permanent-delete btn-sm" onclick="showPermanentDeleteModal(@l.PropertyId, '@l.Title.Replace("'", "\\'")')">
+                            <i class="fas fa-trash-alt me-1"></i>Delete Forever
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+}
+
+<!-- Archive Confirmation Modal -->
+<div id="archiveModal" class="custom-modal-overlay">
+    <div class="custom-modal">
+        <div class="custom-modal-icon info">
+            <i class="fas fa-archive"></i>
+        </div>
+        <h3 class="custom-modal-title">Archive Listing?</h3>
+        <p class="custom-modal-text">Are you sure you want to archive "<span id="archiveListingTitle"></span>"?<br>Archived listings will be hidden from your active listings but can be restored anytime.</p>
+        <div class="custom-modal-actions">
+            <button type="button" class="custom-modal-btn cancel" onclick="closeModal('archiveModal')">Cancel</button>
+            <form id="archiveForm" method="post" style="display:inline;">
+                <button type="submit" class="custom-modal-btn confirm info">Archive</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Soft Delete Confirmation Modal -->
+<div id="softDeleteModal" class="custom-modal-overlay">
+    <div class="custom-modal">
+        <div class="custom-modal-icon warning">
+            <i class="fas fa-trash"></i>
+        </div>
+        <h3 class="custom-modal-title">Move to Trash?</h3>
+        <p class="custom-modal-text">Are you sure you want to move "<span id="softDeleteListingTitle"></span>" to trash?<br>You can restore it within 30 days from the Trash tab.</p>
+        <div class="custom-modal-actions">
+            <button type="button" class="custom-modal-btn cancel" onclick="closeModal('softDeleteModal')">Cancel</button>
+            <form id="softDeleteForm" method="post" style="display:inline;">
+                <button type="submit" class="custom-modal-btn confirm warning">Move to Trash</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Permanent Delete Confirmation Modal -->
+<div id="permanentDeleteModal" class="custom-modal-overlay">
+    <div class="custom-modal">
+        <div class="custom-modal-icon danger">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="custom-modal-title">Delete Permanently?</h3>
+        <p class="custom-modal-text">Warning: This will permanently delete "<span id="permanentDeleteListingTitle"></span>".<br>This action <strong>cannot be undone</strong> and all data will be lost forever.</p>
+        <div class="custom-modal-actions">
+            <button type="button" class="custom-modal-btn cancel" onclick="closeModal('permanentDeleteModal')">Cancel</button>
+            <form id="permanentDeleteForm" method="post" style="display:inline;">
+                <button type="submit" class="custom-modal-btn confirm danger">Delete Forever</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Show Archive Modal
+    function showArchiveModal(id, title) {
+        document.getElementById('archiveListingTitle').textContent = title;
+        document.getElementById('archiveForm').action = '/seller/listing/' + id + '/archive';
+        document.getElementById('archiveModal').classList.add('active');
+    }
+
+    // Show Soft Delete Modal
+    function showSoftDeleteModal(id, title) {
+        document.getElementById('softDeleteListingTitle').textContent = title;
+        document.getElementById('softDeleteForm').action = '/seller/listing/' + id + '/soft-delete';
+        document.getElementById('softDeleteModal').classList.add('active');
+    }
+
+    // Show Permanent Delete Modal
+    function showPermanentDeleteModal(id, title) {
+        document.getElementById('permanentDeleteListingTitle').textContent = title;
+        document.getElementById('permanentDeleteForm').action = '/seller/listing/' + id + '/permanent-delete';
+        document.getElementById('permanentDeleteModal').classList.add('active');
+    }
+
+    // Close Modal
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Close modal when clicking outside
+    document.querySelectorAll('.custom-modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.custom-modal-overlay.active').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+    });
+</script>
+}

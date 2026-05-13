@@ -719,7 +719,7 @@
                     </div>
                 }
 
-                <form method="post" asp-action="Register">
+                <form id="registerForm" method="POST" action="/admin/register">
                     <div class="form-group">
                         <label for="fullName" class="form-label">Full Name</label>
                         <input type="text" 
@@ -732,32 +732,41 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="username" 
+                               name="username" 
+                               placeholder="johnreichert" 
+                               required />
+                        <small class="text-muted" style="font-size: 11px;">At least 3 characters</small>
+                    </div>
+
+                    <div class="form-group">
                         <label for="email" class="form-label">Email Address</label>
                         <input type="email" 
                                class="form-control" 
                                id="email" 
                                name="email" 
-                               placeholder="jonathan@gmail.com" 
+                               placeholder="jonathan@@gmail.com" 
                                title="Please use a valid email domain (gmail.com, yahoo.com, outlook.com, or hotmail.com)"
                                required />
                         <small id="emailError" class="text-danger" style="display:none;">Please use a valid email domain (gmail.com, yahoo.com, outlook.com, or hotmail.com)</small>
                     </div>
 
                     <div class="form-group">
-                        <label for="roleType" class="form-label">Role</label>
-                        <select class="form-control" 
-                                id="roleType" 
-                                name="roleType" 
-                                required>
-                            <option value="">-- Select a Role --</option>
+                        <label for="role" class="form-label">Role</label>
+                        <select class="form-control" id="role" name="role" required>
+                            <option value="" disabled selected>Select your role</option>
                             @if (ViewBag.Roles != null)
                             {
-                                @foreach (var role in ViewBag.Roles)
+                                foreach (var r in ViewBag.Roles)
                                 {
-                                    <option value="@role.RoleType">@role.RoleType</option>
+                                    <option value="@r">@r</option>
                                 }
                             }
                         </select>
+                        <small class="text-muted" style="font-size: 11px;">Select the role you are registering for</small>
                     </div>
 
                     <div class="password-row">
@@ -790,7 +799,11 @@
                         <div class="g-recaptcha" data-sitekey="@siteKey"></div>
                     </div>
 
-                    <button type="submit" class="btn-register">Signin</button>
+                    <div id="registerErrorAlert" style="display:none; background:#fef2f2; border:1px solid #fecaca; color:#991b1b; border-radius:8px; padding:12px 14px; margin-bottom:16px; font-size:13px;">
+                        <strong>Error:</strong> <span id="registerErrorMsg"></span>
+                    </div>
+
+                    <button type="button" class="btn-register" id="registerBtn">Register</button>
 
                     <div class="auth-footer">
                         Already have an account? <a href="/admin/login">Sign In</a>
@@ -800,7 +813,359 @@
         </div>
     </div>
 
+    <!-- OTP Verification Modal -->
+    <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 12px; border: none;">
+                <div class="modal-header" style="background: linear-gradient(135deg, #3d4a5c 0%, #566978 100%); color: white; border-radius: 12px 12px 0 0;">
+                    <h5 class="modal-title" id="otpModalLabel">
+                        <i class="fas fa-shield-alt me-2"></i>Verify Your Email
+                    </h5>
+                </div>
+                <div class="modal-body" style="padding: 30px;">
+                    <div class="text-center mb-4">
+                        <div style="width: 80px; height: 80px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                            <i class="fas fa-envelope-open-text" style="font-size: 36px; color: #3d4a5c;"></i>
+                        </div>
+                        <p style="color: #6b7280; margin: 0;">We've sent a 6-digit OTP code to</p>
+                        <p id="otpEmailDisplay" style="font-weight: 600; color: #1f2937; margin: 5px 0 0;"></p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="otpInput" class="form-label" style="font-weight: 600;">Enter OTP Code</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="otpInput" 
+                               maxlength="6" 
+                               placeholder="Enter 6-digit code" 
+                               style="text-align: center; font-size: 24px; letter-spacing: 8px; padding: 15px;"
+                               required />
+                    </div>
+                    
+                    <div id="otpError" class="alert alert-danger" style="display: none; padding: 10px; font-size: 13px;"></div>
+                    
+                    <div class="text-center" style="color: #9ca3af; font-size: 12px;">
+                        <i class="fas fa-clock me-1"></i>Code expires in <span id="otpTimer" style="font-weight: 600; color: #3d4a5c;">10:00</span>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #e5e7eb; justify-content: space-between;">
+                    <div>
+                        <button type="button" class="btn btn-secondary" id="otpCancelBtn" style="border-radius: 6px;">Cancel</button>
+                        <button type="button" class="btn btn-outline-secondary" id="otpResendBtn" style="border-radius: 6px; display: none; margin-left: 8px;">
+                            <i class="fas fa-paper-plane me-1"></i>Resend OTP
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="otpVerifyBtn" style="background: #3d4a5c; border: none; border-radius: 6px; padding: 10px 24px;">
+                        <i class="fas fa-check me-2"></i>Verify & Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 12px; border: none;">
+                <div class="modal-body" style="padding: 40px 30px; text-align: center;">
+                    <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; animation: scaleIn 0.5s ease-out;">
+                        <i class="fas fa-check" style="font-size: 48px; color: white;"></i>
+                    </div>
+                    
+                    <h3 style="color: #1f2937; margin: 0 0 10px; font-weight: 700;">Welcome to EstateFlow!</h3>
+                    <p id="welcomeMessage" style="color: #6b7280; margin: 0 0 20px; line-height: 1.6;"></p>
+                    
+                    <div style="background: #f9fafb; border-radius: 8px; padding: 15px; margin-bottom: 25px;">
+                        <p style="color: #3d4a5c; margin: 0; font-size: 14px;">
+                            <i class="fas fa-envelope-circle-check me-2" style="color: #22c55e;"></i>
+                            Your account has been successfully created and verified!
+                        </p>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary" id="welcomeContinueBtn" style="background: #3d4a5c; border: none; border-radius: 6px; padding: 12px 40px; font-weight: 600;">
+                        <i class="fas fa-sign-in-alt me-2"></i>Proceed to Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @@keyframes scaleIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Registration form handling with OTP verification
+        const registerForm = document.getElementById('registerForm');
+        const registerBtn = document.getElementById('registerBtn');
+        const otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
+        const welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+        const otpInput = document.getElementById('otpInput');
+        const otpVerifyBtn = document.getElementById('otpVerifyBtn');
+        const otpCancelBtn = document.getElementById('otpCancelBtn');
+        const otpError = document.getElementById('otpError');
+        const welcomeContinueBtn = document.getElementById('welcomeContinueBtn');
+        
+        let registrationData = null;
+        let otpTimerInterval = null;
+
+        // ── Helpers ───────────────────────────────────────────────────────
+        function showFormError(msg) {
+            const el = document.getElementById('registerErrorAlert');
+            document.getElementById('registerErrorMsg').textContent = msg;
+            el.style.display = 'block';
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        function hideFormError() {
+            document.getElementById('registerErrorAlert').style.display = 'none';
+        }
+        function safeResetCaptcha() {
+            try { if (typeof grecaptcha !== 'undefined') grecaptcha.reset(); } catch(e) {}
+        }
+
+        // Handle Register button click
+        registerBtn.addEventListener('click', async function() {
+            // Prevent double submission
+            if (registerBtn.disabled) return;
+            
+            hideFormError();
+
+            // Validate form
+            const formData = new FormData(registerForm);
+            const fullName = formData.get('fullName');
+            const username = formData.get('username');
+            const email    = formData.get('email');
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirmPassword');
+            const role = formData.get('role');
+
+            let recaptcha = '';
+            try { recaptcha = grecaptcha.getResponse(); } catch(e) {}
+
+            // Client-side validation
+            if (!fullName || !username || !email || !password || !confirmPassword) {
+                showFormError('Please fill in all fields.');
+                return;
+            }
+            if (!role) {
+                showFormError('Please select a role.');
+                return;
+            }
+            if (password !== confirmPassword) {
+                showFormError('Passwords do not match.');
+                return;
+            }
+            if (password.length < 6) {
+                showFormError('Password must be at least 6 characters.');
+                return;
+            }
+            if (username.length < 3) {
+                showFormError('Username must be at least 3 characters.');
+                return;
+            }
+            if (!recaptcha) {
+                showFormError('Please complete the reCAPTCHA verification.');
+                return;
+            }
+
+            // Show loading state
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+
+            try {
+                // Submit registration — include Accept: application/json so server returns JSON
+                const response = await fetch('/admin/register', {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json' },
+                    body: formData
+                });
+
+                let result;
+                try {
+                    result = await response.json();
+                } catch (parseErr) {
+                    showFormError(`Server error (HTTP ${response.status}). Please try again.`);
+                    safeResetCaptcha();
+                    return;
+                }
+
+                if (result.success && result.skipOtp) {
+                    // Email unavailable — account activated directly, go straight to welcome → login
+                    document.getElementById('welcomeMessage').textContent =
+                        `Welcome, ${fullName}! Your account has been created successfully. You can now sign in.`;
+                    welcomeModal.show();
+                } else if (result.success) {
+                    // Show OTP modal
+                    document.getElementById('otpEmailDisplay').textContent = email;
+                    registrationData = { userId: result.userId, email: email, fullName: fullName };
+                    otpModal.show();
+                    startOtpTimer(result.expirySeconds || 600);
+                    otpInput.focus();
+                } else {
+                    showFormError(result.message || 'Registration failed. Please try again.');
+                    safeResetCaptcha();
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showFormError('A network error occurred. Please check your connection and try again.');
+                safeResetCaptcha();
+            } finally {
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = 'Register';
+            }
+        });
+
+        // OTP Timer
+        function startOtpTimer(seconds) {
+            let remaining = seconds;
+            const timerDisplay = document.getElementById('otpTimer');
+            
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
+            
+            otpTimerInterval = setInterval(() => {
+                const minutes = Math.floor(remaining / 60);
+                const secs = remaining % 60;
+                timerDisplay.textContent = `${minutes}:${secs.toString().padStart(2, '0')}`;
+                
+                if (remaining <= 0) {
+                    clearInterval(otpTimerInterval);
+                    otpError.textContent = 'OTP code has expired. Please register again.';
+                    otpError.style.display = 'block';
+                    otpVerifyBtn.disabled = true;
+                }
+                
+                remaining--;
+            }, 1000);
+        }
+
+        // Handle OTP verification
+        otpVerifyBtn.addEventListener('click', async function() {
+            const otpCode = otpInput.value.trim();
+            
+            if (!otpCode || otpCode.length !== 6) {
+                otpError.textContent = 'Please enter a valid 6-digit OTP code';
+                otpError.style.display = 'block';
+                return;
+            }
+
+            otpVerifyBtn.disabled = true;
+            otpVerifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verifying...';
+            otpError.style.display = 'none';
+
+            try {
+                const response = await fetch('/admin/verify-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json'
+                    },
+                    body: `userId=${registrationData.userId}&otpCode=${otpCode}`
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Close OTP modal
+                    otpModal.hide();
+                    clearInterval(otpTimerInterval);
+                    
+                    // Show welcome modal
+                    document.getElementById('welcomeMessage').textContent = 
+                        `Thank you ${registrationData.fullName}! Your account has been created successfully.`;
+                    
+                    setTimeout(() => {
+                        welcomeModal.show();
+                    }, 300);
+                } else {
+                    otpError.textContent = result.message || 'Invalid OTP code. Please try again.';
+                    otpError.style.display = 'block';
+                    otpInput.value = '';
+                    otpInput.focus();
+                }
+            } catch (error) {
+                console.error('OTP verification error:', error);
+                otpError.textContent = 'Verification failed. Please try again.';
+                otpError.style.display = 'block';
+            } finally {
+                otpVerifyBtn.disabled = false;
+                otpVerifyBtn.innerHTML = '<i class="fas fa-check me-2"></i>Verify & Continue';
+            }
+        });
+
+        // OTP Cancel button
+        otpCancelBtn.addEventListener('click', function() {
+            otpModal.hide();
+            clearInterval(otpTimerInterval);
+        });
+
+        // Resend OTP button
+        const otpResendBtn = document.getElementById('otpResendBtn');
+        if (otpResendBtn) {
+            otpResendBtn.addEventListener('click', async function() {
+                if (!registrationData) return;
+                otpResendBtn.disabled = true;
+                otpResendBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sending...';
+                const otpErr = document.getElementById('otpError');
+
+                try {
+                    const res = await fetch('/admin/resend-otp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+                        body: `userId=${registrationData.userId}`
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        otpErr.innerHTML = '✅ OTP sent successfully! Check your inbox.';
+                        otpErr.className = 'alert alert-success';
+                        otpErr.style.display = 'block';
+                        startOtpTimer(data.expirySeconds || 600);
+                        otpInput.value = '';
+                        otpInput.focus();
+                        otpResendBtn.style.display = 'none';
+                    } else {
+                        otpErr.innerHTML = '❌ ' + (data.message || 'Failed to resend OTP. Please try again.');
+                        otpErr.className = 'alert alert-danger';
+                        otpErr.style.display = 'block';
+                    }
+                } catch(e) {
+                    otpErr.innerHTML = '❌ Network error. Please try again.';
+                    otpErr.className = 'alert alert-danger';
+                    otpErr.style.display = 'block';
+                } finally {
+                    otpResendBtn.disabled = false;
+                    otpResendBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Resend OTP';
+                }
+            });
+        }
+
+        // Welcome modal continue button
+        welcomeContinueBtn.addEventListener('click', function() {
+            welcomeModal.hide();
+            // Redirect to login page
+            setTimeout(() => {
+                window.location.href = '/admin/login';
+            }, 300);
+        });
+
+        // Auto-format OTP input
+        otpInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    </script>
 
     <style>
         /* Success Toast Styling */

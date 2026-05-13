@@ -1,0 +1,521 @@
+@{
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Inbox";
+    int page = ViewBag.Page ?? 1;
+    int pageSize = ViewBag.PageSize ?? 10;
+    int totalCount = ViewBag.TotalCount ?? 0;
+    int unreadCount = ViewBag.UnreadCount ?? 0;
+}
+
+<style>
+    .inbox-container {
+        background: #F5F7FA;
+        padding: 24px;
+        min-height: 100vh;
+        display: flex;
+        gap: 20px;
+    }
+
+    .inbox-sidebar {
+        width: 300px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .inbox-compose {
+        padding: 16px;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+    .compose-btn {
+        width: 100%;
+        background: #FF9500;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+
+    .compose-btn:hover {
+        background: #FF8C00;
+    }
+
+    .inbox-folders {
+        padding: 16px 0;
+    }
+
+    .folder-item {
+        padding: 12px 16px;
+        color: #6B7280;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.2s;
+        border-left: 3px solid transparent;
+    }
+
+    .folder-item:hover {
+        background: #F9FAFB;
+        color: #1F2937;
+    }
+
+    .folder-item.active {
+        background: #F0F9FF;
+        color: #FF9500;
+        border-left-color: #FF9500;
+    }
+
+    .folder-label {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .folder-count {
+        background: #E5E7EB;
+        color: #6B7280;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .folder-item.active .folder-count {
+        background: #FF9500;
+        color: white;
+    }
+
+    /* Main Content */
+    .inbox-main {
+        flex: 1;
+        display: flex;
+        gap: 20px;
+    }
+
+    .inbox-list {
+        width: 400px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .inbox-list-header {
+        padding: 16px;
+        border-bottom: 1px solid #E5E7EB;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .inbox-list-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1E3A5F;
+    }
+
+    .inbox-search {
+        padding: 12px 16px;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        font-size: 13px;
+        background: #F9FAFB;
+    }
+
+    .message-list {
+        overflow-y: auto;
+        max-height: 600px;
+    }
+
+    .message-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #F3F4F6;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .message-item:hover {
+        background: #F9FAFB;
+    }
+
+    .message-item.unread {
+        background: #F0F9FF;
+    }
+
+    .message-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FF9500, #FF8C00);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .message-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+
+    .message-from {
+        font-weight: 600;
+        color: #1E3A5F;
+        font-size: 13px;
+    }
+
+    .message-time {
+        font-size: 12px;
+        color: #9CA3AF;
+        white-space: nowrap;
+    }
+
+    .message-subject {
+        font-size: 13px;
+        color: #6B7280;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 4px;
+    }
+
+    .message-item.unread .message-subject {
+        color: #1E3A5F;
+        font-weight: 600;
+    }
+
+    .message-preview {
+        font-size: 12px;
+        color: #9CA3AF;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Message Detail */
+    .message-detail {
+        flex: 1;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message-detail-header {
+        padding: 20px;
+        border-bottom: 1px solid #E5E7EB;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .message-detail-from {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .message-detail-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FF9500, #FF8C00);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .message-detail-info h3 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1E3A5F;
+    }
+
+    .message-detail-info p {
+        margin: 4px 0 0;
+        font-size: 12px;
+        color: #9CA3AF;
+    }
+
+    .message-detail-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .action-btn-small {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #E5E7EB;
+        background: white;
+        border-radius: 6px;
+        cursor: pointer;
+        color: #6B7280;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    .action-btn-small:hover {
+        background: #F9FAFB;
+        color: #1F2937;
+    }
+
+    .message-detail-subject {
+        padding: 20px;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+    .detail-subject {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1E3A5F;
+        margin: 0;
+    }
+
+    .message-detail-body {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        font-size: 13px;
+        color: #374151;
+        line-height: 1.6;
+    }
+
+    .message-detail-footer {
+        padding: 16px 20px;
+        border-top: 1px solid #E5E7EB;
+        display: flex;
+        gap: 12px;
+    }
+
+    .reply-input {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        font-size: 13px;
+        resize: vertical;
+        min-height: 60px;
+    }
+
+    .send-btn {
+        padding: 12px 20px;
+        background: #FF9500;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .send-btn:hover {
+        background: #FF8C00;
+    }
+
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #9CA3AF;
+        padding: 40px;
+        text-align: center;
+    }
+
+    .empty-state i {
+        font-size: 48px;
+        color: #D1D5DB;
+        margin-bottom: 16px;
+    }
+
+    @@media (max-width: 1200px) {
+        .inbox-container {
+            flex-direction: column;
+        }
+
+        .inbox-main {
+            flex-direction: column;
+        }
+
+        .inbox-sidebar {
+            width: 100%;
+        }
+
+        .inbox-list {
+            width: 100%;
+        }
+
+        .message-detail {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="inbox-container">
+    <!-- Sidebar -->
+    <div class="inbox-sidebar">
+        <div class="inbox-compose">
+            <button class="compose-btn">
+                <i class="fas fa-pen"></i> Compose
+            </button>
+        </div>
+
+        <div class="inbox-folders">
+            <div class="folder-item active">
+                <i class="fas fa-inbox"></i>
+                <span class="folder-label">Inbox</span>
+                <span class="folder-count">@totalCount</span>
+            </div>
+            <div class="folder-item">
+                <i class="fas fa-star"></i>
+                <span class="folder-label">Important</span>
+                <span class="folder-count">3</span>
+            </div>
+            <div class="folder-item">
+                <i class="fas fa-ban"></i>
+                <span class="folder-label">Snoozed</span>
+                <span class="folder-count">0</span>
+            </div>
+            <div class="folder-item">
+                <i class="fas fa-file"></i>
+                <span class="folder-label">Draft</span>
+                <span class="folder-count">2</span>
+            </div>
+            <div class="folder-item">
+                <i class="fas fa-paper-plane"></i>
+                <span class="folder-label">Sent</span>
+                <span class="folder-count">12</span>
+            </div>
+            <div class="folder-item">
+                <i class="fas fa-tag"></i>
+                <span class="folder-label">Promotions</span>
+                <span class="folder-count">5</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="inbox-main">
+        <!-- Message List -->
+        <div class="inbox-list">
+            <div class="inbox-list-header">
+                <span class="inbox-list-title">All Inbox Mail</span>
+                <i class="fas fa-ellipsis-v" style="color: #9CA3AF; cursor: pointer;"></i>
+            </div>
+            <div class="inbox-search">
+                <input type="text" class="search-input" placeholder="Search in Mails">
+            </div>
+            <div class="message-list">
+                @if (Model == null || Model.Count == 0)
+                {
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No messages</p>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var message in Model)
+                    {
+                        <div class="message-item @(message.Read ? "" : "unread")">
+                            <div class="message-avatar">@message.Avatar</div>
+                            <div class="message-content">
+                                <div class="message-header">
+                                    <span class="message-from">@message.From</span>
+                                    <span class="message-time">@message.Time</span>
+                                </div>
+                                <div class="message-subject">@message.Subject</div>
+                                <div class="message-preview">@message.Message.Substring(0, Math.Min(60, message.Message.Length))...</div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Message Detail -->
+        <div class="message-detail">
+            @if (Model != null && Model.Count > 0)
+            {
+                var selectedMessage = System.Linq.Enumerable.First((IEnumerable<dynamic>)Model);
+                <div class="message-detail-header">
+                    <div class="message-detail-from">
+                        <div class="message-detail-avatar">@selectedMessage.Avatar</div>
+                        <div class="message-detail-info">
+                            <h3>@selectedMessage.From</h3>
+                            <p>@selectedMessage.Email</p>
+                        </div>
+                    </div>
+                    <div class="message-detail-actions">
+                        <button class="action-btn-small" title="Archive">
+                            <i class="fas fa-archive"></i>
+                        </button>
+                        <button class="action-btn-small" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="message-detail-subject">
+                    <h2 class="detail-subject">@selectedMessage.FullSubject</h2>
+                </div>
+
+                <div class="message-detail-body">
+                    @selectedMessage.Message
+                </div>
+
+                <div class="message-detail-footer">
+                    <textarea class="reply-input" placeholder="Type your reply..."></textarea>
+                    <button class="send-btn">Send</button>
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-envelope-open"></i>
+                    <p>Select a message to read</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

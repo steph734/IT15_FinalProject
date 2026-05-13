@@ -1,0 +1,670 @@
+it@{
+    ViewData["Title"] = "Customers";
+    Layout = "~/Views/Shared/_BrokerLayout.cshtml";
+    ViewData["UserName"] = (string?)ViewBag.BrokerName ?? "Broker";
+}
+
+<style>
+    .customers-container {
+        padding: 32px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .page-breadcrumb {
+        display: flex;
+        gap: 8px;
+        font-size: 13px;
+        color: #9ca3af;
+    }
+
+    .page-breadcrumb a {
+        color: #667eea;
+        text-decoration: none;
+    }
+
+    .page-breadcrumb a:hover {
+        color: #764ba2;
+    }
+
+    .btn-create {
+        display: inline-flex;
+        align-items: center;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #f97316, #ea580c);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+    }
+
+    .btn-create:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+        color: white;
+    }
+
+    .btn-create i {
+        font-size: 16px;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        padding: 20px;
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .filter-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .filter-select {
+        background: white;
+        border: 1px solid #e5e7eb;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #667eea;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .filter-select:hover {
+        border-color: #667eea;
+    }
+
+    /* Card */
+    .card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 24px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    /* Table */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead {
+        background: #f9fafb;
+    }
+
+    th {
+        padding: 16px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 12px;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    td {
+        padding: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        color: #1f2937;
+        font-size: 14px;
+    }
+
+    tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Customer Cell */
+    .customer-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .customer-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .customer-avatar.avatar-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .customer-avatar.avatar-2 { background: linear-gradient(135deg, #f97316, #ea580c); }
+    .customer-avatar.avatar-3 { background: linear-gradient(135deg, #10b981, #059669); }
+    .customer-avatar.avatar-4 { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+    .customer-avatar.avatar-5 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .customer-avatar.avatar-6 { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .customer-avatar.avatar-7 { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+    .customer-avatar.avatar-8 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+
+    .customer-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .customer-name {
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .customer-email {
+        font-size: 12px;
+        color: #9ca3af;
+    }
+
+    /* Status Badge */
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-interested {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+    }
+
+    .status-follow-up {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+    }
+
+    .status-under-review {
+        background: rgba(168, 85, 247, 0.1);
+        color: #a855f7;
+    }
+
+    /* Action Icons */
+    .action-icons {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .action-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+        background: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b7280;
+        transition: all 0.3s;
+        font-size: 14px;
+    }
+
+    .action-icon:hover {
+        background: #f3f4f6;
+        color: #667eea;
+        border-color: #667eea;
+    }
+
+    /* Property Type Badge */
+    .property-type {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .property-type.residential {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+    }
+
+    .property-type.commercial {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .property-type.industrial {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+    }
+
+    /* Pagination */
+    .pagination-wrapper {
+        padding: 16px 24px;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .pagination-info {
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .pagination-controls {
+        display: flex;
+        gap: 8px;
+    }
+
+    .pagination-btn {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #e5e7eb;
+        background: white;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        color: #6b7280;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+        background: #f3f4f6;
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    .pagination-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Checkbox */
+    input[type="checkbox"] {
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+    }
+
+    /* Responsive */
+    @@media (max-width: 1200px) {
+        .customers-container {
+            padding: 20px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .filter-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .customers-container {
+            padding: 16px;
+        }
+
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        table {
+            font-size: 12px;
+        }
+
+        th, td {
+            padding: 12px;
+        }
+
+        .customer-cell {
+            gap: 8px;
+        }
+
+        .customer-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 12px;
+        }
+
+        .action-icons {
+            flex-wrap: wrap;
+        }
+
+        .pagination-wrapper {
+            flex-direction: column;
+            gap: 12px;
+        }
+    }
+</style>
+
+<div class="customers-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Customer List</h1>
+            <div class="page-breadcrumb">
+                <a href="/broker/dashboard/analytics">Customers</a>
+                <span>›</span>
+                <span>Customer List</span>
+            </div>
+        </div>
+        <a href="/broker/customers/create" class="btn-create">
+            <i class="fas fa-plus me-2"></i>Create Customer
+        </a>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-title">All Customer List</div>
+        <select class="filter-select">
+            <option>This Month ▼</option>
+            <option>This Week</option>
+            <option>Last Month</option>
+            <option>All Time</option>
+        </select>
+    </div>
+
+    <!-- Customer Table -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">📋 Customer List</div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40px;"><input type="checkbox" /></th>
+                        <th>Customer Photo & Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Property Type</th>
+                        <th>Interested Properties</th>
+                        <th>Status</th>
+                        <th>Last Contacted</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Customer 1 -->
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td>
+                            <div class="customer-cell">
+                                <div class="customer-avatar avatar-1">D</div>
+                                <div class="customer-info">
+                                    <div class="customer-name">David Nummi</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>davidnumminen@teleworm.us</td>
+                        <td>+231 06-7582071</td>
+                        <td><span class="property-type residential">Residential</span></td>
+                        <td>123 Maple St, 456 Oak Ave</td>
+                        <td><span class="status-badge status-interested">Interested</span></td>
+                        <td>15/03/2023</td>
+                        <td>
+                            <div class="action-icons">
+                                <span class="action-icon" title="View"><i class="fas fa-eye"></i></span>
+                                <span class="action-icon" title="Edit"><i class="fas fa-edit"></i></span>
+                                <span class="action-icon" title="Delete"><i class="fas fa-trash"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Customer 2 -->
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td>
+                            <div class="customer-cell">
+                                <div class="customer-avatar avatar-2">S</div>
+                                <div class="customer-info">
+                                    <div class="customer-name">Sinikka Penttinen</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>sinikapenttinen@dayrep.com</td>
+                        <td>+231 47-23456789</td>
+                        <td><span class="property-type commercial">Commercial</span></td>
+                        <td>789 Pine Blvd</td>
+                        <td><span class="status-badge status-under-review">Under Review</span></td>
+                        <td>20/03/2023</td>
+                        <td>
+                            <div class="action-icons">
+                                <span class="action-icon" title="View"><i class="fas fa-eye"></i></span>
+                                <span class="action-icon" title="Edit"><i class="fas fa-edit"></i></span>
+                                <span class="action-icon" title="Delete"><i class="fas fa-trash"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Customer 3 -->
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td>
+                            <div class="customer-cell">
+                                <div class="customer-avatar avatar-3">J</div>
+                                <div class="customer-info">
+                                    <div class="customer-name">Jere Palmu</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>jerepalmu@rhyta.com</td>
+                        <td>+231 73-34567890</td>
+                        <td><span class="property-type residential">Residential</span></td>
+                        <td>101 Birch Ct, 202 Cedar Ln</td>
+                        <td><span class="status-badge status-follow-up">Follow-up</span></td>
+                        <td>25/03/2023</td>
+                        <td>
+                            <div class="action-icons">
+                                <span class="action-icon" title="View"><i class="fas fa-eye"></i></span>
+                                <span class="action-icon" title="Edit"><i class="fas fa-edit"></i></span>
+                                <span class="action-icon" title="Delete"><i class="fas fa-trash"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Customer 4 -->
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td>
+                            <div class="customer-cell">
+                                <div class="customer-avatar avatar-4">U</div>
+                                <div class="customer-info">
+                                    <div class="customer-name">Ulla Nuorela</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>ullanuorela@rhyta.com</td>
+                        <td>+231 45-45678901</td>
+                        <td><span class="property-type residential">Residential</span></td>
+                        <td>303 Elm St</td>
+                        <td><span class="status-badge status-interested">Interested</span></td>
+                        <td>05/04/2023</td>
+                        <td>
+                            <div class="action-icons">
+                                <span class="action-icon" title="View"><i class="fas fa-eye"></i></span>
+                                <span class="action-icon" title="Edit"><i class="fas fa-edit"></i></span>
+                                <span class="action-icon" title="Delete"><i class="fas fa-trash"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Customer 5 -->
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td>
+                            <div class="customer-cell">
+                                <div class="customer-avatar avatar-5">T</div>
+                                <div class="customer-info">
+                                    <div class="customer-name">Tia Karppinen</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>tiakarpppinen@teleworm.us</td>
+                        <td>+231 16-56789012</td>
+                        <td><span class="property-type industrial">Industrial</span></td>
+                        <td>404 Walnut Rd</td>
+                        <td><span class="status-badge status-follow-up">Follow-up</span></td>
+                        <td>12/04/2023</td>
+                        <td>
+                            <div class="action-icons">
+                                <span class="action-icon" title="View"><i class="fas fa-eye"></i></span>
+                                <span class="action-icon" title="Edit"><i class="fas fa-edit"></i></span>
+                                <span class="action-icon" title="Delete"><i class="fas fa-trash"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Customer 6 -->
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td>
+                            <div class="customer-cell">
+                                <div class="customer-avatar avatar-6">H</div>
+                                <div class="customer-info">
+                                    <div class="customer-name">Harland R. Orsini</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>harlandorsini@dayrep.com</td>
+                        <td>+231 82-67890123</td>
+                        <td><span class="property-type residential">Residential</span></td>
+                        <td>505 Spruce St</td>
+                        <td><span class="status-badge status-interested">Interested</span></td>
+                        <td>15/04/2023</td>
+                        <td>
+                            <div class="action-icons">
+                                <span class="action-icon" title="View"><i class="fas fa-eye"></i></span>
+                                <span class="action-icon" title="Edit"><i class="fas fa-edit"></i></span>
+                                <span class="action-icon" title="Delete"><i class="fas fa-trash"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Customer 7 -->
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td>
+                            <div class="customer-cell">
+                                <div class="customer-avatar avatar-7">D</div>
+                                <div class="customer-info">
+                                    <div class="customer-name">David Padgett</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>davidpadgett@armysspy.com</td>
+                        <td>+231 92-78901234</td>
+                        <td><span class="property-type commercial">Commercial</span></td>
+                        <td>606 Fir Ave</td>
+                        <td><span class="status-badge status-under-review">Under Review</span></td>
+                        <td>18/04/2023</td>
+                        <td>
+                            <div class="action-icons">
+                                <span class="action-icon" title="View"><i class="fas fa-eye"></i></span>
+                                <span class="action-icon" title="Edit"><i class="fas fa-edit"></i></span>
+                                <span class="action-icon" title="Delete"><i class="fas fa-trash"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Customer 8 -->
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td>
+                            <div class="customer-cell">
+                                <div class="customer-avatar avatar-8">V</div>
+                                <div class="customer-info">
+                                    <div class="customer-name">Valerie Obrien</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>valeriebrien@dayrep.com</td>
+                        <td>+231 82-89012345</td>
+                        <td><span class="property-type residential">Residential</span></td>
+                        <td>808 Willow Dr, 909 Aspen Ln</td>
+                        <td><span class="status-badge status-interested">Interested</span></td>
+                        <td>20/04/2023</td>
+                        <td>
+                            <div class="action-icons">
+                                <span class="action-icon" title="View"><i class="fas fa-eye"></i></span>
+                                <span class="action-icon" title="Edit"><i class="fas fa-edit"></i></span>
+                                <span class="action-icon" title="Delete"><i class="fas fa-trash"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrapper">
+            <div class="pagination-info">Showing 1 to 8 of 48 entries</div>
+            <div class="pagination-controls">
+                <button class="pagination-btn"><i class="fas fa-chevron-left"></i></button>
+                <button class="pagination-btn" style="background: #667eea; color: white; border-color: #667eea;">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,228 @@
+<!-- Property Search & Filter Component -->
+<div class="property-filters-section">
+    <div class="filter-header">
+        <h3 class="filter-title">Filter Properties</h3>
+        <button class="filter-toggle" id="filterToggle">
+            <i class="fas fa-sliders-h"></i> Filters
+        </button>
+    </div>
+
+    <form class="filters-form" id="propertyFiltersForm" method="get">
+        <!-- Search -->
+        <div class="filter-group">
+            <label class="filter-label">Search</label>
+            <input type="text" name="search" class="form-control" placeholder="Search by location, title..." value="@ViewBag.CurrentSearch">
+        </div>
+
+        <!-- Price Range -->
+        <div class="filter-group">
+            <label class="filter-label">Price Range</label>
+            <div class="price-inputs">
+                <input type="number" name="minPrice" class="form-control" placeholder="Min" value="@ViewBag.MinPrice">
+                <span class="separator">-</span>
+                <input type="number" name="maxPrice" class="form-control" placeholder="Max" value="@ViewBag.MaxPrice">
+            </div>
+        </div>
+
+        <!-- Property Type -->
+        <div class="filter-group">
+            <label class="filter-label">Property Type</label>
+            <select name="propertyType" class="form-control">
+                <option value="">All Types</option>
+                <option value="House">House</option>
+                <option value="Apartment">Apartment</option>
+                <option value="Condo">Condo</option>
+                <option value="Villa">Villa</option>
+                <option value="Commercial">Commercial</option>
+            </select>
+        </div>
+
+        <!-- Bedrooms -->
+        <div class="filter-group">
+            <label class="filter-label">Bedrooms</label>
+            <select name="bedrooms" class="form-control">
+                <option value="">Any</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4+</option>
+            </select>
+        </div>
+
+        <!-- Status -->
+        <div class="filter-group">
+            <label class="filter-label">Listing Status</label>
+            <select name="listingType" class="form-control">
+                <option value="">All Status</option>
+                <option value="Buy">For Sale</option>
+                <option value="Rent">For Rent</option>
+                <option value="Sell">For Lease</option>
+            </select>
+        </div>
+
+        <!-- Buttons -->
+        <div class="filter-actions">
+            <button type="submit" class="btn-filter-search">
+                <i class="fas fa-search"></i> Search
+            </button>
+            <button type="reset" class="btn-filter-reset">
+                <i class="fas fa-redo"></i> Reset
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .property-filters-section {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 30px;
+        border: 1px solid #E5E7EB;
+    }
+
+    .filter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .filter-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1E3A5F;
+        margin: 0;
+    }
+
+    .filter-toggle {
+        display: none;
+        background: #16A39E;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .filters-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #1E3A5F;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        padding: 10px 12px;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #16A39E;
+        box-shadow: 0 0 0 3px rgba(22, 163, 158, 0.1);
+    }
+
+    .price-inputs {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .price-inputs .form-control {
+        flex: 1;
+    }
+
+    .separator {
+        color: #D1D5DB;
+    }
+
+    .filter-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+    }
+
+    .btn-filter-search,
+    .btn-filter-reset {
+        padding: 10px 24px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-filter-search {
+        background: #16A39E;
+        color: white;
+    }
+
+    .btn-filter-search:hover {
+        background: #0F8B84;
+    }
+
+    .btn-filter-reset {
+        background: #F8F9FA;
+        color: #6B7280;
+        border: 1px solid #E5E7EB;
+    }
+
+    .btn-filter-reset:hover {
+        background: #E0F2F1;
+        color: #16A39E;
+    }
+
+    @@media (max-width: 767.98px) {
+        .filter-toggle {
+            display: flex;
+        }
+
+        .filters-form {
+            display: none;
+            grid-template-columns: 1fr;
+        }
+
+        .filters-form.active {
+            display: grid;
+        }
+
+        .filter-actions {
+            grid-column: 1;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterToggle = document.getElementById('filterToggle');
+        const filtersForm = document.querySelector('.filters-form');
+        
+        if (filterToggle) {
+            filterToggle.addEventListener('click', function() {
+                filtersForm.classList.toggle('active');
+            });
+        }
+    });
+</script>

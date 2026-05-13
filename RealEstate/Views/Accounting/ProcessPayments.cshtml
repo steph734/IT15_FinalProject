@@ -1,0 +1,169 @@
+@model List<RealEstate.Models.CommissionDeal>
+@{
+    ViewData["Title"] = "Process Payments";
+    Layout = "~/Views/Shared/_AccountingLayout.cshtml";
+    var selectedDeal = ViewBag.SelectedDeal as RealEstate.Models.CommissionDeal;
+}
+
+<div class="payroll-page">
+    <section class="payroll-header process-header">
+        <div class="container-fluid px-lg-4">
+            <div class="d-flex justify-content-between align-items-end">
+                <div>
+                    <span class="page-badge">PAYMENT PROCESSING</span>
+                    <h1 class="page-title">Process Payments</h1>
+                    <p class="page-subtitle">Select a payout and process payment</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container-fluid px-lg-4 py-4">
+        <div class="row g-3">
+            <div class="col-lg-5">
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <div class="header-left">
+                            <h5><i class="fas fa-list"></i> Select Payout</h5>
+                            <span class="record-count">@(Model?.Count ?? 0) records</span>
+                        </div>
+                    </div>
+                    <div class="payout-list">
+                        @if (Model?.Count > 0)
+                        {
+                            @foreach (var d in Model)
+                            {
+                                <a href="/accounting/payment/process-payments?id=@d.Id" class="payout-item @(selectedDeal?.Id == d.Id ? "active" : "")">
+                                    <div class="payout-info">
+                                        <div class="payout-name">@d.PropertyLabel</div>
+                                        <div class="payout-id">#@d.Id.ToString().PadLeft(4, '0')</div>
+                                    </div>
+                                    <div class="payout-amount">₱@d.AgentPayoutAmount.ToString("N2")</div>
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <div class="empty-state">
+                                <div class="empty-icon">📋</div>
+                                <h4>No Payouts</h4>
+                                <p>No approved payouts available for processing.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                @if (selectedDeal != null)
+                {
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <div class="header-left">
+                                <h5><i class="fas fa-money-bill-wave"></i> Process Payment</h5>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="deal-summary mb-4">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label text-muted">Property</label>
+                                        <div class="fw-bold">@selectedDeal.PropertyLabel</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text-muted">Deal ID</label>
+                                        <div class="fw-bold">#@selectedDeal.Id.ToString().PadLeft(4, '0')</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted">Gross Commission</label>
+                                        <div class="fw-bold text-primary">₱@selectedDeal.GrossCommission.ToString("N2")</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted">Add-ons</label>
+                                        <div class="fw-bold text-warning">₱@selectedDeal.AddOnsTotal.ToString("N2")</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted">Agent Payout</label>
+                                        <div class="fw-bold text-success">₱@selectedDeal.AgentPayoutAmount.ToString("N2")</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form method="post" action="/accounting/payment/process-payments">
+                                <input type="hidden" name="dealId" value="@selectedDeal.Id" />
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Payment Method</label>
+                                        <select name="paymentMethod" class="form-select" required>
+                                            <option value="">Select method...</option>
+                                            <option value="Bank Transfer">Bank Transfer</option>
+                                            <option value="Cash">Cash</option>
+                                            <option value="GCash">GCash</option>
+                                            <option value="Check">Check</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Reference Number</label>
+                                        <input type="text" name="referenceNumber" class="form-control" placeholder="e.g. REF-12345" required />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Payment Date</label>
+                                        <input type="date" name="paymentDate" class="form-control" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" required />
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <button type="submit" class="btn-process-submit">
+                                        <i class="fas fa-check"></i> Mark as Paid
+                                    </button>
+                                    <a href="/accounting/payment/approved-payouts" class="btn-cancel ms-2">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="data-card">
+                        <div class="empty-state">
+                            <div class="empty-icon">💳</div>
+                            <h4>Select a Payout</h4>
+                            <p>Choose a payout from the list to process payment.</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payroll-page { background: #F1F5F9; min-height: 100vh; }
+    .process-header { background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important; }
+    .payroll-header { background: linear-gradient(135deg, #1E3A5F 0%, #16A39E 100%); color: white; padding: 40px 0 30px; }
+    .page-badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 6px; }
+    .page-subtitle { font-size: 0.95rem; opacity: 0.9; margin: 0; }
+    .data-card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; overflow: hidden; }
+    .data-card-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #F1F5F9; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-left h5 { margin: 0; font-weight: 700; color: #1E293B; font-size: 1.1rem; }
+    .header-left h5 i { color: #10b981; margin-right: 6px; }
+    .record-count { background: #F1F5F9; color: #64748B; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+    .payout-list { max-height: 600px; overflow-y: auto; }
+    .payout-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid #F1F5F9; text-decoration: none; color: inherit; transition: all 0.2s; }
+    .payout-item:hover { background: #F8FAFC; }
+    .payout-item.active { background: #ECFDF5; border-left: 3px solid #10b981; }
+    .payout-name { font-weight: 700; color: #1E293B; font-size: 0.95rem; }
+    .payout-id { font-size: 0.8rem; color: #94A3B8; }
+    .payout-amount { font-weight: 800; color: #059669; font-size: 1.1rem; }
+    .deal-summary { background: #F8FAFC; border-radius: 12px; padding: 20px; }
+    .form-label { font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .form-select, .form-control { padding: 10px 14px; border: 1px solid #E2E8F0; border-radius: 10px; font-size: 0.9rem; }
+    .form-select:focus, .form-control:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+    .btn-process-submit { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: linear-gradient(135deg, #10B981, #059669); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 1rem; cursor: pointer; }
+    .btn-cancel { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: #F3F4F6; color: #6B7280; border: none; border-radius: 10px; font-weight: 600; font-size: 1rem; text-decoration: none; }
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+    .empty-state h4 { color: #1E293B; font-weight: 700; margin-bottom: 8px; }
+    .empty-state p { color: #64748B; margin: 0; }
+</style>

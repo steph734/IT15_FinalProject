@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EstateFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    @await RenderSectionAsync("Styles", required: false)
+    <style>
+        .properties-navbar {
+            background: #fff;
+            border-bottom: 1px solid #E5E7EB;
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 9999;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .properties-navbar .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .properties-navbar .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .properties-navbar .nav-brand-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+        .properties-navbar .nav-brand-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .properties-navbar .nav-brand-text .estate { color: #ff7a59; }
+        .properties-navbar .nav-brand-text .flow { color: #1f2937; }
+        .properties-navbar .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .properties-navbar .nav-links a {
+            color: #4b5563;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .properties-navbar .nav-links a:hover,
+        .properties-navbar .nav-links a.active {
+            color: #f97316;
+        }
+        .properties-navbar .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .properties-navbar .btn-login {
+            padding: 8px 18px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .properties-navbar .btn-login:hover {
+            background: #F9FAFB;
+            border-color: #D1D5DB;
+        }
+        .properties-navbar .btn-primary-nav {
+            padding: 8px 18px;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .properties-navbar .btn-primary-nav:hover {
+            opacity: 0.9;
+            color: white;
+        }
+        .properties-body {
+            background: #F8F9FA;
+            min-height: 100vh;
+        }
+        .properties-footer {
+            background: #fff;
+            border-top: 1px solid #E5E7EB;
+            padding: 40px 0 24px;
+            margin-top: auto;
+        }
+        .properties-footer .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Mobile Responsive Styles */
+        @@media (max-width: 991.98px) {
+            .properties-navbar .nav-links {
+                display: none;
+            }
+
+            .properties-navbar .nav-actions {
+                margin-left: auto;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .properties-navbar .nav-container {
+                padding: 0 16px;
+            }
+
+            .properties-navbar .nav-brand-text {
+                font-size: 18px;
+            }
+
+            .properties-navbar .nav-brand-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+
+            .properties-navbar .btn-login,
+            .properties-navbar .btn-primary-nav {
+                padding: 6px 14px;
+                font-size: 13px;
+            }
+
+            .properties-footer {
+                padding: 24px 0 16px;
+            }
+
+            .properties-footer .footer-container {
+                padding: 0 16px;
+            }
+
+            .properties-footer .row {
+                flex-direction: column;
+            }
+
+            .properties-footer .col-md-4,
+            .properties-footer .col-md-2 {
+                margin-bottom: 1.5rem;
+                text-align: center;
+            }
+        }
+
+        @@media (max-width: 575.98px) {
+            .properties-navbar .nav-brand-text {
+                font-size: 16px;
+            }
+
+            .properties-navbar .btn-login span,
+            .properties-navbar .btn-primary-nav span {
+                display: none;
+            }
+
+            .properties-navbar .btn-login::after,
+            .properties-navbar .btn-primary-nav::after {
+                content: attr(data-icon);
+                font-family: "Font Awesome 6 Free";
+                font-weight: 900;
+            }
+        }
+    </style>
+</head>
+<body class="properties-body d-flex flex-column">
+    @* Use the main LandingNavbar for consistency across all pages *@
+    <partial name="_LandingNavbar" />
+
+    <main role="main" class="flex-grow-1" style="padding-top: 20px;">
+        @RenderBody()
+    </main>
+
+    <footer class="properties-footer">
+        <div class="footer-container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="nav-brand-icon" style="width:32px;height:32px;font-size:14px;"><i class="fas fa-building"></i></div>
+                        <span class="nav-brand-text" style="font-size:18px;"><span class="estate">Estate</span><span class="flow">Flow</span></span>
+                    </div>
+                    <p class="text-muted small">Your trusted partner in finding the perfect property. Browse, inquire, and connect with agents seamlessly.</p>
+                </div>
+                <div class="col-md-2">
+                    <h6 class="fw-bold mb-3" style="font-size:14px;">Explore</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="/Properties" class="text-muted text-decoration-none">Properties</a></li>
+                        <li class="mb-2"><a href="/Home/Contact" class="text-muted text-decoration-none">Contact</a></li>
+                        <li class="mb-2"><a href="/Home/About" class="text-muted text-decoration-none">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6 class="fw-bold mb-3" style="font-size:14px;">Account</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="/admin/login" class="text-muted text-decoration-none">Sign In</a></li>
+                        <li class="mb-2"><a href="/admin/register" class="text-muted text-decoration-none">Register</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="fw-bold mb-3" style="font-size:14px;">Contact</h6>
+                    <p class="text-muted small mb-1"><i class="fas fa-envelope me-2"></i>info@estateflow.com</p>
+                    <p class="text-muted small mb-1"><i class="fas fa-phone me-2"></i>+1 (555) 123-4567</p>
+                    <p class="text-muted small"><i class="fas fa-map-marker-alt me-2"></i>123 Real Estate Ave, Metro City</p>
+                </div>
+            </div>
+            <div class="border-top mt-4 pt-4 text-center text-muted small">
+                &copy; @DateTime.UtcNow.Year EstateFlow. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

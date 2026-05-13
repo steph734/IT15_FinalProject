@@ -279,20 +279,29 @@ body {
   object-fit: cover;
 }
 
-@media (min-width: 992px) {
-  .landing-page .landing-collage-float {
-    position: absolute;
-    width: 52%;
-    max-width: 340px;
-    aspect-ratio: 4/3;
-    right: 0;
-    bottom: -1.5rem;
-    border: 4px solid #fff;
-  }
+/* Schedule Visit Button Styling */
+.btn-schedule-visit {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    cursor: pointer;
 }
 
-.landing-page .min-h-landing-testimonial {
-  min-height: 260px;
+.btn-schedule-visit:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    text-decoration: none;
 }
 
 @media (min-width: 768px) {
@@ -488,3 +497,376 @@ body {
 }
 .ef-transaction-id { color: rgba(15,39,68,0.7); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
 .ef-client-cell { font-weight: 600; color: var(--ef-navy); }
+
+/* ==================== RESPONSIVE STYLES ==================== */
+
+/* Mobile First Approach - Base styles for mobile */
+@media (max-width: 575.98px) {
+    /* Landing Page Mobile */
+    .landing-page .landing-hero-title {
+        font-size: 1.75rem;
+    }
+
+    .landing-page .landing-hero-sub {
+        font-size: 0.95rem;
+    }
+
+    .landing-page .landing-search {
+        padding: 1rem;
+    }
+
+    .landing-page .landing-max-w {
+        max-width: 100%;
+    }
+
+    /* Inner Pages Mobile */
+    .site-inner-body .container-fluid {
+        padding: 0 1rem;
+    }
+
+    .site-footer .row {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .site-footer .col-md-6 {
+        margin-bottom: 1rem;
+    }
+
+    .site-footer .text-md-end {
+        text-align: center !important;
+    }
+
+    /* Broker Dashboard Mobile */
+    .broker-dashboard .kpi-card {
+        margin-bottom: 1rem;
+    }
+
+    .broker-dashboard .feature-card {
+        margin-bottom: 1rem;
+    }
+
+    /* Tables Mobile */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+
+    .ef-table-table {
+        font-size: 0.875rem;
+    }
+
+    .ef-table-table thead th {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+
+    .ef-table-table tbody td {
+        padding: 0.5rem;
+    }
+
+    /* Buttons Mobile */
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    /* Cards Mobile */
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    /* Forms Mobile */
+    .form-control {
+        font-size: 1rem;
+    }
+
+    /* Navbar Mobile */
+    .navbar {
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+
+    /* Modals Mobile */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    /* Property Cards Mobile */
+    .site-property-card {
+        margin-bottom: 1rem;
+    }
+
+    /* Agent Photos Mobile */
+    .min-h-agent-photo {
+        min-height: 200px;
+    }
+}
+
+/* Tablet Styles */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    /* Landing Page Tablet */
+    .landing-page .landing-hero-title {
+        font-size: 2rem;
+    }
+
+    .landing-page .landing-hero-sub {
+        font-size: 1rem;
+    }
+
+    /* Broker Dashboard Tablet */
+    .broker-dashboard .kpi-card {
+        margin-bottom: 1rem;
+    }
+
+    /* Tables Tablet */
+    .ef-table-table {
+        font-size: 0.9rem;
+    }
+
+    /* Property Cards Tablet */
+    .site-property-card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Desktop Styles */
+@media (min-width: 992px) {
+    /* Landing Page Desktop */
+    .landing-page .landing-hero-title {
+        font-size: 2.5rem;
+    }
+
+    .landing-page .landing-hero-sub {
+        font-size: 1.125rem;
+    }
+
+    /* Broker Dashboard Desktop */
+    .broker-dashboard .kpi-card {
+        margin-bottom: 0;
+    }
+
+    .broker-dashboard .feature-card {
+        margin-bottom: 0;
+    }
+
+    /* Property Cards Desktop */
+    .site-property-card {
+        margin-bottom: 0;
+    }
+}
+
+/* Large Desktop Styles */
+@media (min-width: 1200px) {
+    .landing-page .landing-hero-title {
+        font-size: 3rem;
+    }
+}
+
+/* Extra Large Desktop Styles */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+}
+
+/* Broker Layout Responsive */
+@media (max-width: 991.98px) {
+    .broker-main-wrapper {
+        flex-direction: column;
+    }
+
+    .broker-content-wrapper {
+        margin-left: 0;
+    }
+
+    .broker-header {
+        padding: 12px 16px;
+    }
+
+    .header-left {
+        gap: 12px;
+    }
+
+    .header-title h1 {
+        font-size: 1.25rem;
+    }
+
+    .header-right {
+        gap: 12px;
+    }
+
+    .header-search {
+        display: none;
+    }
+
+    /* Sidebar mobile toggle */
+    .broker-sidebar {
+        position: fixed;
+        left: -250px;
+        top: 0;
+        height: 100vh;
+        z-index: 1050;
+        transition: left 0.3s ease;
+    }
+
+    .broker-sidebar.show {
+        left: 0;
+    }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+}
+
+/* Properties Layout Responsive */
+@media (max-width: 768px) {
+    .property-grid-page .page-header-modern {
+        padding: 2rem 1rem;
+    }
+
+    .property-grid-page .page-title {
+        font-size: 1.5rem;
+    }
+
+    .property-grid-page .page-subtitle {
+        font-size: 0.875rem;
+    }
+
+    .sidebar-filters {
+        margin-bottom: 2rem;
+    }
+}
+
+/* Modal Responsive */
+@media (max-width: 575.98px) {
+    .modal-dialog {
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .modal-content {
+        border-radius: 0;
+        height: 100vh;
+    }
+
+    .modal-body {
+        overflow-y: auto;
+    }
+}
+
+/* Form Responsive */
+@media (max-width: 575.98px) {
+    .form-row > .col,
+    .form-row > [class*="col-"] {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Utility Classes for Responsive */
+.d-mobile-none {
+    display: none !important;
+}
+
+@media (min-width: 576px) {
+    .d-mobile-none {
+        display: block !important;
+    }
+}
+
+.d-desktop-none {
+    display: block !important;
+}
+
+@media (min-width: 992px) {
+    .d-desktop-none {
+        display: none !important;
+    }
+}
+
+/* Image Responsive */
+.img-fluid-responsive {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Text Responsive */
+.text-responsive-lg {
+    font-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .text-responsive-lg {
+        font-size: 1.5rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .text-responsive-lg {
+        font-size: 1.75rem;
+    }
+}
+
+/* Container Padding Responsive */
+.container-responsive {
+    padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+    .container-responsive {
+        padding: 0 2rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .container-responsive {
+        padding: 0 3rem;
+    }
+}
+
+/* Grid Responsive */
+.grid-responsive {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 576px) {
+    .grid-responsive {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    .grid-responsive {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    .grid-responsive {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

@@ -1,5 +1,6 @@
-using System.Net;
-using System.Net.Mail;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 namespace RealEstate.Services;
 
@@ -19,65 +20,74 @@ public class EmailService
         try
         {
             var smtpSettings = _configuration.GetSection("SmtpSettings");
-            var smtpServer = smtpSettings["SmtpServer"];
-            var smtpPort = int.Parse(smtpSettings["SmtpPort"] ?? "587");
+            var smtpServer   = smtpSettings["SmtpServer"];
+            var smtpPort     = int.Parse(smtpSettings["SmtpPort"] ?? "587");
             var smtpUsername = smtpSettings["SmtpUsername"];
             var smtpPassword = smtpSettings["SmtpPassword"];
-            var senderEmail = smtpSettings["SenderEmail"];
-            var senderName = smtpSettings["SenderName"] ?? "RealEstate Team";
+            var senderName   = smtpSettings["SenderName"] ?? "EstateFlow";
 
-            if (string.IsNullOrEmpty(smtpServer) || string.IsNullOrEmpty(smtpUsername) || string.IsNullOrEmpty(smtpPassword))
+            // ── Config validation ─────────────────────────────────────────
+            if (string.IsNullOrEmpty(smtpServer) ||
+                string.IsNullOrEmpty(smtpUsername) ||
+                string.IsNullOrEmpty(smtpPassword))
             {
-                _logger.LogError("SMTP settings are not configured properly");
+                _logger.LogError("SMTP settings are missing. Check SmtpSettings in appsettings.json.");
                 return false;
             }
 
-            if (string.IsNullOrEmpty(senderEmail))
+            // ── Build the email ───────────────────────────────────────────
+            var message = new MimeMessage();
+            // Gmail requires From == authenticated SMTP account
+            message.From.Add(new MailboxAddress(senderName, smtpUsername));
+            message.To.Add(new MailboxAddress(userName, recipientEmail));
+            message.Subject = "Your OTP Verification Code – EstateFlow";
+
+            var body = new TextPart("html")
             {
-                _logger.LogError("Sender email is not configured. Please add 'SenderEmail' to SmtpSettings in appsettings.json");
-                return false;
-            }
+                Text = GenerateOtpEmailBody(otpCode, userName)
+            };
+            message.Body = body;
 
-            using (var client = new SmtpClient(smtpServer, smtpPort))
-            {
-                client.EnableSsl = true;
-                client.Credentials = new NetworkCredential(smtpUsername, smtpPassword);
-                client.Timeout = 10000; // 10 second timeout
+            // ── Send via MailKit ──────────────────────────────────────────
+            using var client = new SmtpClient();
 
-                var subject = "Your OTP Verification Code";
-                var body = GenerateOtpEmailBody(otpCode, userName);
+            // Use SSL for port 465, STARTTLS for port 587
+            var secureOption = smtpPort == 465 ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls;
+            await client.ConnectAsync(smtpServer, smtpPort, secureOption);
 
-                using (var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(senderEmail, senderName),
-                    Subject = subject,
-                    Body = body,
-                    IsBodyHtml = true
-                })
-                {
-                    mailMessage.To.Add(recipientEmail);
+            // Remove any OAuth2 auth mechanisms — we use App Password (plain login)
+            client.AuthenticationMechanisms.Remove("XOAUTH2");
 
-                    try
-                    {
-                        await client.SendMailAsync(mailMessage);
-                        _logger.LogInformation($"OTP email sent successfully to {recipientEmail} from {senderEmail}");
-                        return true;
-                    }
-                    catch (SmtpException smtpEx)
-                    {
-                        _logger.LogError($"SMTP Error sending OTP to {recipientEmail}: StatusCode={smtpEx.StatusCode}, Message={smtpEx.Message}");
-                        return false;
-                    }
-                }
-            }
+            await client.AuthenticateAsync(smtpUsername, smtpPassword);
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
+
+            _logger.LogInformation("OTP email sent successfully to {Recipient} from {Sender}", recipientEmail, smtpUsername);
+            return true;
+        }
+        catch (MailKit.Security.AuthenticationException authEx)
+        {
+            _logger.LogError(
+                "Gmail authentication failed for {User}: {Msg}\n" +
+                "→ Fix: Go to https://myaccount.google.com/apppasswords and generate a NEW 16-character App Password, " +
+                "then update SmtpPassword in appsettings.json.",
+                _configuration["SmtpSettings:SmtpUsername"], authEx.Message);
+            return false;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Failed to send OTP email to {recipientEmail}: {ex.GetType().Name} - {ex.Message}");
+            var inner = ex.InnerException?.Message ?? "(none)";
+            _logger.LogError("Failed to send OTP email to {Recipient}: {Type} – {Msg} | Inner: {Inner}",
+                recipientEmail, ex.GetType().Name, ex.Message, inner);
             return false;
         }
     }
 
+    // Overload kept for backward compatibility
+    internal async Task<bool> SendOtpEmailAsync(string email, string otpCode)
+        => await SendOtpEmailAsync(email, otpCode, "User");
+
+    // ── HTML email template ───────────────────────────────────────────────
     private string GenerateOtpEmailBody(string otpCode, string userName)
     {
         return $$"""
@@ -110,22 +120,10 @@ public class EmailService
             padding: 30px 20px;
             text-align: center;
         }
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-        .header p {
-            margin: 5px 0 0 0;
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        .content {
-            padding: 30px 20px;
-        }
-        .greeting {
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
+        .header h1 { margin: 0; font-size: 28px; }
+        .header p  { margin: 5px 0 0 0; font-size: 14px; opacity: 0.9; }
+        .content   { padding: 30px 20px; }
+        .greeting  { font-size: 16px; margin-bottom: 20px; }
         .otp-box {
             background-color: #f9f9f9;
             border: 2px dashed #667eea;
@@ -142,11 +140,7 @@ public class EmailService
             font-family: 'Courier New', monospace;
             margin: 0;
         }
-        .otp-label {
-            font-size: 12px;
-            color: #999;
-            margin-top: 10px;
-        }
+        .otp-label { font-size: 12px; color: #999; margin-top: 10px; }
         .instructions {
             background-color: #f0f7ff;
             border-left: 4px solid #667eea;
@@ -154,24 +148,10 @@ public class EmailService
             margin: 20px 0;
             border-radius: 4px;
         }
-        .instructions h3 {
-            margin: 0 0 10px 0;
-            color: #667eea;
-            font-size: 14px;
-        }
-        .instructions ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-        .instructions li {
-            margin: 8px 0;
-            font-size: 14px;
-            color: #555;
-        }
-        .warning {
-            color: #d9534f;
-            font-weight: bold;
-        }
+        .instructions h3 { margin: 0 0 10px 0; color: #667eea; font-size: 14px; }
+        .instructions ul  { margin: 0; padding-left: 20px; }
+        .instructions li  { margin: 8px 0; font-size: 14px; color: #555; }
+        .warning { color: #d9534f; font-weight: bold; }
         .footer {
             background-color: #f5f5f5;
             padding: 20px;
@@ -180,21 +160,15 @@ public class EmailService
             color: #888;
             border-top: 1px solid #eee;
         }
-        .footer p {
-            margin: 5px 0;
-        }
-        .divider {
-            height: 1px;
-            background-color: #eee;
-            margin: 20px 0;
-        }
+        .footer p { margin: 5px 0; }
+        .divider  { height: 1px; background-color: #eee; margin: 20px 0; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Email Verification</h1>
-            <p>RealEstate Platform</p>
+            <p>EstateFlow Platform</p>
         </div>
 
         <div class="content">
@@ -202,7 +176,7 @@ public class EmailService
                 <p>Hello <strong>{{userName}}</strong>,</p>
             </div>
 
-            <p>You have requested to log in to your RealEstate account. Please use the following One-Time Password (OTP) to verify your identity:</p>
+            <p>You have requested to register on EstateFlow. Please use the following One-Time Password (OTP) to verify your identity:</p>
 
             <div class="otp-box">
                 <div class="otp-code">{{otpCode}}</div>
@@ -215,19 +189,18 @@ public class EmailService
                     <li>This OTP code will expire in <strong>10 minutes</strong></li>
                     <li>Each code can only be used once</li>
                     <li><span class="warning">Never share this code with anyone</span></li>
-                    <li>If you did not request this login, please ignore this email and secure your account</li>
+                    <li>If you did not request this, please ignore this email</li>
                 </ul>
             </div>
 
             <div class="divider"></div>
 
-            <p>If you have any questions or need assistance, please contact our support team.</p>
-
-            <p>Best regards,<br><strong>RealEstate Platform Team</strong></p>
+            <p>If you have any questions, please contact our support team.</p>
+            <p>Best regards,<br><strong>EstateFlow Platform Team</strong></p>
         </div>
 
         <div class="footer">
-            <p>&copy; 2025 RealEstate Platform. All rights reserved.</p>
+            <p>&copy; 2025 EstateFlow Platform. All rights reserved.</p>
             <p>This is an automated email. Please do not reply to this message.</p>
         </div>
     </div>

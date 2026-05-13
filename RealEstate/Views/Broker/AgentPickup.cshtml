@@ -1,0 +1,882 @@
+@{
+    ViewData["Title"] = "Agent Pickup";
+    Layout = "~/Views/Shared/_BrokerLayout.cshtml";
+    ViewData["UserName"] = (string?)ViewBag.BrokerName ?? "Broker";
+}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+    .pickup-page {
+        padding: 24px;
+        background: #f5f7fa;
+        min-height: calc(100vh - 80px);
+    }
+
+    .pickup-header {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .pickup-header h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+    }
+
+    .pickup-header p {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .pickup-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .pickup-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .pickup-card h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .pickup-card h3 i {
+        color: #f97316;
+    }
+
+    .pickup-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .pickup-item {
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        transition: all 0.2s ease;
+    }
+
+    .pickup-item:hover {
+        border-color: #f97316;
+        box-shadow: 0 2px 8px rgba(249, 115, 22, 0.1);
+    }
+
+    .pickup-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .pickup-item-title {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 14px;
+    }
+
+    .pickup-item-status {
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .status-in-transit {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    .status-completed {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .pickup-item-details {
+        font-size: 13px;
+        color: #6b7280;
+        line-height: 1.6;
+    }
+
+    .pickup-item-details div {
+        margin-bottom: 4px;
+    }
+
+    .pickup-item-details i {
+        width: 16px;
+        color: #9ca3af;
+    }
+
+    .pickup-actions {
+        margin-top: 12px;
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-pickup {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #f97316, #ea580c);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #ea580c, #dc2626);
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+    }
+
+    .location-tracker {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .location-tracker h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .location-tracker h3 i {
+        color: #f97316;
+    }
+
+    .map-placeholder {
+        background: #f3f4f6;
+        border: 2px dashed #d1d5db;
+        border-radius: 8px;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        font-size: 14px;
+    }
+
+    .location-info {
+        margin-top: 16px;
+        padding: 16px;
+        background: #f9fafb;
+        border-radius: 8px;
+    }
+
+    .location-info-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .location-info-item i {
+        color: #f97316;
+        width: 16px;
+    }
+
+    @@media (max-width: 768px) {
+        .pickup-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .pickup-page {
+            padding: 16px;
+        }
+    }
+</style>
+
+<div class="pickup-page">
+    <div class="pickup-header">
+        <h2><i class="fas fa-car"></i> Agent Pickup</h2>
+        <p>Manage pickup appointments and track agent locations in real-time</p>
+    </div>
+
+    <div class="pickup-grid">
+        <div class="pickup-card">
+            <h3><i class="fas fa-list"></i> Pickup Requests</h3>
+            <ul class="pickup-list" id="pickupList">
+                <li class="pickup-item" id="loadingItem">
+                    <div class="pickup-item-header">
+                        <span class="pickup-item-title">Loading...</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="location-tracker">
+            <h3><i class="fas fa-map-marked-alt"></i> Location Tracker</h3>
+            <div class="map-placeholder">
+                <i class="fas fa-map"></i> Map will be displayed here
+            </div>
+            <div class="location-info">
+                <div class="location-info-item">
+                    <i class="fas fa-car"></i>
+                    <span id="agentLocationText">Agent Location: Updating...</span>
+                </div>
+                <div class="location-info-item">
+                    <i class="fas fa-user"></i>
+                    <span id="clientLocationText">Client Location: Select a pickup request</span>
+                </div>
+                <div class="location-info-item">
+                    <i class="fas fa-route"></i>
+                    <span id="distanceText">Distance: -</span>
+                </div>
+                <div class="location-info-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="etaText">ETA: -</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentPickupId = null;
+
+    // Load pickup appointments on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadPickupAppointments();
+    });
+
+    async function loadPickupAppointments() {
+        try {
+            const response = await fetch('/broker/api/pickup-appointments');
+            const data = await response.json();
+
+            if (data.success) {
+                displayPickupAppointments(data.appointments);
+            } else {
+                console.error('Failed to load pickup appointments:', data.error);
+                document.getElementById('pickupList').innerHTML = '<li class="pickup-item"><div class="pickup-item-header"><span class="pickup-item-title">Failed to load appointments</span></div></li>';
+            }
+        } catch (error) {
+            console.error('Error loading pickup appointments:', error);
+            document.getElementById('pickupList').innerHTML = '<li class="pickup-item"><div class="pickup-item-header"><span class="pickup-item-title">Error loading appointments</span></div></li>';
+        }
+    }
+
+    function displayPickupAppointments(appointments) {
+        const pickupList = document.getElementById('pickupList');
+
+        if (!appointments || appointments.length === 0) {
+            pickupList.innerHTML = '<li class="pickup-item"><div class="pickup-item-header"><span class="pickup-item-title">No pickup appointments found</span></div></li>';
+            return;
+        }
+
+        pickupList.innerHTML = appointments.map(appointment => {
+            const statusClass = getStatusClass(appointment.status);
+            const statusText = appointment.status || 'Pending';
+            const pickupAddress = appointment.customerAddress || 'Not provided';
+            const scheduledTime = `${appointment.preferredDate} at ${appointment.preferredTime}`;
+
+            return `
+                <li class="pickup-item">
+                    <div class="pickup-item-header">
+                        <span class="pickup-item-title">${appointment.propertyTitle}</span>
+                        <span class="pickup-item-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="pickup-item-details">
+                        <div><i class="fas fa-user"></i> Client: ${appointment.customerName}</div>
+                        <div><i class="fas fa-map-marker-alt"></i> Pickup: ${pickupAddress}</div>
+                        <div><i class="fas fa-clock"></i> Scheduled: ${scheduledTime}</div>
+                    </div>
+                    <div class="pickup-actions">
+                        ${appointment.status === 'Scheduled' ? `<button class="btn-pickup btn-primary" onclick="startPickup(${appointment.appointmentId})">Start Pickup</button>` : ''}
+                        ${appointment.status === 'In Transit' ? `<button class="btn-pickup btn-primary" onclick="trackLocation(${appointment.appointmentId}, '${pickupAddress}')">Track Location</button>` : ''}
+                        <button class="btn-pickup btn-secondary" onclick="viewDetails(${appointment.appointmentId})">View Details</button>
+                    </div>
+                </li>
+            `;
+        }).join('');
+    }
+
+    function getStatusClass(status) {
+        switch (status) {
+            case 'Scheduled':
+                return 'status-pending';
+            case 'In Transit':
+                return 'status-in-transit';
+            case 'Completed':
+                return 'status-completed';
+            default:
+                return 'status-pending';
+        }
+    }
+
+    async function startPickup(appointmentId) {
+        try {
+            const response = await fetch(`/broker/api/pickup-appointments/${appointmentId}/start`, {
+                method: 'POST'
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Pickup started successfully');
+                loadPickupAppointments(); // Reload to update status
+            } else {
+                alert('Failed to start pickup: ' + data.error);
+            }
+        } catch (error) {
+            alert('Failed to start pickup: ' + error.message);
+        }
+    }
+
+    function viewDetails(appointmentId) {
+        alert(`Viewing details for appointment #${appointmentId}`);
+    }
+
+    function trackLocation(appointmentId, pickupAddress) {
+        currentPickupId = appointmentId;
+        document.getElementById('clientLocationText').textContent = `Client Location: ${pickupAddress}`;
+        document.getElementById('distanceText').textContent = 'Distance: 2.5 km';
+        document.getElementById('etaText').textContent = 'ETA: 8 minutes';
+        document.getElementById('agentLocationText').textContent = 'Agent Location: On the way';
+
+        // Show track location modal with appointment data
+        showTrackLocationModal(appointmentId, pickupAddress);
+    }
+
+    async function showTrackLocationModal(appointmentId, pickupAddress) {
+        document.getElementById('modalPickupAddress').textContent = pickupAddress;
+        const modal = new bootstrap.Modal(document.getElementById('trackLocationModal'));
+        modal.show();
+
+        // Fetch appointment data to get property and client coordinates
+        try {
+            const response = await fetch(`/broker/api/pickup-appointments`);
+            const data = await response.json();
+
+            console.log('API Response:', data);
+
+            if (data.success) {
+                const appointment = data.appointments.find(a => a.appointmentId === appointmentId);
+                if (appointment) {
+                    console.log('Appointment data:', appointment);
+                    console.log('Property coordinates:', appointment.propertyLatitude, appointment.propertyLongitude);
+                    console.log('Customer coordinates:', appointment.customerLatitude, appointment.customerLongitude);
+                    
+                    // Initialize map after modal is shown with real coordinates
+                    setTimeout(() => {
+                        initTrackLocationMap(
+                            appointment.propertyLatitude, 
+                            appointment.propertyLongitude, 
+                            appointment.customerLatitude,
+                            appointment.customerLongitude,
+                            pickupAddress
+                        );
+                    }, 300);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching appointment data:', error);
+            // Fallback to default coordinates
+            setTimeout(() => {
+                initTrackLocationMap(null, null, null, null, pickupAddress);
+            }, 300);
+        }
+    }
+
+    let trackLocationMap;
+    let brokerLocationMarker = null;
+    let brokerLocationInterval = null;
+    let currentBrokerLat = null;
+    let currentBrokerLng = null;
+    let targetClientLat = null;
+    let targetClientLng = null;
+    let propertyLat = null;
+    let propertyLng = null;
+
+    function initTrackLocationMap(propertyLat, propertyLng, customerLat, customerLng, pickupAddress) {
+        if (trackLocationMap) {
+            trackLocationMap.remove();
+        }
+
+        // Clear any existing interval
+        if (brokerLocationInterval) {
+            clearInterval(brokerLocationInterval);
+        }
+
+        // Store coordinates
+        console.log('Received property coordinates:', propertyLat, propertyLng);
+        console.log('Received customer coordinates:', customerLat, customerLng);
+        
+        // If property coordinates are not available, use Davao fallback
+        if (!propertyLat || !propertyLng) {
+            console.warn('Property coordinates are missing from database');
+            alert('Warning: Property coordinates are not set in the database. Using Davao City center as fallback.');
+            propertyLat = 7.0731; // Davao City center
+            propertyLng = 125.6128;
+            console.log('Using Davao fallback coordinates:', propertyLat, propertyLng);
+        }
+        
+        // If customer coordinates are not available, use a reasonable offset
+        if (!customerLat || !customerLng) {
+            console.warn('Customer coordinates are missing from database');
+            alert('Warning: Customer pickup coordinates are not available. Using estimated location.');
+            // Use a reasonable offset from property for demonstration
+            const typicalDistanceKm = 14.2; // Based on typical urban distance
+            const degreesPerKm = 1 / 111;
+            const offset = typicalDistanceKm * degreesPerKm;
+            targetClientLat = propertyLat + offset;
+            targetClientLng = propertyLng + offset;
+            console.log('Using estimated customer coordinates based on 14.2km distance:', targetClientLat, targetClientLng);
+        } else {
+            targetClientLat = customerLat;
+            targetClientLng = customerLng;
+            console.log('Using actual customer coordinates');
+        }
+
+        // Set initial broker location at property
+        currentBrokerLat = propertyLat;
+        currentBrokerLng = propertyLng;
+
+        // Calculate distance using Haversine formula
+        const distance = calculateDistance(propertyLat, propertyLng, targetClientLat, targetClientLng);
+        console.log('Calculated distance:', distance, 'km');
+        
+        // Calculate ETA based on average speed (adjusting for urban conditions)
+        // Use a more realistic average speed of 25-35 km/h depending on distance
+        let averageSpeedKmh;
+        if (distance < 2) {
+            averageSpeedKmh = 25; // Slower in dense urban areas for short distances
+        } else if (distance < 5) {
+            averageSpeedKmh = 30; // Moderate speed for medium distances
+        } else {
+            averageSpeedKmh = 35; // Faster for longer distances
+        }
+        const etaMinutes = (distance / averageSpeedKmh) * 60;
+        console.log('Average speed:', averageSpeedKmh, 'km/h');
+        console.log('ETA:', etaMinutes, 'minutes');
+
+        // Update UI with real distance and ETA
+        document.getElementById('modalETA').textContent = `${Math.round(etaMinutes)} minutes`;
+        document.getElementById('modalDistance').textContent = `${distance.toFixed(2)} km`;
+        document.getElementById('modalPropertyAddress').textContent = 'Property Location';
+
+        // Center map between property and client locations
+        const centerLat = (propertyLat + targetClientLat) / 2;
+        const centerLng = (propertyLng + targetClientLng) / 2;
+        trackLocationMap = L.map('trackLocationMap').setView([centerLat, centerLng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(trackLocationMap);
+
+        // Property location marker (orange)
+        const propertyIcon = L.divIcon({
+            className: 'custom-marker',
+            html: '<div style="background:#FF9500;width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+
+        L.marker([propertyLat, propertyLng], { icon: propertyIcon }).addTo(trackLocationMap)
+            .bindPopup('Property Location (Starting Point)');
+
+        // Client pickup location marker (red)
+        const clientIcon = L.divIcon({
+            className: 'custom-marker',
+            html: '<div style="background:#DC2626;width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+
+        L.marker([targetClientLat, targetClientLng], { icon: clientIcon }).addTo(trackLocationMap)
+            .bindPopup(`Client Pickup Location: ${pickupAddress}`);
+
+        // Broker location marker (blue) - starts at property
+        const brokerIcon = L.divIcon({
+            className: 'custom-marker',
+            html: '<div style="background:#3B82F6;width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+
+        brokerLocationMarker = L.marker([currentBrokerLat, currentBrokerLng], { icon: brokerIcon }).addTo(trackLocationMap)
+            .bindPopup('Broker Location');
+
+        // Draw route line from property to client location
+        const routeLine = L.polyline([
+            [propertyLat, propertyLng],
+            [targetClientLat, targetClientLng]
+        ], {
+            color: '#10B981',
+            weight: 4,
+            opacity: 0.7,
+            dashArray: '10, 10'
+        }).addTo(trackLocationMap);
+
+        // Fit map to show all markers
+        const group = L.featureGroup([
+            L.marker([propertyLat, propertyLng]),
+            L.marker([targetClientLat, targetClientLng]),
+            brokerLocationMarker
+        ]);
+        trackLocationMap.fitBounds(group.getBounds().pad(0.1));
+
+        // Start real-time broker location simulation (moves every 1 minute)
+        startBrokerLocationSimulation();
+    }
+
+    function startBrokerLocationSimulation() {
+        // Move broker location every 1 minute (60000ms)
+        brokerLocationInterval = setInterval(() => {
+            moveBrokerTowardsClient();
+        }, 60000); // 1 minute
+    }
+
+    function moveBrokerTowardsClient() {
+        if (!brokerLocationMarker || !propertyLat || !propertyLng || !targetClientLat || !targetClientLng) {
+            return;
+        }
+
+        // Calculate step size (move 10% of the remaining distance each interval)
+        const step = 0.1;
+        const latDiff = targetClientLat - currentBrokerLat;
+        const lngDiff = targetClientLng - currentBrokerLng;
+
+        // Update broker location
+        currentBrokerLat += latDiff * step;
+        currentBrokerLng += lngDiff * step;
+
+        // Update marker position
+        brokerLocationMarker.setLatLng([currentBrokerLat, currentBrokerLng]);
+
+        // Save broker location to backend
+        if (currentPickupId) {
+            saveBrokerLocation(currentPickupId, currentBrokerLat, currentBrokerLng);
+        }
+
+        // Calculate remaining distance
+        const remainingDistance = calculateDistance(currentBrokerLat, currentBrokerLng, targetClientLat, targetClientLng);
+        
+        // Calculate remaining ETA with dynamic speed based on distance
+        let averageSpeedKmh;
+        if (remainingDistance < 2) {
+            averageSpeedKmh = 25;
+        } else if (remainingDistance < 5) {
+            averageSpeedKmh = 30;
+        } else {
+            averageSpeedKmh = 35;
+        }
+        const remainingEtaMinutes = (remainingDistance / averageSpeedKmh) * 60;
+
+        // Update UI
+        document.getElementById('modalETA').textContent = `${Math.round(remainingEtaMinutes)} minutes`;
+        document.getElementById('modalDistance').textContent = `${remainingDistance.toFixed(2)} km`;
+
+        // Check if broker has reached the client location
+        if (remainingDistance < 0.01) { // Less than 10 meters
+            clearInterval(brokerLocationInterval);
+            document.getElementById('modalETA').textContent = 'Arrived';
+            document.getElementById('modalDistance').textContent = '0 km';
+            alert('Broker has arrived at the pickup location!');
+        }
+    }
+
+    async function saveBrokerLocation(appointmentId, latitude, longitude) {
+        try {
+            const response = await fetch(`/broker/api/pickup-appointments/${appointmentId}/location`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    latitude: latitude,
+                    longitude: longitude
+                })
+            });
+            const data = await response.json();
+            if (!data.success) {
+                console.error('Failed to save broker location:', data.error);
+            }
+        } catch (error) {
+            console.error('Error saving broker location:', error);
+        }
+    }
+
+    // Haversine formula to calculate distance between two coordinates in kilometers
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // Earth's radius in kilometers
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+        
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c;
+        
+        return distance;
+    }
+
+    function toRadians(degrees) {
+        return degrees * (Math.PI / 180);
+    }
+
+    function viewDetails(appointmentId) {
+        showAppointmentDetailsModal(appointmentId);
+    }
+
+    async function showAppointmentDetailsModal(appointmentId) {
+        try {
+            const response = await fetch(`/broker/api/pickup-appointments`);
+            const data = await response.json();
+
+            if (data.success) {
+                const appointment = data.appointments.find(a => a.appointmentId === appointmentId);
+                if (appointment) {
+                    populateAppointmentDetails(appointment);
+                    const modal = new bootstrap.Modal(document.getElementById('appointmentDetailsModal'));
+                    modal.show();
+                }
+            }
+        } catch (error) {
+            console.error('Error loading appointment details:', error);
+        }
+    }
+
+    function populateAppointmentDetails(appointment) {
+        document.getElementById('detailPropertyTitle').textContent = appointment.propertyTitle || 'N/A';
+        document.getElementById('detailCustomerName').textContent = appointment.customerName || 'N/A';
+        document.getElementById('detailCustomerEmail').textContent = appointment.customerEmail || 'N/A';
+        document.getElementById('detailCustomerPhone').textContent = appointment.customerPhone || 'N/A';
+        document.getElementById('detailPickupAddress').textContent = appointment.customerAddress || 'N/A';
+        document.getElementById('detailScheduledDate').textContent = appointment.preferredDate || 'N/A';
+        document.getElementById('detailScheduledTime').textContent = appointment.preferredTime || 'N/A';
+        document.getElementById('detailStatus').textContent = appointment.status || 'N/A';
+        document.getElementById('detailStatus').className = `pickup-item-status ${getStatusClass(appointment.status)}`;
+    }
+</script>
+
+<!-- Track Location Modal -->
+<div class="modal fade" id="trackLocationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px;border:none;overflow:hidden;">
+            <div class="modal-header" style="background:linear-gradient(135deg,#F97316,#EA580C);color:white;border:none;padding:24px;">
+                <div>
+                    <h5 class="modal-title" style="font-weight:700;font-size:1.3rem;">
+                        <i class="fas fa-route me-2"></i>Track Pickup Route
+                    </h5>
+                    <p style="margin:5px 0 0;font-size:0.85rem;opacity:0.9;">View route from property to client pickup location</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <div class="row g-3">
+                    <!-- Left: Route Info -->
+                    <div class="col-md-5">
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight:600;color:#1E3A5F;">
+                                <i class="fas fa-building me-2" style="color:#FF9500;"></i>Property Location
+                            </label>
+                            <div class="alert alert-warning" style="border-radius:8px;">
+                                <div id="modalPropertyAddress" style="font-size:0.85rem;">Property Address</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight:600;color:#1E3A5F;">
+                                <i class="fas fa-map-marker-alt me-2 text-danger"></i>Pickup Location
+                            </label>
+                            <div class="alert alert-info" style="border-radius:8px;">
+                                <div id="modalPickupAddress" style="font-size:0.85rem;"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight:600;color:#1E3A5F;">
+                                <i class="fas fa-road me-2" style="color:#10B981;"></i>Route Details
+                            </label>
+                            <div class="alert alert-success" style="border-radius:8px;">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-car me-2"></i>
+                                    <strong>ETA: <span id="modalETA">Calculating...</span></strong>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-ruler me-2"></i>
+                                    <strong>Distance: <span id="modalDistance">-</span></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Map -->
+                    <div class="col-md-7">
+                        <div id="trackLocationMap" style="height:400px;border-radius:12px;border:2px solid #E5E7EB;background-color:#f0f0f0;"></div>
+                        <div class="mt-2 d-flex gap-3" style="font-size:0.8rem;">
+                            <span><i class="fas fa-building text-warning me-1"></i>Property</span>
+                            <span><i class="fas fa-map-marker-alt text-danger me-1"></i>Pickup Location</span>
+                            <span><i class="fas fa-car text-primary me-1"></i>Broker Location</span>
+                            <span><i class="fas fa-route text-success me-1"></i>Route</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Appointment Details Modal -->
+<div class="modal fade" id="appointmentDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px;border:none;overflow:hidden;">
+            <div class="modal-header" style="background:linear-gradient(135deg,#F97316,#EA580C);color:white;border:none;padding:24px;">
+                <div>
+                    <h5 class="modal-title" style="font-weight:700;font-size:1.3rem;">
+                        <i class="fas fa-info-circle me-2"></i>Appointment Details
+                    </h5>
+                    <p style="margin:5px 0 0;font-size:0.85rem;opacity:0.9;">Full pickup appointment information</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <div class="details-container">
+                    <div class="detail-section mb-4">
+                        <h6 style="font-weight:700;color:#1E3A5F;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #E5E7EB;">
+                            <i class="fas fa-home me-2" style="color:#F97316;"></i>Property Information
+                        </h6>
+                        <div class="detail-item">
+                            <span class="detail-label">Property:</span>
+                            <span class="detail-value" id="detailPropertyTitle">-</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-section mb-4">
+                        <h6 style="font-weight:700;color:#1E3A5F;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #E5E7EB;">
+                            <i class="fas fa-user me-2" style="color:#F97316;"></i>Customer Information
+                        </h6>
+                        <div class="detail-item">
+                            <span class="detail-label">Name:</span>
+                            <span class="detail-value" id="detailCustomerName">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Email:</span>
+                            <span class="detail-value" id="detailCustomerEmail">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Phone:</span>
+                            <span class="detail-value" id="detailCustomerPhone">-</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-section mb-4">
+                        <h6 style="font-weight:700;color:#1E3A5F;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #E5E7EB;">
+                            <i class="fas fa-map-marker-alt me-2" style="color:#F97316;"></i>Pickup Information
+                        </h6>
+                        <div class="detail-item">
+                            <span class="detail-label">Pickup Address:</span>
+                            <span class="detail-value" id="detailPickupAddress">-</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-section mb-4">
+                        <h6 style="font-weight:700;color:#1E3A5F;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #E5E7EB;">
+                            <i class="fas fa-calendar me-2" style="color:#F97316;"></i>Schedule Information
+                        </h6>
+                        <div class="detail-item">
+                            <span class="detail-label">Date:</span>
+                            <span class="detail-value" id="detailScheduledDate">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Time:</span>
+                            <span class="detail-value" id="detailScheduledTime">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status:</span>
+                            <span class="pickup-item-status" id="detailStatus">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top:1px solid #E5E7EB;padding:16px 24px;background:#F8F9FA;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:8px;padding:10px 24px;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .details-container {
+        background: #F8F9FA;
+        padding: 20px;
+        border-radius: 12px;
+    }
+
+    .detail-section {
+        background: white;
+        padding: 16px;
+        border-radius: 8px;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #F3F4F6;
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #6B7280;
+        font-size: 0.9rem;
+    }
+
+    .detail-value {
+        font-weight: 500;
+        color: #1F2937;
+        font-size: 0.9rem;
+    }
+</style>

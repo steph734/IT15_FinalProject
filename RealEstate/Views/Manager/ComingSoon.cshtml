@@ -1,0 +1,24 @@
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Coming Soon";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow-sm border-0 rounded-4 p-5">
+                <div class="mb-4">
+                    <i class="fas fa-person-digging fa-4x text-warning"></i>
+                </div>
+                <h2 class="fw-bold mb-3">Under Construction</h2>
+                <p class="text-muted fs-5 mb-4">
+                    We're working hard to bring you this feature. It will be available in an upcoming update!
+                </p>
+                <a href="/manager/dashboard" class="btn btn-primary rounded-pill px-4 py-2">
+                    <i class="fas fa-home me-2"></i>Return to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

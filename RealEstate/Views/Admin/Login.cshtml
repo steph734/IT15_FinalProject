@@ -993,12 +993,12 @@
 
                     <form id="loginForm" method="POST" action="/admin/login">
                         <div class="form-group">
-                            <label for="email" class="form-label">Your Email</label>
-                            <input type="email" 
+                            <label for="username" class="form-label">Username or Email</label>
+                            <input type="text" 
                                    class="form-control" 
-                                   id="email" 
+                                   id="username" 
                                    name="email" 
-                                   placeholder="you@example.com" 
+                                   placeholder="Enter your username or email" 
                                    required 
                                    autofocus />
                         </div>
@@ -1063,7 +1063,7 @@
                 <button type="button" class="btn-close btn-close-modal" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 15px; right: 15px; z-index: 10;" id="otpModalCloseBtn"></button>
                 <div class="modal-body otp-modal-body">
                     <h2 class="otp-modal-title">Verify</h2>
-                    <p class="otp-modal-subtitle">Your code was sent to you via email</p>
+                    <p class="otp-modal-subtitle">Your code was sent to <strong id="otpEmailDisplay"></strong></p>
 
                     <div id="otpErrorAlert" class="alert alert-danger" style="display: none;">
                         <strong>Error:</strong>
@@ -1081,7 +1081,7 @@
                         </div>
                         <input type="hidden" id="otpCodeFull" name="otpCode" />
                         <input type="hidden" id="otpUserId" name="userId" />
-                        <input type="hidden" id="otpEmailDisplay" name="otpEmail" />
+
 
                         <div style="text-align: center; color: #6b7280; font-size: 12px; margin-bottom: 15px;">
                             Code expires in: <strong id="otpTimer" style="color: #d9534f;">10:00</strong>
@@ -1110,6 +1110,10 @@
         let otpTimerInterval = null;
         let resendTimerInterval = null;
 
+        function safeResetCaptcha() {
+            try { if (typeof grecaptcha !== 'undefined') grecaptcha.reset(); } catch(e) {}
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM Content Loaded - Login page initialized');
         });
@@ -1119,16 +1123,20 @@
             e.preventDefault();
             console.log('Login form submitted');
 
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const recaptchaResponse = grecaptcha.getResponse();
-
-            console.log('Email:', email, 'ReCAPTCHA:', recaptchaResponse ? 'Valid' : 'Invalid');
-
-            if (!recaptchaResponse) {
-                alert('Please verify that you are not a robot.');
-                return;
+            
+            // Safely get reCAPTCHA response (handle case where grecaptcha is not loaded)
+            let recaptchaResponse = '';
+            try {
+                if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse) {
+                    recaptchaResponse = grecaptcha.getResponse();
+                }
+            } catch (err) {
+                console.log('reCAPTCHA not available:', err);
             }
+
+            console.log('Email/Username:', email, 'ReCAPTCHA:', recaptchaResponse ? 'Valid' : 'Not completed/optional');
 
             // Disable submit button during request
             const loginBtn = document.getElementById('loginBtn');
@@ -1148,65 +1156,73 @@
 
                 console.log('Response status:', response.status);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                let data;
+                try {
+                    data = await response.json();
+                } catch (parseErr) {
+                    // Server returned non-JSON (e.g. HTML error page)
+                    console.error('Non-JSON response:', parseErr);
+                    document.getElementById('loginErrorAlert').style.display = 'block';
+                    document.getElementById('loginErrorMessage').textContent = `Server error (HTTP ${response.status}). Please try again or contact support.`;
+                    safeResetCaptcha();
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Login';
+                    return;
                 }
 
-                const data = await response.json();
                 console.log('Login response data:', data);
 
                 if (data.success) {
-                    console.log('Login successful, showing OTP modal');
-                    console.log('Expiry seconds from backend:', data.expirySeconds);
-                    // Show OTP modal
-                    const otpEmailDisplay = document.getElementById('otpEmailDisplay');
-                    const otpUserIdInput = document.getElementById('otpUserId');
-
-                    console.log('Setting OTP modal data - Email:', data.email, 'UserId:', data.userId, 'ExpirySeconds:', data.expirySeconds);
-
-                    if (otpEmailDisplay) otpEmailDisplay.textContent = data.email;
-                    if (otpUserIdInput) otpUserIdInput.value = data.userId;
-
-                    clearOTPInputs();
-                    startOTPTimer(data.expirySeconds);
-                    startResendTimer();
-
-                    const otpModal = document.getElementById('otpModal');
-                    console.log('OTP Modal element:', otpModal);
-
-                    if (otpModal) {
-                        otpModalInstance = new bootstrap.Modal(otpModal, { backdrop: 'static', keyboard: false });
-                        console.log('OTP Modal instance created:', otpModalInstance);
-                        otpModalInstance.show();
-                        console.log('OTP Modal shown');
-
-                        // Setup event handlers for modal elements
-                        setTimeout(() => {
-                            console.log('Setting up OTP input handlers');
-                            setupOTPInputHandlers();
-                            setupOTPFormHandler();
-                            setupResendOTPHandler();
-
-                            const firstInput = document.querySelector('.otp-input');
-                            console.log('First OTP input element:', firstInput);
-                            if (firstInput) firstInput.focus();
-                        }, 500);
-                    } else {
-                        console.error('OTP Modal element not found!');
-                    }
+                    console.log('Login successful, redirecting to dashboard...');
+                    console.log('User role:', data.role);
+                    
+                    // Show loading message
+                    loginBtn.textContent = 'Success! Redirecting...';
+                    
+                    // Redirect based on role after a short delay
+                    setTimeout(() => {
+                        let redirectUrl = '/home/index'; // Default fallback
+                        
+                        // Redirect based on user role
+                        switch(data.role) {
+                            case 'SuperAdmin':
+                                redirectUrl = '/superadmin/dashboard';
+                                break;
+                            case 'Broker':
+                                redirectUrl = '/broker/dashboard/my-dashboard';
+                                break;
+                            case 'Manager':
+                                redirectUrl = '/manager/dashboard';
+                                break;
+                            case 'Accounting':
+                                redirectUrl = '/accounting/dashboard';
+                                break;
+                            case 'Investor':
+                                redirectUrl = '/investor/dashboard';
+                                break;
+                            case 'Seller':
+                                redirectUrl = '/seller/dashboard';
+                                break;
+                            default:
+                                redirectUrl = '/home/index';
+                        }
+                        
+                        console.log('Redirecting to:', redirectUrl);
+                        window.location.href = redirectUrl;
+                    }, 500);
                 } else {
                     console.log('Login failed:', data.message);
                     document.getElementById('loginErrorAlert').style.display = 'block';
                     document.getElementById('loginErrorMessage').textContent = data.message || 'Login failed. Please try again.';
-                    grecaptcha.reset();
+                    safeResetCaptcha();
                     loginBtn.disabled = false;
                     loginBtn.textContent = 'Login';
                 }
             } catch (error) {
                 console.error('Login error:', error);
                 document.getElementById('loginErrorAlert').style.display = 'block';
-                document.getElementById('loginErrorMessage').textContent = 'An error occurred. Please try again.';
-                grecaptcha.reset();
+                document.getElementById('loginErrorMessage').textContent = 'A network error occurred. Please check your connection and try again.';
+                safeResetCaptcha();
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Login';
             }

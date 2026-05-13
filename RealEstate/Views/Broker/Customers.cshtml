@@ -1,0 +1,452 @@
+@{
+    ViewData["Title"] = "Customers";
+    Layout = "~/Views/Shared/_BrokerLayout.cshtml";
+    ViewData["UserName"] = (string?)ViewBag.BrokerName ?? "Broker";
+}
+
+<style>
+    .customers-dashboard {
+        padding: 20px;
+        background: #f5f7fb;
+        min-height: calc(100vh - 80px);
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .panel {
+        background: #fff;
+        border: 1px solid #ebeff5;
+        border-radius: 10px;
+        box-shadow: 0 1px 2px rgba(17, 24, 39, 0.03);
+        padding: 14px;
+    }
+
+    .panel-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #4b5563;
+        margin-bottom: 8px;
+    }
+
+    .muted {
+        color: #9ca3af;
+        font-size: 11px;
+    }
+
+    .country-card {
+        grid-column: span 3;
+    }
+
+    .country-flag {
+        font-size: 16px;
+        margin-right: 6px;
+    }
+
+    .country-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+    .customers-count {
+        font-size: 22px;
+        font-weight: 700;
+        color: #111827;
+        margin: 4px 0 8px;
+    }
+
+    .mini-progress {
+        height: 5px;
+        width: 100%;
+        background: #eceff6;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .mini-progress > span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, #7c3aed, #6366f1);
+        border-radius: 999px;
+    }
+
+    .investor-panel {
+        grid-column: span 4;
+    }
+
+    .investor-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b, #f97316);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+
+    .investor-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .bar-chart {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 8px;
+        align-items: end;
+        height: 90px;
+        margin: 10px 0 12px;
+    }
+
+    .bar {
+        border-radius: 8px 8px 4px 4px;
+        background: #e5e7eb;
+    }
+
+    .bar.highlight {
+        background: linear-gradient(180deg, #7c3aed, #6366f1);
+    }
+
+    .dual-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .btn-lite {
+        border: 1px solid #e5e7eb;
+        background: #f8fafc;
+        color: #4b5563;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .btn-primary-lite {
+        border: none;
+        background: linear-gradient(135deg, #7c3aed, #6366f1);
+        color: white;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .invest-chart {
+        grid-column: span 7;
+    }
+
+    .invest-revenue {
+        float: right;
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .bars-wide {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 14px;
+        align-items: end;
+        height: 140px;
+        margin-top: 16px;
+    }
+
+    .bars-wide .col {
+        text-align: center;
+        font-size: 10px;
+        color: #9ca3af;
+    }
+
+    .bars-wide .col span {
+        display: block;
+        width: 24px;
+        margin: 0 auto 8px;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #8b5cf6, #6366f1);
+    }
+
+    .country-map {
+        grid-column: span 5;
+    }
+
+    .map-box {
+        border-radius: 10px;
+        background: radial-gradient(circle at 40% 40%, #f8fafc, #eef2f7);
+        border: 1px dashed #d7deea;
+        height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    .top-customers {
+        grid-column: span 4;
+    }
+
+    .customer-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .customer-item:last-child {
+        border-bottom: none;
+    }
+
+    .customer-meta {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .customer-meta .avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 10px;
+    }
+
+    .customer-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .customer-mail {
+        font-size: 10px;
+        color: #94a3b8;
+    }
+
+    .visit-device {
+        grid-column: span 4;
+    }
+
+    .line-graph {
+        height: 105px;
+        border-radius: 10px;
+        background: linear-gradient(180deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.03));
+        border: 1px solid #eef2ff;
+        position: relative;
+        overflow: hidden;
+        margin: 10px 0;
+    }
+
+    .line-graph:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 56%;
+        height: 2px;
+        background: linear-gradient(90deg, #7c3aed, #6366f1);
+        transform: skewY(-8deg);
+    }
+
+    .device-bars {
+        display: grid;
+        gap: 8px;
+    }
+
+    .device-row {
+        display: grid;
+        grid-template-columns: 85px 1fr 50px;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        color: #64748b;
+    }
+
+    .track {
+        height: 6px;
+        border-radius: 999px;
+        background: #eef2f7;
+        overflow: hidden;
+    }
+
+    .fill {
+        height: 100%;
+        border-radius: 999px;
+    }
+
+    .purchase-property {
+        grid-column: span 4;
+    }
+
+    .property-image {
+        width: 100%;
+        border-radius: 8px;
+        height: 170px;
+        object-fit: cover;
+        margin-bottom: 10px;
+        border: 1px solid #edf2f7;
+    }
+
+    .property-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .price {
+        color: #111827;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    @@media (max-width: 1280px) {
+        .country-card { grid-column: span 4; }
+        .investor-panel { grid-column: span 4; }
+        .invest-chart { grid-column: span 8; }
+        .country-map { grid-column: span 12; }
+        .top-customers, .visit-device, .purchase-property { grid-column: span 6; }
+    }
+
+    @@media (max-width: 900px) {
+        .dashboard-grid > .panel { grid-column: span 12 !important; }
+    }
+</style>
+
+<div class="customers-dashboard">
+    <div class="dashboard-grid">
+        <section class="panel country-card">
+            <div class="country-row"><div><span class="country-flag">🇧🇷</span><strong>Brazil</strong></div><span class="muted">Today +100</span></div>
+            <div class="muted">Total Customer</div>
+            <div class="customers-count">3474</div>
+            <div class="mini-progress"><span style="width: 68%;"></span></div>
+        </section>
+
+        <section class="panel country-card">
+            <div class="country-row"><div><span class="country-flag">🇨🇦</span><strong>Canada</strong></div><span class="muted">Today +11</span></div>
+            <div class="muted">Total Customer</div>
+            <div class="customers-count">7843</div>
+            <div class="mini-progress"><span style="width: 76%;"></span></div>
+        </section>
+
+        <section class="panel country-card">
+            <div class="country-row"><div><span class="country-flag">🇷🇺</span><strong>Russia</strong></div><span class="muted">Today +71</span></div>
+            <div class="muted">Total Customer</div>
+            <div class="customers-count">5933</div>
+            <div class="mini-progress"><span style="width: 58%;"></span></div>
+        </section>
+
+        <section class="panel country-card">
+            <div class="country-row"><div><span class="country-flag">🇺🇸</span><strong>USA</strong></div><span class="muted">Today +19</span></div>
+            <div class="muted">Total Customer</div>
+            <div class="customers-count">8901</div>
+            <div class="mini-progress"><span style="width: 82%;"></span></div>
+        </section>
+
+        <section class="panel investor-panel">
+            <div class="panel-title">Property Investor</div>
+            <div class="investor-header">
+                <div class="avatar">DN</div>
+                <div>
+                    <div class="investor-name">David Nummi</div>
+                    <div class="muted">Investor</div>
+                </div>
+            </div>
+            <div class="bar-chart">
+                <div class="bar" style="height: 34%;"></div>
+                <div class="bar highlight" style="height: 52%;"></div>
+                <div class="bar highlight" style="height: 68%;"></div>
+                <div class="bar" style="height: 46%;"></div>
+                <div class="bar highlight" style="height: 72%;"></div>
+                <div class="bar highlight" style="height: 42%;"></div>
+                <div class="bar" style="height: 26%;"></div>
+                <div class="bar highlight" style="height: 18%;"></div>
+            </div>
+            <div class="dual-buttons">
+                <button class="btn-primary-lite">Over Chat</button>
+                <button class="btn-lite">Call To Customer</button>
+            </div>
+        </section>
+
+        <section class="panel invest-chart">
+            <div class="panel-title">Recent Customers Invest <span class="invest-revenue">$67435.00</span></div>
+            <div class="muted">Customer buy property</div>
+            <div class="bars-wide">
+                <div class="col"><span style="height: 66px;"></span>Jan</div>
+                <div class="col"><span style="height: 24px;"></span>Feb</div>
+                <div class="col"><span style="height: 30px;"></span>Mar</div>
+                <div class="col"><span style="height: 58px;"></span>Apr</div>
+                <div class="col"><span style="height: 36px;"></span>May</div>
+                <div class="col"><span style="height: 18px;"></span>Jun</div>
+                <div class="col"><span style="height: 92px;"></span>Jul</div>
+            </div>
+        </section>
+
+        <section class="panel country-map">
+            <div class="panel-title">Customer by Country</div>
+            <div class="map-box">World Map Visualization</div>
+        </section>
+
+        <section class="panel top-customers">
+            <div class="panel-title">Top Customer</div>
+            <div class="customer-item">
+                <div class="customer-meta"><div class="avatar">TK</div><div><div class="customer-name">Tia Karppinen</div><div class="customer-mail">tia@example.com</div></div></div>
+                <span class="muted">$775,571</span>
+            </div>
+            <div class="customer-item">
+                <div class="customer-meta"><div class="avatar">HO</div><div><div class="customer-name">Harland R. Orsini</div><div class="customer-mail">harland@example.com</div></div></div>
+                <span class="muted">$671,193</span>
+            </div>
+            <div class="customer-item">
+                <div class="customer-meta"><div class="avatar">DP</div><div><div class="customer-name">David Padgett</div><div class="customer-mail">david.p@example.com</div></div></div>
+                <span class="muted">$547,099</span>
+            </div>
+            <div class="customer-item">
+                <div class="customer-meta"><div class="avatar">VO</div><div><div class="customer-name">Valerie Obrien</div><div class="customer-mail">valerie@example.com</div></div></div>
+                <span class="muted">$316,008</span>
+            </div>
+            <div class="customer-item">
+                <div class="customer-meta"><div class="avatar">DN</div><div><div class="customer-name">David Nummi</div><div class="customer-mail">david@example.com</div></div></div>
+                <span class="muted">$295,384</span>
+            </div>
+            <button class="btn-primary-lite" style="width:100%; margin-top:8px;">View All</button>
+        </section>
+
+        <section class="panel visit-device">
+            <div class="panel-title">Customer Visit by Device</div>
+            <div style="font-size: 22px; font-weight: 700; color: #111827;">67,893 <span class="muted">+12.4%</span></div>
+            <div class="line-graph"></div>
+            <div class="device-bars">
+                <div class="device-row"><span>Mobile</span><div class="track"><div class="fill" style="width: 64%; background:#7c3aed;"></div></div><span>24.5%</span></div>
+                <div class="device-row"><span>iOS</span><div class="track"><div class="fill" style="width: 55%; background:#10b981;"></div></div><span>54.5%</span></div>
+                <div class="device-row"><span>Windows</span><div class="track"><div class="fill" style="width: 32%; background:#f59e0b;"></div></div><span>32%</span></div>
+                <div class="device-row"><span>Mac</span><div class="track"><div class="fill" style="width: 17%; background:#64748b;"></div></div><span>17%</span></div>
+            </div>
+            <button class="btn-primary-lite" style="width:100%; margin-top:12px;">View All</button>
+        </section>
+
+        <section class="panel purchase-property">
+            <div class="panel-title">Recent Purchase Property</div>
+            <img class="property-image" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=60" alt="Property" />
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div class="property-title">Woods & Apartment</div>
+                <div class="price">$80,675.00</div>
+            </div>
+            <div class="muted">New York, NY · 4 Beds · 3 Baths</div>
+        </section>
+    </div>
+</div>

@@ -1,0 +1,343 @@
+@model Customer
+
+@{
+    ViewData["Title"] = "Payment Confirmation";
+    Layout = "~/Views/Shared/_BrokerLayout.cshtml";
+}
+
+<style>
+    .payment-container {
+        padding: 32px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .payment-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        padding: 32px;
+    }
+
+    .payment-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .payment-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #f97316, #ea580c);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        font-size: 40px;
+        color: white;
+    }
+
+    .payment-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+    }
+
+    .payment-subtitle {
+        font-size: 14px;
+        color: #9ca3af;
+    }
+
+    /* Order Summary */
+    .order-summary {
+        background: #f9fafb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 14px;
+    }
+
+    .summary-item:last-child {
+        margin-bottom: 0;
+        padding-top: 12px;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 12px;
+    }
+
+    .summary-label {
+        color: #6b7280;
+    }
+
+    .summary-value {
+        color: #1f2937;
+        font-weight: 600;
+    }
+
+    .summary-total .summary-value {
+        font-size: 18px;
+        color: #f97316;
+    }
+
+    /* Divider */
+    .divider {
+        border: none;
+        border-top: 1px solid #e5e7eb;
+        margin: 24px 0;
+    }
+
+    /* Button */
+    .btn-primary {
+        display: block;
+        width: 100%;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #f97316, #ea580c);
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 12px;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    }
+
+    .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-secondary {
+        display: block;
+        width: 100%;
+        padding: 12px 24px;
+        background: #f3f4f6;
+        color: #667eea;
+        text-decoration: none;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+    }
+
+    /* Customer Info */
+    .customer-info {
+        background: #f9fafb;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 24px;
+        font-size: 14px;
+    }
+
+    .customer-info p {
+        margin: 0 0 8px 0;
+        color: #6b7280;
+    }
+
+    .customer-info strong {
+        color: #1f2937;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(249, 115, 22, 0.3);
+        border-radius: 50%;
+        border-top-color: #f97316;
+        animation: spin 0.6s linear infinite;
+    }
+
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .processing-message {
+        text-align: center;
+        margin-bottom: 24px;
+        padding: 16px;
+        background: #f0f9ff;
+        border-radius: 8px;
+        color: #667eea;
+        font-size: 14px;
+    }
+
+    .error-message {
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        font-size: 14px;
+    }
+
+    .success-message {
+        background: #dcfce7;
+        border: 1px solid #bbf7d0;
+        color: #15803d;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        font-size: 14px;
+    }
+</style>
+
+<div class="payment-container">
+    <div class="payment-card">
+        <!-- Payment Header -->
+        <div class="payment-header">
+            <div class="payment-icon">
+                <i class="fas fa-credit-card"></i>
+            </div>
+            <h1 class="payment-title">Payment Confirmation</h1>
+            <p class="payment-subtitle">Complete your payment to finalize customer registration</p>
+        </div>
+
+        <!-- Messages -->
+        <div id="messageContainer"></div>
+
+        <!-- Customer Info -->
+        <div class="customer-info">
+            <p><strong>Customer Name:</strong> @Model.FullName</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Property Type:</strong> @Model.PropertyType</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <div class="summary-item">
+                <span class="summary-label">Maximum Budget:</span>
+                <span class="summary-value">₱@Model.MaxBudget?.ToString("N2")</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Processing Fee (2%):</span>
+                <span class="summary-value">₱@((decimal)(Model.MaxBudget ?? 0) * 0.02m).ToString("N2")</span>
+            </div>
+            <div class="summary-item summary-total">
+                <span class="summary-label">Total Amount:</span>
+                <span class="summary-value">₱@((decimal)(Model.MaxBudget ?? 0) * 1.02m).ToString("N2")</span>
+            </div>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- Payment Method -->
+        <div class="customer-info" style="margin-bottom: 24px;">
+            <p><strong>Payment Method:</strong> @Model.PaymentMethod</p>
+            @if (!string.IsNullOrEmpty(Model.CardNumber))
+            {
+                <p><strong>Card:</strong> ****@Model.CardNumber.Substring(Math.Max(0, Model.CardNumber.Length - 4))</p>
+            }
+        </div>
+
+        <!-- Action Buttons -->
+        <button id="payBtn" class="btn-primary" onclick="confirmPayment()">
+            <i class="fas fa-lock me-2"></i>Confirm Payment
+        </button>
+
+        <a href="/broker/customers" class="btn-secondary">
+            <i class="fas fa-times me-2"></i>Cancel
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.paymongo.com/js/v1/paymongo.js"></script>
+
+<script>
+    const customerId = @Model.CustomerId;
+    const payMongoPublicKey = '@ViewBag.PayMongoPublicKey';
+    
+    async function confirmPayment() {
+        const payBtn = document.getElementById('payBtn');
+        const messageContainer = document.getElementById('messageContainer');
+
+        try {
+            // Show loading state
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<div class="spinner"></div> Processing Payment...';
+
+            // Call backend to process payment
+            const response = await fetch(`/broker/payment/process`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    customerId: customerId
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Show success message
+                messageContainer.innerHTML = `
+                    <div class="success-message">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Payment processed successfully! Redirecting...
+                    </div>
+                `;
+                
+                // Redirect to customer list after 2 seconds
+                setTimeout(() => {
+                    window.location.href = '/broker/customers';
+                }, 2000);
+            } else {
+                // Show error message
+                messageContainer.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        ${data.message || 'Payment processing failed. Please try again.'}
+                    </div>
+                `;
+                
+                payBtn.disabled = false;
+                payBtn.innerHTML = '<i class="fas fa-lock me-2"></i>Confirm Payment';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            messageContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    An error occurred. Please try again.
+                </div>
+            `;
+            
+            payBtn.disabled = false;
+            payBtn.innerHTML = '<i class="fas fa-lock me-2"></i>Confirm Payment';
+        }
+    }
+
+    // Show processing message on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const messageContainer = document.getElementById('messageContainer');
+        messageContainer.innerHTML = `
+            <div class="processing-message">
+                <i class="fas fa-info-circle me-2"></i>
+                Your payment is ready to be confirmed. Click the button below to proceed.
+            </div>
+        `;
+    });
+</script>

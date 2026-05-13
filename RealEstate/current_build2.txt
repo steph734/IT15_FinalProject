@@ -1,0 +1,15 @@
+﻿  Determining projects to restore...
+c:\Users\ADMIN\source\repos\real\RealEstate\RealEstate.csproj : warning NU1902: Package 'MailKit' 4.13.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-9j88-vvj5-vhgr
+  All projects are up-to-date for restore.
+c:\Users\ADMIN\source\repos\real\RealEstate\RealEstate.csproj : warning NU1902: Package 'MailKit' 4.13.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-9j88-vvj5-vhgr
+c:\Users\ADMIN\source\repos\real\RealEstate\ApplicationDBContext.cs(38,22): error CS0246: The type or namespace name 'Seller' could not be found (are you missing a using directive or an assembly reference?) [c:\Users\ADMIN\source\repos\real\RealEstate\RealEstate.csproj]
+
+Build FAILED.
+
+c:\Users\ADMIN\source\repos\real\RealEstate\RealEstate.csproj : warning NU1902: Package 'MailKit' 4.13.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-9j88-vvj5-vhgr
+c:\Users\ADMIN\source\repos\real\RealEstate\RealEstate.csproj : warning NU1902: Package 'MailKit' 4.13.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-9j88-vvj5-vhgr
+c:\Users\ADMIN\source\repos\real\RealEstate\ApplicationDBContext.cs(38,22): error CS0246: The type or namespace name 'Seller' could not be found (are you missing a using directive or an assembly reference?) [c:\Users\ADMIN\source\repos\real\RealEstate\RealEstate.csproj]
+    2 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:09.00

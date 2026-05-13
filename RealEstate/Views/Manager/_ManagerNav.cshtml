@@ -1,126 +1,261 @@
-<!-- Manager Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-site-primary sticky-top shadow-sm">
-    <div class="container-fluid px-lg-4">
-        <!-- Logo -->
-        <a class="navbar-brand fw-bold" href="/manager/dashboard">
-            <span class="brand-estate">Estate</span><span class="brand-flow">Flow</span>
-        </a>
+@{
+    var currentPath = ViewContext.HttpContext.Request.Path.Value?.ToLowerInvariant() ?? "";
+    var isDashboardGroup  = currentPath.Contains("/manager/dashboard");
+    var isAgentsGroup     = currentPath.Contains("/manager/agents");
+    var isCommissionGroup = currentPath.Contains("/manager/commission");
+    var isSellersGroup    = currentPath.Contains("/manager/sellers");
+    var isMessagingGroup  = currentPath.Contains("/manager/inbox") || currentPath.Contains("/manager/messages");
+}
 
-        <!-- Toggle for Mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#managerNavbar" aria-controls="managerNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<aside class="broker-sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <div class="logo-text">
+                <span class="logo-estate">Estate</span><span class="logo-flow">Flow</span>
+            </div>
+        </div>
+    </div>
 
-        <!-- Navigation Items -->
-        <div class="collapse navbar-collapse" id="managerNavbar">
-            <ul class="navbar-nav ms-auto gap-1">
-                <li class="nav-item">
-                    <a class="nav-link" href="/manager/dashboard">
-                        <i class="fas fa-chart-line me-2"></i>Dashboard
+    <div class="sidebar-search">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search..." />
+        </div>
+    </div>
+
+    <nav class="sidebar-menu">
+        <div class="menu-section">
+            <div class="menu-label">MAIN</div>
+            <ul class="menu-items">
+                <li class="menu-item menu-item-expandable @(isDashboardGroup ? "active" : "")">
+                    <a href="#" class="menu-link menu-link-toggle @(isDashboardGroup ? "active" : "")" data-target="dashboard-menu">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                        <i class="fas fa-chevron-down menu-toggle-icon"></i>
                     </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="teamDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-users me-2"></i>Team
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="teamDropdown">
-                        <li><a class="dropdown-item" href="/manager/team-management">Team Management</a></li>
-                        <li><a class="dropdown-item" href="/manager/agent-assignment">Agent Assignment</a></li>
-                        <li><a class="dropdown-item" href="/manager/performance-tracking">Performance Tracking</a></li>
+                    <ul class="menu-items submenu @(isDashboardGroup ? "active" : "")" id="dashboard-menu">
+                        <li class="menu-item">
+                            <a href="/manager/agents" class="menu-link submenu-link @(currentPath.Contains("/manager/agents") && !currentPath.Contains("list") && !currentPath.Contains("grid") && !currentPath.Contains("properties") && !currentPath.Contains("calendar") ? "active" : "")">
+                                <i class="fas fa-user"></i>
+                                <span>Agents</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/manager/coming-soon" class="menu-link submenu-link @(currentPath.Contains("/manager/dashboard/sales") ? "active" : "")">
+                                <i class="fas fa-chart-column"></i>
+                                <span>Sales</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/manager/coming-soon" class="menu-link submenu-link @(currentPath.Contains("/manager/dashboard/property") ? "active" : "")">
+                                <i class="fas fa-house"></i>
+                                <span>Property</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="propertyDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-home me-2"></i>Properties
+                <li class="menu-item menu-item-expandable @(currentPath.Contains("/manager/properties") ? "active" : "")">
+                    <a href="#" class="menu-link menu-link-toggle @(currentPath.Contains("/manager/properties") ? "active" : "")" data-target="properties-menu">
+                        <i class="fas fa-building"></i>
+                        <span>Properties</span>
+                        <i class="fas fa-chevron-down menu-toggle-icon"></i>
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="propertyDropdown">
-                        <li><a class="dropdown-item" href="/manager/inventory-overview">Inventory Overview</a></li>
-                        <li><a class="dropdown-item" href="/manager/property-moderation">Property Moderation</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="reportDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-chart-bar me-2"></i>Reports
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="reportDropdown">
-                        <li><a class="dropdown-item" href="/manager/sales-pipeline">Sales Pipeline</a></li>
-                        <li><a class="dropdown-item" href="/manager/managerial-reports">Managerial Reports</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/manager/settings">
-                        <i class="fas fa-cog me-2"></i>Settings
-                    </a>
-                </li>
-
-                <!-- User Dropdown -->
-                <li class="nav-item dropdown ms-3">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle me-2"></i>
-                        <span>@(ViewData["UserName"] as string ?? "Manager")</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="/manager/settings">Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form method="post" action="/manager/logout" style="display: inline;">
-                                <button type="submit" class="dropdown-item">Logout</button>
-                            </form>
+                    <ul class="menu-items submenu @(currentPath.Contains("/manager/properties") ? "active" : "")" id="properties-menu">
+                        <li class="menu-item">
+                            <a href="/manager/properties?view=list" class="menu-link submenu-link @(currentPath.Contains("/manager/properties") && ViewContext.HttpContext.Request.Query["view"] != "grid" ? "active" : "")">
+                                <i class="fas fa-list"></i>
+                                <span>List View</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/manager/properties?view=grid" class="menu-link submenu-link @(currentPath.Contains("/manager/properties") && ViewContext.HttpContext.Request.Query["view"] == "grid" ? "active" : "")">
+                                <i class="fas fa-grip"></i>
+                                <span>Grid View</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/manager/coming-soon" class="menu-link submenu-link">
+                                <i class="fas fa-calendar-days"></i>
+                                <span>Calendar</span>
+                            </a>
                         </li>
                     </ul>
                 </li>
             </ul>
         </div>
+
+        <div class="menu-section">
+            <div class="menu-label">SELLERS</div>
+            <ul class="menu-items">
+                <li class="menu-item menu-item-expandable @(isSellersGroup ? "active" : "")">
+                    <a href="#" class="menu-link menu-link-toggle @(isSellersGroup ? "active" : "")" data-target="sellers-menu">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Sellers</span>
+                        <i class="fas fa-chevron-down menu-toggle-icon"></i>
+                    </a>
+                    <ul class="menu-items submenu @(isSellersGroup ? "active" : "")" id="sellers-menu">
+                        <li class="menu-item">
+                            <a href="/manager/sellers/listings" class="menu-link submenu-link @(currentPath.Contains("/manager/sellers/listings") && !currentPath.Contains("status=PendingReview") ? "active" : "")">
+                                <i class="fas fa-list"></i><span>All Listings</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/manager/sellers/listings?status=PendingReview" class="menu-link submenu-link @(currentPath.Contains("status=PendingReview") ? "active" : "")">
+                                <i class="fas fa-clock"></i><span>Pending Review</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">COMMUNICATION</div>
+            <ul class="menu-items">
+                <li class="menu-item"><a href="/manager/coming-soon" class="menu-link @(currentPath.Contains("/manager/inbox") ? "active" : "")"><i class="fas fa-inbox"></i><span>Inbox</span></a></li>
+                <li class="menu-item"><a href="/manager/coming-soon" class="menu-link @(currentPath.Contains("/manager/messages") ? "active" : "")"><i class="fas fa-comments"></i><span>Messages</span></a></li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">COMMISSION</div>
+            <ul class="menu-items">
+                <li class="menu-item menu-item-expandable @(isCommissionGroup ? "active" : "")">
+                    <a href="#" class="menu-link menu-link-toggle @(isCommissionGroup ? "active" : "")" data-target="commission-menu">
+                        <i class="fas fa-percentage"></i>
+                        <span>Commission</span>
+                        <i class="fas fa-chevron-down menu-toggle-icon"></i>
+                    </a>
+                    <ul class="menu-items submenu @(isCommissionGroup ? "active" : "")" id="commission-menu">
+                        <li class="menu-item">
+                            <a href="/manager/coming-soon" class="menu-link submenu-link @(currentPath.Contains("/manager/commission/review") ? "active" : "")">
+                                <i class="fas fa-check-double"></i>
+                                <span>Commission Review</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/manager/commission-rules" class="menu-link submenu-link @(currentPath.Contains("/manager/commission-rules") || currentPath.Contains("/manager/commission/rules") ? "active" : "")">
+                                <i class="fas fa-file-contract"></i>
+                                <span>Commission Rules</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">ACCOUNT</div>
+            <ul class="menu-items">
+                <li class="menu-item"><a href="/manager/coming-soon" class="menu-link @(currentPath.Contains("/manager/settings") ? "active" : "")"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <form method="post" action="/manager/logout" class="w-100">
+            <button type="submit" class="logout-button">
+                <i class="fas fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </button>
+        </form>
     </div>
-</nav>
+</aside>
 
 <style>
-    .brand-estate {
-        color: #ff7a59;
-        font-weight: 700;
-    }
-
-    .brand-flow {
-        color: #333;
-        font-weight: 700;
-    }
-
-    .bg-site-primary {
-        background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-    }
-
-    .navbar-dark .nav-link {
-        color: rgba(255, 255, 255, 0.8) !important;
-        transition: all 0.3s ease;
-        font-weight: 500;
-    }
-
-    .navbar-dark .nav-link:hover {
-        color: white !important;
-    }
-
-    .navbar-dark .dropdown-toggle::after {
-        border-top-color: rgba(255, 255, 255, 0.8);
-    }
-
-    .dropdown-menu {
-        border: none;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-radius: 8px;
-    }
-
-    .dropdown-item {
-        color: #333;
-        transition: all 0.2s ease;
-    }
-
-    .dropdown-item:hover {
-        background-color: #f5f7fa;
-        color: #3b82f6;
-    }
-
-    .dropdown-item.active {
-        background-color: #3b82f6;
-        color: white;
+    .broker-sidebar { width: 250px; background: #1a1f3a; color: #e4e6eb; display: flex; flex-direction: column; height: 100vh; position: fixed; left: 0; top: 0; overflow-y: auto; box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15); z-index: 1000; }
+    .sidebar-logo { padding: 24px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+    .logo-container { display: flex; align-items: center; gap: 12px; }
+    .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; }
+    .logo-text { font-size: 16px; font-weight: 700; }
+    .logo-estate { color: #ff7a59; }
+    .logo-flow { color: #e4e6eb; }
+    .sidebar-search { padding: 16px 12px; }
+    .search-wrapper { position: relative; display: flex; align-items: center; }
+    .search-wrapper i { position: absolute; left: 12px; color: #9ca3af; font-size: 14px; }
+    .search-wrapper input { width: 100%; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 10px 12px 10px 36px; color: #e4e6eb; font-size: 13px; }
+    .sidebar-menu { flex: 1; overflow-y: auto; padding: 16px 0; }
+    .menu-label { padding: 12px 20px 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #9ca3af; }
+    .menu-items { list-style: none; padding: 0; margin: 0; }
+    .menu-link { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: #e4e6eb; text-decoration: none; transition: all 0.2s ease; font-size: 14px; font-weight: 500; }
+    .menu-link i { width: 20px; text-align: center; font-size: 16px; color: #9ca3af; }
+    .menu-link:hover { background: rgba(255, 127, 88, 0.1); color: #fff; }
+    .menu-link:hover i { color: #ff7a59; }
+    .menu-link.active { background: linear-gradient(90deg, rgba(249, 115, 22, 0.2), transparent); color: #ff7a59; border-left: 3px solid #ff7a59; padding-left: 17px; }
+    .menu-link.active i { color: #ff7a59; }
+    .submenu { display: none; background: rgba(0, 0, 0, 0.2); }
+    .submenu.active { display: block; }
+    .submenu-link { padding-left: 48px !important; font-size: 13px; color: #b0b4ba; }
+    .submenu-link i { font-size: 14px; }
+    .menu-toggle-icon { margin-left: auto; font-size: 12px; transition: transform 0.2s ease; width: auto !important; }
+    .menu-item-expandable.active .menu-toggle-icon { transform: rotate(180deg); }
+    .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+    .logout-button { width: 100%; border: 1px solid rgba(255, 255, 255, 0.2); background: transparent; color: #e4e6eb; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+    .logout-button:hover { background: rgba(255, 127, 88, 0.1); }
+    @@media (max-width: 768px) {
+        .broker-sidebar {
+            width: 250px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+        .broker-sidebar.mobile-open {
+            transform: translateX(0);
+        }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get current path from Razor variable
+        const currentPath = window.location.pathname.toLowerCase();
+        
+        const toggleLinks = document.querySelectorAll('.menu-link-toggle');
+        toggleLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-target');
+                const targetMenu = document.getElementById(targetId);
+                const menuItem = this.closest('.menu-item-expandable');
+                targetMenu.classList.toggle('active');
+                menuItem.classList.toggle('active');
+            });
+        });
+
+        // Handle Messages page
+        if (currentPath.includes('/broker/messages')) {
+            const messageLinks = document.querySelectorAll('.menu-link');
+            messageLinks.forEach(link => {
+                const href = link.getAttribute('href') ? link.getAttribute('href').toLowerCase() : '';
+                if (href === '/broker/messages') {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Handle Manager Inbox page
+        if (currentPath.includes('/manager/inbox')) {
+            const inboxLinks = document.querySelectorAll('.menu-link');
+            inboxLinks.forEach(link => {
+                const href = link.getAttribute('href') ? link.getAttribute('href').toLowerCase() : '';
+                if (href === '/manager/inbox') {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Handle Manager Messages page
+        if (currentPath.includes('/manager/messages')) {
+            const msgLinks = document.querySelectorAll('.menu-link');
+            msgLinks.forEach(link => {
+                const href = link.getAttribute('href') ? link.getAttribute('href').toLowerCase() : '';
+                if (href === '/manager/messages') {
+                    link.classList.add('active');
+                }
+            });
+        }
+    });
+</script>

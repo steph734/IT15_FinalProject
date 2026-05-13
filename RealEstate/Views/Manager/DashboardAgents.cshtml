@@ -1,0 +1,122 @@
+@{
+    ViewData["Title"] = "Agent";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="agent-dashboard">
+    <div class="row g-3 mb-3">
+        <div class="col-lg-3 col-md-6">
+            <div class="mini-card">
+                <div class="mini-label">Earn of the Month</div>
+                <div class="mini-value">$3548.09</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="mini-card">
+                <div class="mini-label">Earn Growth</div>
+                <div class="mini-value">$67435.00 <span class="tag up">+6.45%</span></div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="mini-card">
+                <div class="mini-label">Conversation Rate</div>
+                <div class="mini-value">78.8%</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="mini-card">
+                <div class="mini-label">Gross Profit Margin</div>
+                <div class="mini-value">34.00%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-xl-9">
+            <div class="panel">
+                <div class="panel-head">
+                    <h6>Sales Funnel</h6>
+                    <span>This Month</span>
+                </div>
+                <div class="line-area">
+                    <svg viewBox="0 0 700 170" preserveAspectRatio="none">
+                        <path d="M0,110 C35,40 70,140 105,80 C140,25 175,125 210,95 C245,60 280,160 315,85 C350,40 385,145 420,102 C455,60 490,150 525,80 C560,35 595,120 630,95 C655,78 678,52 700,70"
+                              fill="none" stroke="#6d5efc" stroke-width="3" />
+                    </svg>
+                </div>
+                <div class="stats-row">
+                    <div><span>Visitors</span><strong>123.7k</strong></div>
+                    <div><span>Views</span><strong>167.1k</strong></div>
+                    <div><span>Leads</span><strong>89.7k</strong></div>
+                    <div><span>Market</span><strong>34.8k</strong></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3">
+            <div class="panel purple-card">
+                <h6>Top Agents</h6>
+                <div class="avatars">😀 😎 🙂 🧑‍💼 👨‍💼</div>
+                <p class="mb-1">Lahomes Group, Pvt Ltd</p>
+                <small>4.5 / 5 Rating</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-xl-9">
+            <div class="panel">
+                <div class="panel-head">
+                    <h6>Recent Agent Status</h6>
+                    <span>This Month</span>
+                </div>
+                <div class="bars">
+                    <div style="height:70%"></div><div style="height:82%"></div><div style="height:58%"></div><div style="height:90%"></div>
+                    <div style="height:66%"></div><div style="height:74%"></div><div style="height:45%"></div><div style="height:28%"></div>
+                    <div style="height:76%"></div><div style="height:40%"></div><div style="height:71%"></div><div style="height:34%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3">
+            <div class="panel side-panel">
+                <h6>Goals</h6>
+                <div class="goal-circle">75%</div>
+                <p class="small text-muted text-center">Achieved</p>
+                <hr />
+                <h6>Recent Join Agent</h6>
+                <ul class="join-list">
+                    <li><span>Ryan G. Harris</span><small>May 2024</small></li>
+                    <li><span>Michael Coch</span><small>May 2024</small></li>
+                    <li><span>Charlie C. Thom</span><small>May 2024</small></li>
+                    <li><span>Julia V. Quincy</span><small>May 2024</small></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .agent-dashboard .mini-card, .agent-dashboard .panel { background: #fff; border: 1px solid #eceff5; border-radius: 10px; padding: 14px; }
+    .mini-label { font-size: 0.75rem; color: #6b7280; margin-bottom: 3px; }
+    .mini-value { font-size: 1.45rem; font-weight: 700; color: #1f2937; }
+    .tag { font-size: 0.65rem; padding: 2px 6px; border-radius: 999px; vertical-align: middle; margin-left: 6px; }
+    .tag.up { background: #dcfce7; color: #15803d; }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .panel-head h6, .panel h6 { margin: 0; font-size: 0.85rem; font-weight: 600; color: #334155; }
+    .panel-head span { font-size: 0.72rem; color: #94a3b8; }
+    .line-area { height: 180px; }
+    .line-area svg { width: 100%; height: 100%; }
+    .stats-row { border-top: 1px solid #edf2f7; margin-top: 4px; padding-top: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .stats-row span { display: block; font-size: 0.68rem; color: #9ca3af; }
+    .stats-row strong { font-size: 0.82rem; color: #334155; }
+    .purple-card { background: linear-gradient(180deg, #f5f3ff, #e9e5ff); border-color: #d9d2ff; min-height: 250px; }
+    .purple-card .avatars { font-size: 1.5rem; margin: 14px 0 10px; }
+    .bars { margin-top: 10px; display: grid; grid-template-columns: repeat(12, 1fr); align-items: end; gap: 14px; height: 220px; border-top: 1px solid #eef2f7; padding-top: 12px; }
+    .bars div { background: #6d5efc; border-radius: 10px; opacity: 0.95; }
+    .goal-circle { width: 125px; height: 125px; border-radius: 50%; margin: 8px auto 6px; background: conic-gradient(#6d5efc 0 270deg, #e5e7eb 270deg 360deg); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; color: #1f2937; position: relative; }
+    .goal-circle::after { content: ""; width: 85px; height: 85px; background: #fff; border-radius: 50%; position: absolute; }
+    .goal-circle { z-index: 1; }
+    .goal-circle::before { content: "75%"; position: absolute; z-index: 2; font-size: 1.15rem; font-weight: 700; }
+    .join-list { list-style: none; padding: 0; margin: 0; }
+    .join-list li { display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding: 8px 0; font-size: 0.78rem; }
+    .join-list small { color: #94a3b8; }
+</style>

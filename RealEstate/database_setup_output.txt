@@ -1,0 +1,82 @@
+Changed database context to 'db49649'.
+=========================================
+Starting Database Reset and Setup...
+=========================================
+ 
+Step 1: Clearing existing user data...
+
+(3 rows affected)
+  ✓ Cleared CommissionRules table
+
+(0 rows affected)
+  ✓ Cleared OtpVerifications table
+
+(0 rows affected)
+  ✓ Cleared Notifications table
+
+(0 rows affected)
+  ✓ Cleared CommissionDeals table
+
+(0 rows affected)
+  ✓ Cleared CommissionBatches table
+
+(2 rows affected)
+  ✓ Cleared Agents table
+
+(6 rows affected)
+  ✓ Cleared SellerListings table
+
+(10 rows affected)
+  ✓ Cleared Users table
+Checking identity information: current identity value '0'.
+DBCC execution completed. If DBCC printed error messages, contact your system administrator.
+  ✓ Reset Users identity counter
+ 
+Step 2: Checking Username column...
+  ✓ Username column already exists
+
+(0 rows affected)
+  ✓ Fixed empty usernames
+  ✓ Unique index on Username created
+ 
+Step 3: Setting up roles...
+ 
+Step 4: Creating predefined accounts...
+
+(1 rows affected)
+  ✓ Created Broker account (username: broker123, password: broker@123456)
+
+(1 rows affected)
+  ✓ Created Manager account (username: manager123, password: manager@123456)
+
+(1 rows affected)
+  ✓ Created Seller account (username: seller123, password: seller@123456)
+
+(1 rows affected)
+  ✓ Created Accounting account (username: accounting123, password: accounting@123456)
+ 
+Step 5: Verifying setup...
+ 
+UserId      RoleType                                           FullName                                                                                             Username                                                                                             Email                                                                                                                                                                                                                                                           IsActive CreatedAt                             
+----------- -------------------------------------------------- ---------------------------------------------------------------------------------------------------- ---------------------------------------------------------------------------------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------- --------------------------------------
+          1 Broker                                             Broker User                                                                                          broker123                                                                                            broker@estateflow.com                                                                                                                                                                                                                                                  1            2026-04-27 10:17:54.0266667
+          2 Manager                                            Manager User                                                                                         manager123                                                                                           manager@estateflow.com                                                                                                                                                                                                                                                 1            2026-04-27 10:17:54.0300000
+          3 Seller                                             Seller User                                                                                          seller123                                                                                            seller@estateflow.com                                                                                                                                                                                                                                                  1            2026-04-27 10:17:54.0400000
+          4 Accounting                                         Accounting User                                                                                      accounting123                                                                                        accounting@estateflow.com                                                                                                                                                                                                                                              1            2026-04-27 10:17:54.0433333
+
+(4 rows affected)
+ 
+=========================================
+Database Reset and Setup Completed!
+=========================================
+ 
+Predefined Account Credentials:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Broker:     username: broker123     | password: broker@123456
+Manager:    username: manager123    | password: manager@123456
+Seller:     username: seller123     | password: seller@123456
+Accounting: username: accounting123 | password: accounting@123456
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 
+You can now login with any of these accounts!
+=========================================

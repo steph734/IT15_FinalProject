@@ -12,104 +12,110 @@ public class UserService
     public UserService(ApplicationDBContext context)
     {
         _context = context;
-        SeedRoles();
-    }
-
-    private void SeedRoles()
-    {
-        // Check if roles exist
-        if (_context.Roles.Any())
-            return;
-
-        // Add default roles
-        _context.Roles.AddRange(
-            new Role { RoleType = "SuperAdmin" },
-            new Role { RoleType = "Manager" },
-            new Role { RoleType = "Accounting" },
-            new Role { RoleType = "Investor" },
-            new Role { RoleType = "Broker" }
-        );
-
-        _context.SaveChanges();
     }
 
     // Get user by ID
-    public User? GetUserById(int userId)
+    public ApplicationUser? GetUserById(int userId)
     {
-        return _context.Users.Include(u => u.Role).FirstOrDefault(u => u.UserId == userId);
+        return _context.Users.FirstOrDefault(u => u.UserId == userId);
     }
 
     // Get user by email
-    public User? GetUserByEmail(string email)
+    public ApplicationUser? GetUserByEmail(string email)
     {
-        return _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Email == email);
+        return _context.Users.FirstOrDefault(u => u.Email == email);
+    }
+
+    // Get user by username
+    public ApplicationUser? GetUserByUsername(string username)
+    {
+        return _context.Users.FirstOrDefault(u => u.Username == username);
     }
 
     // Get all users of specific role
-    public IReadOnlyList<User> GetUsersByRole(string roleType)
+    public IReadOnlyList<ApplicationUser> GetUsersByRole(string roleType)
     {
         return _context.Users
-            .Include(u => u.Role)
-            .Where(u => u.Role != null && u.Role.RoleType == roleType)
+            .Where(u => u.Role == roleType)
             .ToList()
             .AsReadOnly();
     }
 
     // Get all active users
-    public IReadOnlyList<User> GetActiveUsers()
+    public IReadOnlyList<ApplicationUser> GetActiveUsers()
     {
         return _context.Users
-            .Include(u => u.Role)
             .Where(u => u.IsActive)
             .ToList()
             .AsReadOnly();
     }
 
     // Get all users
-    public IReadOnlyList<User> GetAllUsers()
+    public IReadOnlyList<ApplicationUser> GetAllUsers()
     {
         return _context.Users
-            .Include(u => u.Role)
             .ToList()
             .AsReadOnly();
     }
 
     // Register new user
-    public User RegisterUser(string fullName, string email, string password, string roleType)
+    public ApplicationUser RegisterUser(string fullName, string username, string email, string password, string roleType)
     {
-        // Validate
+        // Validate username
+        if (string.IsNullOrWhiteSpace(username) || username.Length < 3)
+            throw new InvalidOperationException("Username must be at least 3 characters");
+        
+        if (_context.Users.Any(u => u.Username == username))
+            throw new InvalidOperationException("Username already taken");
+        
+        // Validate email
         if (_context.Users.Any(u => u.Email == email))
             throw new InvalidOperationException("Email already registered");
 
         if (password.Length < 6)
             throw new InvalidOperationException("Password must be at least 6 characters");
 
-        // Get role
-        var role = _context.Roles.FirstOrDefault(r => r.RoleType == roleType);
-        if (role == null)
-            throw new InvalidOperationException($"Role '{roleType}' does not exist");
-
-        // Create user
-        var user = new User
+        // Create user as inactive — activated after OTP verification
+        var user = new ApplicationUser
         {
             FullName = fullName,
+            Username = username,
             Email = email,
             PasswordHash = HashPassword(password),
-            RoleId = role.RoleId,
+            Role = roleType,
             CreatedAt = DateTime.UtcNow,
-            IsActive = true
+            IsActive = false   // activated in VerifyOtp after email confirmed
         };
 
         _context.Users.Add(user);
         _context.SaveChanges();
 
+        if (roleType == "Agent")
+        {
+            var names = fullName.Split(' ', 2);
+            var agent = new Agent
+            {
+                UserId = user.UserId,
+                FirstName = names[0],
+                LastName = names.Length > 1 ? names[1] : "",
+                Email = email,
+                Name = fullName,
+                IsArchived = false,
+                CreatedAtUtc = DateTime.UtcNow
+            };
+            _context.Agents.Add(agent);
+            _context.SaveChanges();
+        }
+
         return user;
     }
 
-    // Login user
-    public User? LoginUser(string email, string password)
+    // Login user with username
+    public ApplicationUser? LoginUser(string usernameOrEmail, string password)
     {
-        var user = GetUserByEmail(email);
+        // Try to find user by username or email
+        var user = _context.Users
+            .FirstOrDefault(u => u.Username == usernameOrEmail || u.Email == usernameOrEmail);
 
         if (user == null || !VerifyPassword(password, user.PasswordHash))
             return null;
@@ -125,7 +131,7 @@ public class UserService
     }
 
     // Update user
-    public void UpdateUser(User user)
+    public void UpdateUser(ApplicationUser user)
     {
         _context.Users.Update(user);
         _context.SaveChanges();
@@ -187,7 +193,7 @@ public class UserService
     public int GetUserCountByRole(string roleType)
     {
         return _context.Users
-            .Where(u => u.Role != null && u.Role.RoleType == roleType)
+            .Where(u => u.Role == roleType)
             .Count();
     }
 
@@ -197,10 +203,17 @@ public class UserService
         return _context.Users.Count(u => u.IsActive);
     }
 
-    // Get all roles
-    public IReadOnlyList<Role> GetAllRoles()
+    // Get all roles available for registration
+    public IReadOnlyList<string> GetAllRoles()
     {
-        return _context.Roles.ToList().AsReadOnly();
+        return new List<string>
+        {
+            "Manager",
+            "Broker",
+            "Seller",
+            "Accounting",
+            "Agent"
+        }.AsReadOnly();
     }
 
     // Hash password using SHA256
@@ -218,5 +231,13 @@ public class UserService
     {
         var hashOfInput = HashPassword(password);
         return hashOfInput == hash;
+    }
+
+    // Verify password for a specific user by ID
+    public bool VerifyPasswordForUser(int userId, string password)
+    {
+        var user = GetUserById(userId);
+        if (user == null) return false;
+        return VerifyPassword(password, user.PasswordHash);
     }
 }

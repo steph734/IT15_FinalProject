@@ -1,0 +1,87 @@
+@model RealEstate.Models.PaymentTransaction
+@{
+    Layout = null;
+    var receiptNo = $"REC-{Model.Id.ToString("D5")}";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Receipt @receiptNo | EstateFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;padding:40px}
+        .receipt{max-width:700px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.08);overflow:hidden}
+        .receipt-header{background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:32px;text-align:center}
+        .receipt-header h1{font-size:28px;font-weight:800;margin-bottom:4px}
+        .receipt-header .sub{font-size:14px;opacity:.85}
+        .receipt-body{padding:32px}
+        .receipt-row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #f1f5f9;font-size:14px}
+        .receipt-row:last-child{border-bottom:none}
+        .receipt-row .key{color:#64748b;font-weight:500}
+        .receipt-row .val{font-weight:700;color:#1e293b;text-align:right}
+        .receipt-total{background:#f8fafc;border-radius:10px;padding:20px 24px;margin-top:20px;display:flex;justify-content:space-between;align-items:center}
+        .receipt-total .key{font-size:14px;font-weight:700;color:#374151}
+        .receipt-total .val{font-size:24px;font-weight:800;color:#10b981}
+        .receipt-footer{text-align:center;padding:20px 32px 28px;border-top:1px solid #f1f5f9;color:#94a3b8;font-size:12px}
+        .receipt-footer .logo{font-size:16px;font-weight:800;color:#10b981;margin-bottom:6px}
+        .btn-print{display:inline-flex;align-items:center;gap:8px;background:#10b981;color:#fff;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:24px}
+        .btn-print:hover{background:#059669}
+        .status-badge{background:#dcfce7;color:#166534;display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700}
+        @@media print {
+            body{background:#fff;padding:0}
+            .btn-print{display:none}
+            .receipt{box-shadow:none}
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align:center;margin-bottom:20px">
+        <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> Print Receipt</button>
+    </div>
+
+    <div class="receipt">
+        <div class="receipt-header">
+            <h1><i class="fas fa-receipt"></i> PAYMENT RECEIPT</h1>
+            <div class="sub">@receiptNo • EstateFlow Real Estate</div>
+        </div>
+        <div class="receipt-body">
+            <div class="receipt-row">
+                <span class="key">Receipt Number</span>
+                <span class="val">@receiptNo</span>
+            </div>
+            <div class="receipt-row">
+                <span class="key">Payment Intent ID</span>
+                <span class="val">@Model.PayMongoPaymentIntentId</span>
+            </div>
+            <div class="receipt-row">
+                <span class="key">Description</span>
+                <span class="val">@(Model.Description ?? "—")</span>
+            </div>
+            <div class="receipt-row">
+                <span class="key">Payment Method</span>
+                <span class="val">@Model.PaymentMethod</span>
+            </div>
+            <div class="receipt-row">
+                <span class="key">Payment Date</span>
+                <span class="val">@Model.CreatedDate.ToString("MMMM dd, yyyy HH:mm")</span>
+            </div>
+            <div class="receipt-row">
+                <span class="key">Status</span>
+                <span class="val"><span class="status-badge"><i class="fas fa-check-circle"></i> Validated</span></span>
+            </div>
+            <div class="receipt-total">
+                <span class="key">Amount Paid</span>
+                <span class="val">₱@Model.Amount.ToString("N2")</span>
+            </div>
+        </div>
+        <div class="receipt-footer">
+            <div class="logo">EstateFlow</div>
+            <div>This is a system-generated receipt. No signature required.</div>
+            <div>Generated on @DateTime.UtcNow.ToString("MMMM dd, yyyy HH:mm UTC")</div>
+        </div>
+    </div>
+</body>
+</html>

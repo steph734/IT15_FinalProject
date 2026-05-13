@@ -73,12 +73,21 @@ public class RequireManagerAttribute : RequireRoleAttribute
 }
 
 /// <summary>
-/// Attribute to require investor role
+/// Attribute to require seller role
+/// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+public class RequireSellerAttribute : RequireRoleAttribute
+{
+    public RequireSellerAttribute() : base("Seller") { }
+}
+
+/// <summary>
+/// Attribute to require investor role (kept for backward compatibility)
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class RequireInvestorAttribute : RequireRoleAttribute
 {
-    public RequireInvestorAttribute() : base("Investor") { }
+    public RequireInvestorAttribute() : base("Investor", "Seller") { }
 }
 
 /// <summary>

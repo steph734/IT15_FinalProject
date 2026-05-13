@@ -1,0 +1,1646 @@
+@using RealEstate.Models
+@{
+    ViewData["Title"] = "Property Grid";
+    Layout = "~/Views/Shared/_PropertiesLayout.cshtml";
+    
+    // Get inspection listings for the checklist section
+    var inspectionListings = ViewBag.InspectionListings as List<Property> ?? new List<Property>();
+}
+
+<div class="property-grid-page">
+    <!-- Page Header -->
+    <section class="page-header-modern">
+        <div class="container">
+            <div class="page-header-content">
+                <span class="page-label">PROPERTY LISTINGS</span>
+                <h1 class="page-title">Property Grid</h1>
+                <p class="page-subtitle">Browse our comprehensive collection of properties</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="properties-grid-section">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar Filters -->
+                <div class="col-lg-3">
+                    <div class="sidebar-filters">
+                        <h2 class="listing-grid-title">Listing Grid</h2>
+                        
+                        <div class="filter-header">
+                            <h5 class="filter-section-title">Properties</h5>
+                            <span class="property-count">Show @Model.TotalCount Properties</span>
+                        </div>
+
+                        <div class="filter-divider"></div>
+
+                        <!-- Properties Location -->
+                        <div class="filter-group">
+                            <label class="filter-label">Properties Location</label>
+                            <div class="custom-select-wrapper">
+                                <select class="custom-select">
+                                    <option>Choose a city</option>
+                                    <option>New York</option>
+                                    <option>Los Angeles</option>
+                                    <option>Chicago</option>
+                                    <option>Miami</option>
+                                    <option>San Francisco</option>
+                                </select>
+                                <i class="fas fa-chevron-down select-icon"></i>
+                            </div>
+                        </div>
+
+                        <!-- Type Of Place -->
+                        <div class="filter-group">
+                            <label class="filter-label">Type Of Place</label>
+                            <input type="text" class="custom-input" placeholder="">
+                        </div>
+
+                        <!-- Custom Price Range -->
+                        <div class="filter-group">
+                            <label class="filter-label">Custom Price Range :</label>
+                            <div class="range-slider-container">
+                                <div class="range-slider-track">
+                                    <div class="range-slider-fill"></div>
+                                    <div class="range-thumb range-thumb-left"></div>
+                                    <div class="range-thumb range-thumb-right"></div>
+                                </div>
+                            </div>
+                            <div class="range-inputs">
+                                <div class="range-input-wrapper">
+                                    <span class="range-currency">$</span>
+                                    <input type="text" class="range-input" value="6000" id="minPrice">
+                                </div>
+                                <span class="range-separator">to</span>
+                                <div class="range-input-wrapper">
+                                    <span class="range-currency">$</span>
+                                    <input type="text" class="range-input" value="100000" id="maxPrice">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Accessibility Features -->
+                        <div class="filter-group">
+                            <label class="filter-label">Accessibility Features :</label>
+                            <div class="checkbox-grid">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">For Rent</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">For Sale</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">Balcony</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">Parking</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">Spa</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">Pool</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">Restaurant</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">Fitness Club</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Properties Type -->
+                        <div class="filter-group">
+                            <label class="filter-label">Properties Type :</label>
+                            <div class="checkbox-grid">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" checked>
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">All Properties</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">Cottage</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">Villas</span>
+                                </label>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">Apartment</span>
+                                </label>
+                                <label class="custom-checkbox full-width">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-label">Duplex Bungalow</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button class="apply-btn">Apply</button>
+                    </div>
+                </div>
+
+                <!-- Properties Grid -->
+                <div class="col-lg-9">
+                    <!-- Sorting and View Options -->
+                    <div class="properties-controls">
+                        <div class="results-info">
+                            <span>Showing <strong>1-8</strong> of <strong>23</strong> properties</span>
+                        </div>
+                        <div class="view-controls">
+                            <div class="view-toggle">
+                                <button class="view-btn active" data-view="grid">
+                                    <i class="fas fa-th"></i>
+                                </button>
+                                <button class="view-btn" data-view="list">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                            </div>
+                            <select class="sort-select">
+                                <option>Sort by: Newest</option>
+                                <option>Price: Low to High</option>
+                                <option>Price: High to Low</option>
+                                <option>Most Popular</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Property Cards Grid -->
+                    <div class="properties-grid" id="propertiesGrid">
+                        @foreach (var property in Model.Properties)
+                        {
+                            var coverImage = !string.IsNullOrEmpty(property.CoverImage) ? property.CoverImage : "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80";
+                            var isRent = property.ListingType == 1;
+                            <div class="property-card">
+                                <div class="property-image">
+                                    <img src="@coverImage" alt="@property.Title" loading="lazy">
+                                    <div class="property-status @(isRent ? "for-rent" : "for-sale")">
+                                        @(isRent ? "For Rent" : "For Sale")
+                                    </div>
+                                    <div class="property-favorite">
+                                        <i class="far fa-heart"></i>
+                                    </div>
+                                </div>
+
+                                <div class="property-content">
+                                    <div class="property-price">
+                                        ₱@(property.FinalPrice?.ToString("N0") ?? property.BasePrice.ToString("N0"))
+                                        @if (isRent)
+                                        {
+                                            <span class="price-period">/month</span>
+                                        }
+                                    </div>
+
+                                    <h3 class="property-title">@property.Title</h3>
+
+                                    <div class="property-location">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>@property.Location</span>
+                                    </div>
+
+                                    <div class="property-features">
+                                        <div class="feature">
+                                            <i class="fas fa-bed"></i>
+                                            <span>@property.Bedrooms Beds</span>
+                                        </div>
+                                        <div class="feature">
+                                            <i class="fas fa-bath"></i>
+                                            <span>@property.Bathrooms Baths</span>
+                                        </div>
+                                        <div class="feature">
+                                            <i class="fas fa-ruler-combined"></i>
+                                            <span>@property.Sqft sqft</span>
+                                        </div>
+                                        <div class="feature">
+                                            <i class="fas fa-car"></i>
+                                            <span>@property.ParkingSlots Parking</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="property-description">
+                                        @property.Description
+                                    </div>
+
+                                    <div class="property-actions">
+                                        <a href="/Properties/Details/@property.PropertyId" class="btn-primary property-details-btn">
+                                            View Details
+                                        </a>
+                                        <div class="dropdown more-inquiry-dropdown">
+                                            <button class="btn-secondary more-inquiry-btn" data-bs-toggle="dropdown">
+                                                More Inquiry
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="/Properties/SendInquiry/@property.PropertyId"><i class="fas fa-envelope"></i> Send Message</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-wrapper">
+                        <ul class="pagination">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inspection Checklist Section -->
+    @if (inspectionListings.Any())
+    {
+        <section class="inspection-checklist-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-clipboard-check me-3"></i>Property Inspection Checklist
+                    </h2>
+                    <p class="section-subtitle">Complete inspections for properties currently under review</p>
+                </div>
+
+                <div class="inspection-grid">
+                    @foreach (var listing in inspectionListings)
+                    {
+                        <div class="inspection-card">
+                            <div class="inspection-header">
+                                <div class="property-info">
+                                    <h4 class="property-title">@listing.Title</h4>
+                                    <p class="property-location">
+                                        <i class="fas fa-map-marker-alt me-2"></i>@listing.Location
+                                    </p>
+                                    <div class="property-details">
+                                        <span class="detail-item">
+                                            <i class="fas fa-bed me-1"></i>@listing.Bedrooms Beds
+                                        </span>
+                                        <span class="detail-item">
+                                            <i class="fas fa-bath me-1"></i>@listing.Bathrooms Baths
+                                        </span>
+                                        <span class="detail-item">
+                                            <i class="fas fa-ruler-combined me-1"></i>@listing.Sqft sqft
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="inspection-status">
+                                    <span class="status-badge status-inspection">
+                                        <i class="fas fa-search me-2"></i>Inspection
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="inspection-progress">
+                                <div class="progress-info">
+                                    <span class="progress-label">Inspection Progress</span>
+                                    <span class="progress-percentage">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <div class="inspection-actions">
+                                <a href="/manager/sellers/listings/@listing.Id/inspection-checklist" 
+                                   class="btn-inspection-checklist">
+                                    <i class="fas fa-clipboard-list me-2"></i>Open Checklist
+                                </a>
+                                <div class="quick-actions">
+                                    <button class="btn-quick-notes" onclick="showQuickNotes(@listing.Id)">
+                                        <i class="fas fa-sticky-note"></i>
+                                    </button>
+                                    <button class="btn-view-property" onclick="viewProperty(@listing.Id)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="inspection-notes" id="quick-notes-@listing.Id" style="display: none;">
+                                <form method="post" action="/manager/sellers/listings/@listing.Id/complete-inspection">
+                                    @Html.AntiForgeryToken()
+                                    <div class="form-group">
+                                        <label class="form-label">Quick Inspection Notes</label>
+                                        <textarea name="inspectionNotes" class="form-control" rows="3" 
+                                                  placeholder="Add quick inspection notes..."></textarea>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn-complete-quick">
+                                            <i class="fas fa-check me-2"></i>Complete Inspection
+                                        </button>
+                                        <button type="button" class="btn-cancel-notes" onclick="hideQuickNotes(@listing.Id)">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+</div>
+
+<!-- Assign Agent Modal -->
+<div class="modal fade" id="assignAgentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Agent to Property</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="property-summary mb-3">
+                    <h6>Property Details</h6>
+                    <div id="selectedPropertyInfo">
+                        <p class="mb-1"><strong>Property:</strong> <span id="modalPropertyName">Modern Apartment</span></p>
+                        <p class="mb-0"><strong>Location:</strong> <span id="modalPropertyLocation">66 Brooklynt, New York</span></p>
+                    </div>
+                </div>
+                
+                <div class="agent-selection">
+                    <h6>Select Agent</h6>
+                    <div class="agent-list">
+                        <div class="agent-option">
+                            <label class="agent-card">
+                                <input type="radio" name="agent" value="1">
+                                <div class="agent-info">
+                                    <img src="https://i.pravatar.cc/40?u=agent1" alt="Agent">
+                                    <div class="agent-details">
+                                        <div class="agent-name">John Smith</div>
+                                        <div class="agent-specialty">Luxury Properties</div>
+                                        <div class="agent-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star-half-alt"></i>
+                                            <span>4.8</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="agent-option">
+                            <label class="agent-card">
+                                <input type="radio" name="agent" value="2">
+                                <div class="agent-info">
+                                    <img src="https://i.pravatar.cc/40?u=agent2" alt="Agent">
+                                    <div class="agent-details">
+                                        <div class="agent-name">Maria Garcia</div>
+                                        <div class="agent-specialty">Downtown Area</div>
+                                        <div class="agent-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <span>5.0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="agent-option">
+                            <label class="agent-card">
+                                <input type="radio" name="agent" value="3">
+                                <div class="agent-info">
+                                    <img src="https://i.pravatar.cc/40?u=agent3" alt="Agent">
+                                    <div class="agent-details">
+                                        <div class="agent-name">Robert Johnson</div>
+                                        <div class="agent-specialty">Family Homes</div>
+                                        <div class="agent-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                            <span>4.2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="assignment-notes mt-3">
+                    <label for="assignmentNotes" class="form-label">Assignment Notes (Optional)</label>
+                    <textarea class="form-control" id="assignmentNotes" rows="3" placeholder="Add any special instructions or notes for the agent..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmAssignAgent">Assign Agent</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Page Header */
+    .page-header-modern {
+        background: linear-gradient(135deg, #1E3A5F 0%, #16A39E 100%);
+        color: white;
+        padding: 80px 0 60px;
+        text-align: center;
+    }
+
+    .page-label {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+    }
+
+    .page-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 16px;
+    }
+
+    .page-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Properties Grid Section */
+    .properties-grid-section {
+        padding: 60px 0;
+    }
+
+    /* Sidebar Filters - Listing Grid Style */
+    .sidebar-filters {
+        background: white;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .listing-grid-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #5B6B8A;
+        margin-bottom: 20px;
+    }
+
+    .filter-header {
+        margin-bottom: 12px;
+    }
+
+    .filter-section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #4A5568;
+        margin-bottom: 4px;
+    }
+
+    .property-count {
+        font-size: 0.9rem;
+        color: #718096;
+    }
+
+    .filter-divider {
+        height: 1px;
+        background: #E2E8F0;
+        margin: 20px 0;
+    }
+
+    .filter-group {
+        margin-bottom: 24px;
+    }
+
+    .filter-label {
+        display: block;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #4A5568;
+        margin-bottom: 10px;
+    }
+
+    /* Custom Select */
+    .custom-select-wrapper {
+        position: relative;
+    }
+
+    .custom-select {
+        width: 100%;
+        padding: 12px 40px 12px 16px;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        background: white;
+        color: #718096;
+        font-size: 0.9rem;
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .custom-select:focus {
+        border-color: #6B4EE6;
+    }
+
+    .select-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #718096;
+        font-size: 0.8rem;
+        pointer-events: none;
+    }
+
+    /* Custom Input */
+    .custom-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        background: white;
+        color: #2D3748;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .custom-input:focus {
+        border-color: #6B4EE6;
+    }
+
+    /* Range Slider */
+    .range-slider-container {
+        padding: 20px 8px 16px;
+    }
+
+    .range-slider-track {
+        position: relative;
+        height: 6px;
+        background: #E2E8F0;
+        border-radius: 3px;
+    }
+
+    .range-slider-fill {
+        position: absolute;
+        left: 10%;
+        right: 20%;
+        top: 0;
+        height: 100%;
+        background: #6B4EE6;
+        border-radius: 3px;
+    }
+
+    .range-thumb {
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 18px;
+        height: 18px;
+        background: #6B4EE6;
+        border: 3px solid white;
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(107, 78, 230, 0.4);
+        cursor: pointer;
+    }
+
+    .range-thumb-left {
+        left: 10%;
+    }
+
+    .range-thumb-right {
+        left: 80%;
+    }
+
+    /* Range Inputs */
+    .range-inputs {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .range-input-wrapper {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .range-currency {
+        position: absolute;
+        left: 12px;
+        color: #718096;
+        font-size: 0.9rem;
+    }
+
+    .range-input {
+        width: 100%;
+        padding: 10px 12px 10px 28px;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        background: white;
+        color: #2D3748;
+        font-size: 0.9rem;
+        text-align: center;
+        outline: none;
+    }
+
+    .range-separator {
+        color: #718096;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+
+    /* Checkbox Grid */
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .custom-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .custom-checkbox input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .checkmark {
+        width: 18px;
+        height: 18px;
+        border: 1.5px solid #CBD5E0;
+        border-radius: 4px;
+        background: white;
+        transition: all 0.2s;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .custom-checkbox input:checked + .checkmark {
+        background: #6B4EE6;
+        border-color: #6B4EE6;
+    }
+
+    .custom-checkbox input:checked + .checkmark::after {
+        content: '\2713';
+        color: white;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    .checkbox-label {
+        font-size: 0.9rem;
+        color: #4A5568;
+        user-select: none;
+    }
+
+    .custom-checkbox.full-width {
+        grid-column: 1 / -1;
+    }
+
+    /* Apply Button */
+    .apply-btn {
+        width: 100%;
+        padding: 14px;
+        background: #6B4EE6;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 8px;
+    }
+
+    .apply-btn:hover {
+        background: #5a3fd4;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(107, 78, 230, 0.3);
+    }
+
+    /* Properties Controls */
+    .properties-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+    }
+
+    .results-info {
+        color: #6B7280;
+        font-size: 0.95rem;
+    }
+
+    .results-info strong {
+        color: #1E3A5F;
+    }
+
+    .view-controls {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .view-toggle {
+        display: flex;
+        gap: 8px;
+    }
+
+    .view-btn {
+        width: 40px;
+        height: 40px;
+        border: 1px solid #E5E7EB;
+        background: white;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        color: #6B7280;
+    }
+
+    .view-btn.active {
+        background: #16A39E;
+        color: white;
+        border-color: #16A39E;
+    }
+
+    .sort-select {
+        padding: 10px 12px;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+        color: #6B7280;
+    }
+
+    /* Properties Grid */
+    .properties-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+
+    /* Property Card */
+    .property-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s;
+    }
+
+    .property-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .property-image {
+        position: relative;
+        height: 220px;
+        overflow: hidden;
+    }
+
+    .property-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .property-card:hover .property-image img {
+        transform: scale(1.05);
+    }
+
+    .property-status {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .property-status.for-sale {
+        background: #10B981;
+        color: white;
+    }
+
+    .property-status.for-rent {
+        background: #F59E0B;
+        color: white;
+    }
+
+    .property-favorite {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .property-favorite:hover {
+        background: white;
+    }
+
+    .property-favorite i {
+        color: #EF4444;
+        font-size: 1rem;
+    }
+
+    .property-content {
+        padding: 20px;
+    }
+
+    .property-price {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #1E3A5F;
+        margin-bottom: 8px;
+    }
+
+    .property-price span {
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    .price-period {
+        color: #6B7280;
+        font-size: 0.9rem;
+    }
+
+    .property-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1E3A5F;
+        margin-bottom: 8px;
+        line-height: 1.3;
+    }
+
+    .property-location {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #6B7280;
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+    }
+
+    .property-location i {
+        color: #16A39E;
+    }
+
+    .property-features {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .feature {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        color: #6B7280;
+    }
+
+    .feature i {
+        color: #16A39E;
+        width: 16px;
+    }
+
+    .property-description {
+        color: #6B7280;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    .property-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .property-details-btn {
+        flex: 1;
+        background: #16A39E;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    /* Inspection Checklist Section */
+    .inspection-checklist-section {
+        background: #f8fafc;
+        padding: 60px 0;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+        font-size: 1.1rem;
+        color: #64748b;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .inspection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 24px;
+        margin-top: 40px;
+    }
+
+    .inspection-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 2px solid transparent;
+        transition: all 0.3s;
+    }
+
+    .inspection-card:hover {
+        border-color: #7c3aed;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(124, 58, 237, 0.15);
+    }
+
+    .inspection-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .property-info {
+        flex: 1;
+    }
+
+    .property-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 8px;
+        line-height: 1.3;
+    }
+
+    .property-location {
+        display: flex;
+        align-items: center;
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+    }
+
+    .property-location i {
+        color: #7c3aed;
+    }
+
+    .property-details {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+
+    .detail-item i {
+        color: #7c3aed;
+        font-size: 0.8rem;
+    }
+
+    .inspection-status {
+        margin-left: 16px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-inspection {
+        background: #ddd6fe;
+        color: #7c3aed;
+        border: 1px solid #c4b5fd;
+    }
+
+    .inspection-progress {
+        margin-bottom: 20px;
+    }
+
+    .progress-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .progress-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .progress-percentage {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #7c3aed;
+    }
+
+    .progress-bar {
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #7c3aed, #6d28d9);
+        transition: width 0.3s ease;
+    }
+
+    .inspection-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .btn-inspection-checklist {
+        flex: 1;
+        background: linear-gradient(135deg, #7c3aed, #6d28d9);
+        color: white;
+        text-decoration: none;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-align: center;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-inspection-checklist:hover {
+        background: linear-gradient(135deg, #6d28d9, #5b21b6);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .quick-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-quick-notes,
+    .btn-view-property {
+        width: 40px;
+        height: 40px;
+        border: 1px solid #e5e7eb;
+        background: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-quick-notes {
+        color: #f59e0b;
+    }
+
+    .btn-quick-notes:hover {
+        background: #fef3c7;
+        border-color: #f59e0b;
+    }
+
+    .btn-view-property {
+        color: #64748b;
+    }
+
+    .btn-view-property:hover {
+        background: #f1f5f9;
+        border-color: #64748b;
+    }
+
+    .inspection-notes {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 16px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        resize: vertical;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-complete-quick {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .btn-complete-quick:hover {
+        background: #059669;
+    }
+
+    .btn-cancel-notes {
+        background: #f3f4f6;
+        color: #6b7280;
+        border: 1px solid #d1d5db;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-cancel-notes:hover {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    .property-details-btn:hover {
+        background: #0F8B84;
+    }
+
+    .more-inquiry-dropdown .btn-secondary {
+        background: #F3F4F6;
+        color: #6B7280;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        padding: 10px 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .more-inquiry-dropdown .btn-secondary:hover {
+        background: #E5E7EB;
+        color: #374151;
+    }
+
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        padding: 8px 0;
+    }
+
+    .dropdown-item {
+        padding: 10px 16px;
+        color: #374151;
+        font-size: 0.9rem;
+        transition: background 0.2s;
+    }
+
+    .dropdown-item:hover {
+        background: #F3F4F6;
+        color: #16A39E;
+    }
+
+    .dropdown-item i {
+        width: 16px;
+        margin-right: 8px;
+    }
+
+    .assign-agent-btn {
+        color: #16A39E;
+        font-weight: 600;
+    }
+
+    /* Assign Agent Modal */
+    .property-summary {
+        background: #F8F9FA;
+        padding: 16px;
+        border-radius: 8px;
+        border-left: 4px solid #16A39E;
+    }
+
+    .agent-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .agent-option {
+        margin-bottom: 0;
+    }
+
+    .agent-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .agent-card:hover {
+        background: #F8F9FA;
+        border-color: #16A39E;
+    }
+
+    .agent-card input[type="radio"] {
+        margin: 0;
+    }
+
+    .agent-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+    }
+
+    .agent-info img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .agent-details {
+        flex: 1;
+    }
+
+    .agent-name {
+        font-weight: 600;
+        color: #1E3A5F;
+        margin-bottom: 2px;
+    }
+
+    .agent-specialty {
+        font-size: 0.8rem;
+        color: #6B7280;
+        margin-bottom: 4px;
+    }
+
+    .agent-rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.8rem;
+        color: #F59E0B;
+    }
+
+    /* Pagination */
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        background: white;
+        color: #6B7280;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .page-link:hover {
+        border-color: #16A39E;
+        color: #16A39E;
+    }
+
+    .page-item.active .page-link {
+        background: #16A39E;
+        color: white;
+        border-color: #16A39E;
+    }
+
+    .page-item.disabled .page-link {
+        color: #D1D5DB;
+        cursor: not-allowed;
+    }
+
+    /* Responsive */
+    @@media (max-width: 991px) {
+        .properties-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+        
+        .sidebar-filters {
+            position: static;
+            margin-bottom: 30px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .properties-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .properties-controls {
+            flex-direction: column;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .property-features {
+            grid-template-columns: 1fr;
+        }
+        
+        .property-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // View toggle functionality
+        const viewBtns = document.querySelectorAll('.view-btn');
+        const propertiesGrid = document.getElementById('propertiesGrid');
+        
+        viewBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                viewBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const view = this.dataset.view;
+                if (view === 'list') {
+                    propertiesGrid.style.gridTemplateColumns = '1fr';
+                } else {
+                    propertiesGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(320px, 1fr))';
+                }
+            });
+        });
+
+        // Assign Agent Modal functionality
+        const assignAgentBtns = document.querySelectorAll('.assign-agent-btn');
+        const assignAgentModal = document.getElementById('assignAgentModal');
+        const modalPropertyName = document.getElementById('modalPropertyName');
+        const modalPropertyLocation = document.getElementById('modalPropertyLocation');
+        
+        assignAgentBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const propertyId = this.dataset.propertyId;
+                const propertyCard = this.closest('.property-card');
+                const title = propertyCard.querySelector('.property-title').textContent;
+                const location = propertyCard.querySelector('.property-location span').textContent;
+                
+                modalPropertyName.textContent = title;
+                modalPropertyLocation.textContent = location;
+                
+                const modal = new bootstrap.Modal(assignAgentModal);
+                modal.show();
+            });
+        });
+
+        // Confirm Assign Agent
+        const confirmAssignBtn = document.getElementById('confirmAssignAgent');
+        if (confirmAssignBtn) {
+            confirmAssignBtn.addEventListener('click', function() {
+                const selectedAgent = document.querySelector('input[name="agent"]:checked');
+                if (selectedAgent) {
+                    // Here you would typically send the assignment to the server
+                    const modal = bootstrap.Modal.getInstance(assignAgentModal);
+                    modal.hide();
+                    
+                    // Show success message
+                    alert('Agent assigned successfully!');
+                } else {
+                    alert('Please select an agent to assign.');
+                }
+            });
+        }
+
+        // Favorite button functionality
+        const favoriteBtns = document.querySelectorAll('.property-favorite');
+        favoriteBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                if (icon.classList.contains('far')) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            });
+        });
+
+        // Inspection Checklist functionality
+        const inspectionCards = document.querySelectorAll('.inspection-card');
+        inspectionCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Animate progress bars on scroll
+        const progressBars = document.querySelectorAll('.progress-fill');
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px'
+        };
+
+        const progressObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const progressBar = entry.target;
+                    // Simulate progress animation (you can replace with actual progress data)
+                    setTimeout(() => {
+                        progressBar.style.width = '25%'; // Example progress
+                        const percentageText = progressBar.closest('.inspection-card').querySelector('.progress-percentage');
+                        if (percentageText) {
+                            percentageText.textContent = '25%';
+                        }
+                    }, 300);
+                    progressObserver.unobserve(progressBar);
+                }
+            });
+        }, observerOptions);
+
+        progressBars.forEach(bar => {
+            progressObserver.observe(bar);
+        });
+    });
+
+    // Show quick notes section
+    function showQuickNotes(listingId) {
+        const notesSection = document.getElementById(`quick-notes-${listingId}`);
+        if (notesSection) {
+            notesSection.style.display = notesSection.style.display === 'none' ? 'block' : 'none';
+            
+            // Focus on textarea when shown
+            if (notesSection.style.display === 'block') {
+                const textarea = notesSection.querySelector('textarea');
+                if (textarea) {
+                    setTimeout(() => textarea.focus(), 100);
+                }
+            }
+        }
+    }
+
+    // Hide quick notes section
+    function hideQuickNotes(listingId) {
+        const notesSection = document.getElementById(`quick-notes-${listingId}`);
+        if (notesSection) {
+            notesSection.style.display = 'none';
+        }
+    }
+
+    // View property details
+    function viewProperty(listingId) {
+        window.location.href = `/manager/sellers/listings/${listingId}`;
+    }
+</script>

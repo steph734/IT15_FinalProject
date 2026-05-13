@@ -1,0 +1,236 @@
+@model List<RealEstate.Models.Property>
+@{
+    ViewData["Title"] = "Property Grid";
+    var page = (int?)ViewBag.Page ?? 1;
+    var totalPages = (int?)ViewBag.TotalPages ?? 1;
+    Layout = "~/Views/Shared/_BrokerLayout.cshtml";
+}
+
+<style>
+    .broker-grid-container { padding: 24px; }
+    .properties-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 28px;
+        margin-bottom: 48px;
+    }
+    .property-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(30, 58, 95, 0.08);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+    }
+    .property-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 32px rgba(30, 58, 95, 0.15);
+    }
+    .property-image-wrapper {
+        position: relative;
+        width: 100%;
+        height: 220px;
+        overflow: hidden;
+        background: #E5E7EB;
+    }
+    .property-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .property-card:hover .property-image {
+        transform: scale(1.08);
+    }
+    .property-badge {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: #f97316;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    .property-badge.rent { background: #10B981; }
+    .property-content {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .property-header {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .property-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #f97316, #ea580c);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+    .property-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1f2937;
+        line-height: 1.4;
+        margin-bottom: 4px;
+    }
+    .property-location {
+        font-size: 12px;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .property-specs {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+        padding: 12px 0;
+        border-top: 1px solid #f3f4f6;
+        border-bottom: 1px solid #f3f4f6;
+        margin: auto 0 16px 0;
+    }
+    .spec-item { text-align: center; }
+    .spec-icon { font-size: 16px; color: #f97316; margin-bottom: 4px; }
+    .spec-value { font-size: 13px; font-weight: 700; color: #1f2937; }
+    .spec-label { font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px; }
+    .property-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .property-price .price-value {
+        font-size: 18px;
+        font-weight: 800;
+        color: #f97316;
+    }
+    .property-price .price-label {
+        font-size: 10px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 24px; }
+    .pagination a, .pagination span { padding: 8px 12px; border-radius: 6px; border: 1px solid #e5e7eb; background: white; color: #1f2937; text-decoration: none; transition: all 0.3s; }
+    .pagination a:hover { background: #f97316; color: white; border-color: #f97316; }
+    .pagination .active { background: #f97316; color: white; border-color: #f97316; }
+</style>
+
+<div class="broker-grid-container">
+    <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 24px;">
+        <div>
+            <h2 style="font-weight:700; color:#1f2937; margin:0;">Property Grid</h2>
+            <p style="color:#6b7280; margin:0;">Manage your assigned properties</p>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="properties-grid">
+            @foreach (var property in Model)
+            {
+                <a href="@Url.Action("Details", "Properties", new { id = property.PropertyId })" class="property-card">
+                    <div class="property-image-wrapper">
+                        @{
+                            var coverImage = !string.IsNullOrEmpty(property.CoverImage) ? property.CoverImage : "https://images.unsplash.com/photo-1600585154084-4e5fe7c39198?auto=format&fit=crop&w=500&q=60";
+                        }
+                        <img src="@coverImage" alt="@property.Title" class="property-image" />
+                        <span class="property-badge @(property.ListingType == RealEstate.Models.PropertyListingType.Rent ? "rent" : "")">
+                            @(property.ListingType == RealEstate.Models.PropertyListingType.Rent ? "For Rent" : "For Sale")
+                        </span>
+                    </div>
+
+                    <div class="property-content">
+                        <div class="property-header">
+                            <div class="property-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div>
+                                <div class="property-title">@property.Title</div>
+                                <div class="property-location">
+                                    <i class="fas fa-map-marker-alt"></i> @property.Location
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="property-specs">
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="fas fa-bed"></i></div>
+                                <div class="spec-value">@property.Bedrooms</div>
+                                <div class="spec-label">Beds</div>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="fas fa-bath"></i></div>
+                                <div class="spec-value">@property.Bathrooms</div>
+                                <div class="spec-label">Baths</div>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="fas fa-ruler"></i></div>
+                                <div class="spec-value">@(property.Sqft / 1000)k</div>
+                                <div class="spec-label">Sqft</div>
+                            </div>
+                        </div>
+
+                        <div class="property-footer">
+                            <div class="property-price">
+                                <div class="price-value">₱@(property.FinalPrice?.ToString("N0") ?? property.BasePrice.ToString("N0"))</div>
+                                <div class="price-label">@property.PropertyType</div>
+                            </div>
+                            <span style="color:#f97316; font-weight:700; font-size:13px;">View Details <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+
+        @if (totalPages > 1)
+        {
+            <div class="pagination">
+                @if (page > 1)
+                {
+                    <a href="?page=1">« First</a>
+                    <a href="?page=@(page - 1)">‹ Previous</a>
+                }
+                @for (int i = Math.Max(1, page - 2); i <= Math.Min(totalPages, page + 2); i++)
+                {
+                    if (i == page)
+                    {
+                        <span class="active">@i</span>
+                    }
+                    else
+                    {
+                        <a href="?page=@i">@i</a>
+                    }
+                }
+                @if (page < totalPages)
+                {
+                    <a href="?page=@(page + 1)">Next ›</a>
+                    <a href="?page=@totalPages">Last »</a>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <div style="background: white; border-radius: 12px; border: 1px solid #e5e7eb; text-align: center; padding: 60px 20px;">
+            <i class="fas fa-home" style="font-size: 48px; color: #9ca3af; display: block; margin-bottom: 16px;"></i>
+            <p style="color: #6b7280; font-size: 16px;">No properties assigned to you</p>
+        </div>
+    }
+</div>

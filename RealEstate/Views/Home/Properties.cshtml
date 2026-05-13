@@ -1,0 +1,687 @@
+@{
+    ViewData["Title"] = "Properties - EstateFlow";
+}
+
+<div class="estateflow-page-wrapper">
+    <!-- Main Content -->
+    <section class="properties-listing-section">
+        <div class="container-fluid px-4">
+            <!-- Top Filters -->
+            <div class="top-filters mb-4">
+                <div class="filter-row">
+                    <div class="filter-dropdown">
+                        <i class="fas fa-check-circle"></i>
+                        <select class="form-control">
+                            <option>Status</option>
+                            <option>For Sale</option>
+                            <option>For Rent</option>
+                            <option>For Lease</option>
+                        </select>
+                    </div>
+                    <div class="filter-dropdown">
+                        <i class="fas fa-home"></i>
+                        <select class="form-control">
+                            <option>Type</option>
+                            <option>House</option>
+                            <option>Apartment</option>
+                            <option>Condo</option>
+                            <option>Villa</option>
+                        </select>
+                    </div>
+                    <div class="filter-dropdown">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <select class="form-control">
+                            <option>Location</option>
+                            <option>Downtown</option>
+                            <option>Suburban</option>
+                            <option>Midtown</option>
+                        </select>
+                    </div>
+                    <div class="filter-dropdown">
+                        <i class="fas fa-sliders-h"></i>
+                        <button class="form-control advanced-filter-btn">Advanced Filter</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Properties Grid (Main Content) -->
+                <div class="col-lg-8">
+                    <!-- Sorting Options -->
+                    <div class="properties-controls mb-4">
+                        <div class="control-left">
+                            <span class="result-count">Showing <strong>1-10</strong> of <strong>23</strong></span>
+                        </div>
+                        <div class="control-right">
+                            <div class="view-toggle">
+                                <button class="view-btn active" data-view="grid" title="Grid View">
+                                    <i class="fas fa-th"></i>
+                                </button>
+                                <button class="view-btn" data-view="list" title="List View">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                            </div>
+                            <select class="sort-select" id="sortBy">
+                                <option value="newest">Sort by: Newest</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="featured">Featured</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Property Cards Grid -->
+                    <div class="properties-grid" id="propertiesGrid">
+                        <!-- Sample Property Cards -->
+                        @for (int i = 1; i <= 8; i++)
+                        {
+                            <div class="property-card-item">
+                                <div class="property-card-horizontal">
+                                    <div class="property-card-image">
+                                        <img src="https://images.unsplash.com/photo-@(600585154340+i)-be6161a56a0c?auto=format&fit=crop&w=300&q=80" alt="Property @i" class="property-image">
+                                        @if (i % 3 == 1)
+                                        {
+                                            <div class="property-card-badge">@(i + 1) Beds</div>
+                                        }
+                                    </div>
+                                    <div class="property-card-content">
+                                        <h3 class="property-card-title">
+                                            @(i % 3 == 0 ? "Opening New Doors to Your Future" : i % 3 == 1 ? "Your Journey to Home Starts Here" : "Finding Your Dream Property")
+                                        </h3>
+                                        <div class="property-card-features">
+                                            <span><i class="fas fa-bed"></i> @(i + 1) Beds</span>
+                                            <span><i class="fas fa-bath"></i> @(i) Baths</span>
+                                        </div>
+                                        <div class="property-card-footer">
+                                            <div class="property-card-location">
+                                                <i class="fas fa-map-marker-alt"></i> 66 Brooklynt, New York America
+                                            </div>
+                                            <div class="property-card-price">${@(300 + (i * 100))}.00 <span>/per day</span></div>
+                                        </div>
+                                        <a href="#" class="property-card-cta">BOOK NOW <i class="fas fa-arrow-right"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-wrapper mt-5">
+                        <ul class="pagination-dots">
+                            <li class="page-dot active">1</li>
+                            <li class="page-dot">2</li>
+                            <li class="page-dot">3</li>
+                            <li class="page-dot">4</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Sidebar Filters (Right) -->
+                <div class="col-lg-4">
+                    <div class="sidebar-filters sticky-sidebar">
+                        <!-- Property Type -->
+                        <div class="filter-section">
+                            <h5 class="filter-section-title">Property Type</h5>
+                            <div class="filter-checkboxes">
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>House</span>
+                                </label>
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>Single Family</span>
+                                </label>
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>Apartment</span>
+                                </label>
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>Office Villa</span>
+                                </label>
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>Luxury Home</span>
+                                </label>
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>Studio</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Amenities -->
+                        <div class="filter-section">
+                            <h5 class="filter-section-title">Amenities</h5>
+                            <div class="filter-checkboxes">
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>Dishwasher</span>
+                                </label>
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>Floor Coverings</span>
+                                </label>
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>Internet</span>
+                                </label>
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>Build Wardrobes</span>
+                                </label>
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>Supermarket</span>
+                                </label>
+                                <label class="checkbox-filter">
+                                    <input type="checkbox">
+                                    <span>Kids Zone</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // View toggle functionality
+            const viewBtns = document.querySelectorAll('.view-btn');
+            const propertiesGrid = document.getElementById('propertiesGrid');
+
+            viewBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    viewBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const view = this.dataset.view;
+                    if (view === 'list') {
+                        propertiesGrid.style.gridTemplateColumns = '1fr';
+                    } else {
+                        propertiesGrid.style.gridTemplateColumns = '1fr';
+                    }
+                });
+            });
+        });
+    </script>
+    </div>
+
+        <!-- CTA Section -->
+        <section class="cta-section-modern">
+            <div class="container text-center">
+                <h2 class="cta-title">Can't Find What You're Looking For?</h2>
+                <p class="cta-subtitle">Our agents are ready to help you find the perfect property</p>
+                <a href="#" class="btn-primary-modern btn-lg">Contact Our Agents</a>
+            </div>
+        </section>
+    </div>
+
+    /* Top Filters */
+    .top-filters {
+        background: white;
+        padding: 20px 0;
+    }
+
+    .filter-row {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .filter-dropdown {
+        position: relative;
+        flex: 1;
+        min-width: 150px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .filter-dropdown i {
+        color: #6B7280;
+        font-size: 1rem;
+    }
+
+    .filter-dropdown .form-control,
+    .advanced-filter-btn {
+        flex: 1;
+        padding: 10px 12px;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background: white;
+        color: #6B7280;
+        cursor: pointer;
+    }
+
+    /* Properties Section */
+    .properties-listing-section {
+        padding: 20px 0;
+    }
+
+    .sticky-sidebar {
+        position: sticky;
+        top: 80px;
+    }
+
+    /* Controls */
+    .properties-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .control-left {
+        display: flex;
+        align-items: center;
+    }
+
+    .control-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .result-count {
+        color: #6B7280;
+        font-size: 0.95rem;
+    }
+
+    .result-count strong {
+        color: #1E3A5F;
+    }
+
+    .sort-select {
+        padding: 8px 12px;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background: white;
+        cursor: pointer;
+    }
+
+    .view-toggle {
+        display: flex;
+        gap: 8px;
+    }
+
+    .view-btn {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #E5E7EB;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+        color: #6B7280;
+    }
+
+    .view-btn.active {
+        background: #FF9500;
+        color: white;
+        border-color: #FF9500;
+    }
+
+    /* Properties Grid */
+    .properties-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    /* Horizontal Property Card */
+    .property-card-horizontal {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 0;
+        background: white;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+
+    .property-card-horizontal:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .property-card-image {
+        position: relative;
+        width: 100%;
+        height: 220px;
+        overflow: hidden;
+        background: #F0F0F0;
+    }
+
+    .property-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .property-card-horizontal:hover .property-image {
+        transform: scale(1.05);
+    }
+
+    .property-card-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: #FF9500;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    /* Content */
+    .property-card-content {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .property-card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1E3A5F;
+        margin: 0 0 12px 0;
+        line-height: 1.4;
+    }
+
+    .property-card-features {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 12px;
+    }
+
+    .property-card-features span {
+        font-size: 0.85rem;
+        color: #6B7280;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .property-card-features i {
+        color: #FF9500;
+    }
+
+    .property-card-footer {
+        margin-bottom: 12px;
+    }
+
+    .property-card-location {
+        font-size: 0.85rem;
+        color: #6B7280;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
+    .property-card-location i {
+        color: #FF9500;
+    }
+
+    .property-card-price {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #1E3A5F;
+    }
+
+    .property-card-price span {
+        font-size: 0.85rem;
+        color: #9CA3AF;
+        font-weight: 400;
+    }
+
+    .property-card-cta {
+        display: inline-block;
+        background: #FF9500;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+    }
+
+    .property-card-cta:hover {
+        background: #FF8C00;
+        text-decoration: none;
+        gap: 12px;
+    }
+
+    /* Pagination */
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+    }
+
+    .pagination-dots {
+        display: flex;
+        list-style: none;
+        gap: 12px;
+        padding: 0;
+        margin: 0;
+    }
+
+    .page-dot {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #E5E7EB;
+        border-radius: 4px;
+        background: white;
+        cursor: pointer;
+        font-weight: 600;
+        color: #6B7280;
+        transition: all 0.3s;
+    }
+
+    .page-dot.active {
+        background: #FF9500;
+        color: white;
+        border-color: #FF9500;
+    }
+
+    .page-dot:hover:not(.active) {
+        border-color: #FF9500;
+        color: #FF9500;
+    }
+
+    /* Sidebar */
+    .sidebar-filters {
+        background: white;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    .filter-section {
+        margin-bottom: 25px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+    .filter-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .filter-section-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #1E3A5F;
+        margin-bottom: 12px;
+    }
+
+    .filter-checkboxes {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .checkbox-filter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .checkbox-filter input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        accent-color: #FF9500;
+    }
+
+    .checkbox-filter span {
+        font-size: 0.9rem;
+        color: #6B7280;
+    }
+
+    /* CTA Section */
+    .cta-section-modern {
+        background: linear-gradient(135deg, #FF9500, #FF8C00);
+        color: white;
+        padding: 60px 0;
+        text-align: center;
+        margin-top: 60px;
+    }
+
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    .cta-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        opacity: 0.95;
+    }
+
+    .btn-primary-modern.btn-lg {
+        padding: 14px 40px;
+        font-size: 1rem;
+    }
+
+    @@media (max-width: 991.98px) {
+        .property-card-horizontal {
+            grid-template-columns: 1fr;
+        }
+
+        .property-card-image {
+            height: 250px;
+        }
+
+        .sidebar-filters {
+            order: -1;
+            margin-bottom: 30px;
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .filter-row {
+            gap: 10px;
+        }
+
+        .filter-dropdown {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .filter-dropdown i {
+            display: none;
+        }
+
+        .properties-controls {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-right {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .property-card-image {
+            height: 180px;
+        }
+
+        .properties-grid {
+            gap: 12px;
+        }
+
+        .cta-title {
+            font-size: 1.5rem;
+        }
+
+        .sidebar-filters {
+            padding: 15px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // View toggle functionality
+        const viewBtns = document.querySelectorAll('.view-btn');
+        const propertiesGrid = document.getElementById('propertiesGrid');
+
+        viewBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                viewBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const view = this.dataset.view;
+                if (view === 'list') {
+                    propertiesGrid.style.gridTemplateColumns = '1fr';
+                } else {
+                    propertiesGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
+                }
+            });
+        });
+
+        // Favorite button functionality
+        const favoriteButtons = document.querySelectorAll('.btn-favorite');
+        favoriteButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                this.classList.toggle('active');
+                const icon = this.querySelector('i');
+                if (icon.classList.contains('far')) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            });
+        });
+    });
+</script>

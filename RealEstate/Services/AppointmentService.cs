@@ -1,19 +1,9 @@
 using RealEstate.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RealEstate.Services;
-
-public enum AppointmentStatus { Scheduled, Confirmed, Completed, Cancelled }
-
-public class ViewingAppointment
-{
-    public int Id { get; set; }
-    public int PropertyId { get; set; }
-    public string CustomerName { get; set; } = string.Empty;
-    public string CustomerPhone { get; set; } = string.Empty;
-    public string CustomerPhotoUrl { get; set; } = string.Empty;
-    public DateTime WhenUtc { get; set; }
-    public AppointmentStatus Status { get; set; } = AppointmentStatus.Scheduled;
-}
 
 public class AppointmentService
 {
@@ -30,7 +20,7 @@ public class AppointmentService
         if (_context.ViewingAppointments.Any())
             return;
 
-        _context.ViewingAppointments.Add(new ViewingAppointment
+        _context.ViewingAppointments.Add(new RealEstate.Models.ViewingAppointment
         {
             PropertyId = 1,
             CustomerName = "Juan Dela Cruz",
@@ -40,7 +30,7 @@ public class AppointmentService
             Status = AppointmentStatus.Scheduled
         });
 
-        _context.ViewingAppointments.Add(new ViewingAppointment
+        _context.ViewingAppointments.Add(new RealEstate.Models.ViewingAppointment
         {
             PropertyId = 2,
             CustomerName = "Maria Santos",
@@ -53,27 +43,27 @@ public class AppointmentService
         _context.SaveChanges();
     }
 
-    public IReadOnlyList<ViewingAppointment> GetAll() 
+    public IReadOnlyList<RealEstate.Models.ViewingAppointment> GetAll() 
         => _context.ViewingAppointments.OrderBy(a => a.WhenUtc).ToList().AsReadOnly();
 
-    public IReadOnlyList<ViewingAppointment> GetUpcoming(int days = 7) 
+    public IReadOnlyList<RealEstate.Models.ViewingAppointment> GetUpcoming(int days = 7) 
         => _context.ViewingAppointments
             .Where(a => a.WhenUtc >= DateTime.UtcNow && a.WhenUtc <= DateTime.UtcNow.AddDays(days))
             .OrderBy(a => a.WhenUtc)
             .ToList()
             .AsReadOnly();
 
-    public ViewingAppointment? Get(int id) 
+    public RealEstate.Models.ViewingAppointment? Get(int id) 
         => _context.ViewingAppointments.FirstOrDefault(a => a.Id == id);
 
-    public ViewingAppointment Add(ViewingAppointment appt)
+    public RealEstate.Models.ViewingAppointment Add(RealEstate.Models.ViewingAppointment appt)
     {
         _context.ViewingAppointments.Add(appt);
         _context.SaveChanges();
         return appt;
     }
 
-    public void Update(ViewingAppointment appt)
+    public void Update(RealEstate.Models.ViewingAppointment appt)
     {
         _context.ViewingAppointments.Update(appt);
         _context.SaveChanges();
@@ -89,14 +79,14 @@ public class AppointmentService
         }
     }
 
-    public IReadOnlyList<ViewingAppointment> GetByProperty(int propertyId)
+    public IReadOnlyList<RealEstate.Models.ViewingAppointment> GetByProperty(int propertyId)
         => _context.ViewingAppointments
             .Where(a => a.PropertyId == propertyId)
             .OrderBy(a => a.WhenUtc)
             .ToList()
             .AsReadOnly();
 
-    public IReadOnlyList<ViewingAppointment> GetByStatus(AppointmentStatus status)
+    public IReadOnlyList<RealEstate.Models.ViewingAppointment> GetByStatus(AppointmentStatus status)
         => _context.ViewingAppointments
             .Where(a => a.Status == status)
             .OrderBy(a => a.WhenUtc)

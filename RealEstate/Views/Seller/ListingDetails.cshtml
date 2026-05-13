@@ -1,0 +1,215 @@
+@model RealEstate.Models.Property
+@{
+    ViewData["Title"] = "Property Details";
+    Layout = "~/Views/Shared/_SellerLayout.cshtml";
+}
+
+@section Styles {
+<!-- Leaflet CSS for Map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+    .detail-wrapper { max-width: 900px; margin: 0 auto; padding: 32px 16px; }
+    .status-banner { padding: 20px 28px; border-radius: 14px; margin-bottom: 28px; display: flex; align-items: center; gap: 16px; }
+    .status-banner.pending  { background: #fef3c7; border-left: 4px solid #f59e0b; }
+    .status-banner.approved { background: #d1fae5; border-left: 4px solid #10b981; }
+    .status-banner.rejected { background: #fee2e2; border-left: 4px solid #ef4444; }
+    .status-banner.sold     { background: #dbeafe; border-left: 4px solid #3b82f6; }
+    .detail-card { background: white; border-radius: 16px; padding: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 20px; }
+    .card-title { font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f3f4f6; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9fafb; font-size: 14px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: #6b7280; font-weight: 500; }
+    .info-value { color: #1f2937; font-weight: 600; }
+    .price-highlight { font-size: 24px; font-weight: 800; color: #0ea5e9; }
+    .doc-link { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px; text-decoration: none; color: #374151; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+    .doc-link:hover { border-color: #0ea5e9; color: #0ea5e9; background: #f0f9ff; }
+</style>
+}
+
+<div class="detail-wrapper">
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <a href="/seller/my-listings" class="btn btn-outline-secondary btn-sm" style="border-radius:8px;">
+            <i class="fas fa-arrow-left me-1"></i>Back
+        </a>
+        <div>
+            <h1 style="font-size:26px; font-weight:800; color:#1f2937; margin:0; font-family:'Plus Jakarta Sans',sans-serif;">@Model.Title</h1>
+            <small class="text-muted">Submitted on @Model.CreatedAt.ToString("MMMM dd, yyyy")</small>
+        </div>
+    </div>
+
+    <!-- Status Banner -->
+    @{
+        var (bannerClass, bannerIcon, statusText) = (Model.IsRejected, Model.IsApproved) switch {
+            (true, _) => ("rejected", "fas fa-times-circle", "Rejected"),
+            (false, true) => ("approved", "fas fa-check-circle", "Approved"),
+            _ => ("pending", "fas fa-clock", Model.Status)
+        };
+    }
+    <div class="status-banner @bannerClass">
+        <i class="@bannerIcon fa-2x"></i>
+        <div>
+            <strong style="font-size:16px;">Status: @statusText</strong>
+            @if (!string.IsNullOrEmpty(Model.ManagerNotes))
+            {
+                <p class="mb-0 mt-1" style="font-size:13px;">Manager Note: @Model.ManagerNotes</p>
+            }
+            @if (Model.DecisionAt.HasValue)
+            {
+                <p class="mb-0 mt-1" style="font-size:12px; opacity:0.7;">Decision on @Model.DecisionAt.Value.ToString("MMM dd, yyyy 'at' h:mm tt")</p>
+            }
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- Cover Image -->
+            @if (!string.IsNullOrEmpty(Model.CoverImage))
+            {
+                <img src="@Model.CoverImage" style="width:100%; height:260px; object-fit:cover; border-radius:14px; margin-bottom:20px;" alt="Cover" />
+            }
+
+            <!-- Property Details -->
+            <div class="detail-card">
+                <div class="card-title"><i class="fas fa-info-circle me-2 text-primary"></i>Property Details</div>
+                <div class="info-row"><span class="info-label">Type</span><span class="info-value">@Model.PropertyType</span></div>
+                <div class="info-row"><span class="info-label">Location</span><span class="info-value">@Model.Location</span></div>
+                <div class="info-row"><span class="info-label">Bedrooms</span><span class="info-value">@Model.Bedrooms</span></div>
+                <div class="info-row"><span class="info-label">Bathrooms</span><span class="info-value">@Model.Bathrooms</span></div>
+                <div class="info-row"><span class="info-label">Parking Slots</span><span class="info-value">@Model.ParkingSlots</span></div>
+                <div class="info-row"><span class="info-label">Floor Area</span><span class="info-value">@Model.Sqft sqm</span></div>
+            </div>
+
+            <!-- Map Location -->
+            @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+            {
+                <div class="detail-card">
+                    <div class="card-title"><i class="fas fa-map-marker-alt me-2 text-danger"></i>Map Location</div>
+                    <div id="propertyMap" style="height: 300px; border-radius: 12px; border: 2px solid #e5e7eb; background-color: #f0f0f0;"></div>
+                    <div class="mt-3 row g-2">
+                        <div class="col-md-6">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text" style="background: #f8f9fa;"><i class="fas fa-globe"></i> Lat</span>
+                                <input type="text" class="form-control" readonly value="@Model.Latitude.Value.ToString("F8")" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text" style="background: #f8f9fa;"><i class="fas fa-globe"></i> Lng</span>
+                                <input type="text" class="form-control" readonly value="@Model.Longitude.Value.ToString("F8")" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2" style="font-size: 0.8rem; color: #6b7280;">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Property location verified and saved in database
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="detail-card" style="background: #fef3c7; border-left: 4px solid #f59e0b;">
+                    <div class="card-title"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>Map Location Not Set</div>
+                    <p style="font-size:14px; color:#92400e; margin-bottom: 12px;">
+                        This property does not have map coordinates. Edit the listing to add the exact location.
+                    </p>
+                    <a href="/seller/listing/@Model.PropertyId/edit" class="btn btn-sm btn-warning">
+                        <i class="fas fa-edit me-1"></i>Edit to Add Location
+                    </a>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="detail-card">
+                    <div class="card-title"><i class="fas fa-align-left me-2 text-primary"></i>Description</div>
+                    <p style="font-size:14px; color:#374151; line-height:1.7;">@Model.Description</p>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Pricing -->
+            <div class="detail-card">
+                <div class="card-title"><i class="fas fa-peso-sign me-2 text-primary"></i>Pricing</div>
+                <div class="mb-3">
+                    <div style="font-size:12px; color:#6b7280; font-weight:600;">YOUR SUGGESTED PRICE</div>
+                    <div class="price-highlight">₱@(Model.SuggestedPrice?.ToString("N2") ?? "0")</div>
+                </div>
+                @if (Model.FinalPrice.HasValue)
+                {
+                    <div class="mb-3">
+                        <div style="font-size:12px; color:#059669; font-weight:600;">MANAGER FINAL PRICE</div>
+                        <div style="font-size:20px; font-weight:800; color:#059669;">₱@Model.FinalPrice.Value.ToString("N2")</div>
+                    </div>
+                }
+                @if (Model.Status == "Sold" && Model.FinalPrice.HasValue)
+                {
+                    <div class="mt-3 p-3 rounded" style="background:#d1fae5;">
+                        <div style="font-size:12px; color:#059669; font-weight:700;">SOLD FOR</div>
+                        <div style="font-size:22px; font-weight:800; color:#059669;">₱@Model.FinalPrice.Value.ToString("N2")</div>
+                    </div>
+                }
+            </div>
+
+            <!-- Documents -->
+            @{
+                List<string>? docList = null;
+                try { docList = System.Text.Json.JsonSerializer.Deserialize<List<string>>(Model.DocumentUrlsJson); } catch { }
+            }
+            @if (docList != null && docList.Any())
+            {
+                <div class="detail-card">
+                    <div class="card-title"><i class="fas fa-file-alt me-2 text-primary"></i>Documents</div>
+                    <div class="d-flex flex-column gap-2">
+                        @for (int i = 0; i < docList.Count; i++)
+                        {
+                            <a href="@docList[i]" target="_blank" class="doc-link">
+                                <i class="fas fa-file"></i>Document @(i + 1)
+                                <i class="fas fa-external-link-alt ms-auto" style="font-size:11px;"></i>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<!-- Leaflet JS for Map -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+    // Initialize map if coordinates exist
+    document.addEventListener('DOMContentLoaded', function() {
+        @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+        {
+            <text>
+            // Wait for DOM to be fully rendered before initializing map
+            setTimeout(function() {
+                const lat = @Model.Latitude.Value.ToString("F0");
+                const lng = @Model.Longitude.Value.ToString("F0");
+                const propertyTitle = @Html.Raw(Json.Serialize(Model.Title));
+                const propertyLocation = @Html.Raw(Json.Serialize(Model.Location));
+
+                // Initialize map
+                const map = L.map('propertyMap').setView([lat, lng], 16);
+
+                // Add OpenStreetMap tiles with proper attribution
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    maxZoom: 19
+                }).addTo(map);
+
+                // Add marker with popup
+                const marker = L.marker([lat, lng]).addTo(map);
+                marker.bindPopup('<strong>' + propertyTitle + '</strong><br>' + propertyLocation).openPopup();
+
+                // Force map to recalculate size and load tiles properly
+                map.invalidateSize(true);
+            }, 500);
+            </text>
+        }
+    });
+</script>
+}

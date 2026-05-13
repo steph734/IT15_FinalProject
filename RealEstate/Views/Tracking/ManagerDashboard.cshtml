@@ -1,0 +1,99 @@
+@{
+    ViewData["Title"] = "Tracking Dashboard";
+    var activeSessions = ViewBag.ActiveSessions as List<RealEstate.Models.TrackingSession>;
+    var completedSessions = ViewBag.CompletedSessions as List<RealEstate.Models.TrackingSession>;
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-satellite-dish me-2"></i>Live Tracking Dashboard</h2>
+            <p class="text-muted">Monitor all active viewing sessions</p>
+        </div>
+    </div>
+
+    <!-- Active Sessions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-broadcast-tower me-2"></i>Active Sessions (@activeSessions?.Count)</h5>
+                </div>
+                <div class="card-body">
+                    @if (activeSessions != null && activeSessions.Any())
+                    {
+                        <div class="row">
+                            @foreach (var session in activeSessions)
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <h6 class="card-title">@session.CustomerName</h6>
+                                            <p class="mb-1"><small><i class="fas fa-home me-1"></i>@session.Property?.Title</small></p>
+                                            <p class="mb-1"><small><i class="fas fa-clock me-1"></i>Started: @session.StartedAt.ToString("hh:mm tt")</small></p>
+                                            <p class="mb-2"><small><i class="fas fa-user-tie me-1"></i>Agent: @(session.Agent?.DisplayName ?? "Not Assigned")</small></p>
+                                            <a href="/tracking/manager/session/@session.Id" class="btn btn-sm btn-success w-100">
+                                                <i class="fas fa-map me-1"></i>Monitor Live
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">No active tracking sessions</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed Sessions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Completed Sessions (@completedSessions?.Count)</h5>
+                </div>
+                <div class="card-body">
+                    @if (completedSessions != null && completedSessions.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Property</th>
+                                        <th>Agent</th>
+                                        <th>Started</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var session in completedSessions)
+                                    {
+                                        <tr>
+                                            <td>@session.CustomerName</td>
+                                            <td>@session.Property?.Title</td>
+                                            <td>@(session.Agent?.DisplayName ?? "N/A")</td>
+                                            <td>@session.StartedAt.ToString("MMM dd, hh:mm tt")</td>
+                                            <td>@(session.EndedAt.HasValue ? $"{(session.EndedAt.Value - session.StartedAt).TotalMinutes:F0} min" : "N/A")</td>
+                                            <td><span class="badge bg-success">Completed</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">No completed sessions</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

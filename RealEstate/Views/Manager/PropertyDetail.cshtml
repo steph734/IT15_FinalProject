@@ -1,0 +1,1637 @@
+@model RealEstate.Models.Property
+@{
+    ViewData["Title"] = "Property Details";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+@section Styles {
+<!-- Leaflet CSS for Map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <a href="/manager/sellers/listings" class="btn btn-outline-secondary btn-sm rounded-pill">
+            <i class="fas fa-arrow-left me-1"></i> Back
+        </a>
+        <h2 class="mb-0"><i class="fas fa-building text-primary me-2"></i> @Model.Title</h2>
+        
+        @if (Model.Status == "Inspection")
+        {
+            <span class="badge bg-warning text-dark px-3 py-2 fs-6 ms-auto">Under Inspection</span>
+        }
+        else if (Model.Status == "PendingReview")
+        {
+            <span class="badge bg-info text-dark px-3 py-2 fs-6 ms-auto">Pending Review</span>
+        }
+        else if (Model.IsApproved)
+        {
+            <span class="badge bg-success px-3 py-2 fs-6 ms-auto">Approved</span>
+        }
+        else if (Model.IsRejected)
+        {
+            <span class="badge bg-danger px-3 py-2 fs-6 ms-auto">Rejected</span>
+        }
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- Property Details Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">Property Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label class="text-muted small fw-bold">Location</label>
+                            <div>@Model.Location</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="text-muted small fw-bold">Property Type</label>
+                            <div>@Model.PropertyType</div>
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="text-muted small fw-bold">Bedrooms</label>
+                            <div>@Model.Bedrooms</div>
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="text-muted small fw-bold">Bathrooms</label>
+                            <div>@Model.Bathrooms</div>
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="text-muted small fw-bold">Parking</label>
+                            <div>@Model.ParkingSlots</div>
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="text-muted small fw-bold">Area</label>
+                            <div>@Model.Sqft sqm</div>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <label class="text-muted small fw-bold">Description</label>
+                            <p class="mb-0">@Model.Description</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">Attached Documents</h5>
+                </div>
+                <div class="card-body">
+                    @{
+                        List<string>? docs = null;
+                        try { docs = System.Text.Json.JsonSerializer.Deserialize<List<string>>(Model.DocumentUrlsJson ?? "[]"); } catch { }
+                    }
+                    @if (docs != null && docs.Any())
+                    {
+                        <div class="d-flex flex-wrap gap-2">
+                            @for (int i = 0; i < docs.Count; i++)
+                            {
+                                <a href="@docs[i]" target="_blank" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-file-alt me-1"></i> Document @(i + 1)
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No documents attached.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Map Location Card -->
+            @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+            {
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-map-marker-alt text-danger me-2"></i>Map Location</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="propertyMap" style="height: 280px; border-radius: 12px; border: 2px solid #e5e7eb; background-color: #f0f0f0;"></div>
+                        <div class="mt-3 row g-2">
+                            <div class="col-md-6">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text" style="background: #f8f9fa;"><i class="fas fa-globe"></i> Lat</span>
+                                    <input type="text" class="form-control" readonly value="@Model.Latitude.Value.ToString("F8")" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text" style="background: #f8f9fa;"><i class="fas fa-globe"></i> Lng</span>
+                                    <input type="text" class="form-control" readonly value="@Model.Longitude.Value.ToString("F8")" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2" style="font-size: 0.8rem; color: #6b7280;">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Property location verified and saved in database
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card shadow-sm border-0 mb-4" style="background: #fef3c7; border-left: 4px solid #f59e0b !important;">
+                    <div class="card-header bg-white py-3" style="background: transparent !important;">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Map Location Not Set</h5>
+                    </div>
+                    <div class="card-body">
+                        <p style="font-size:14px; color:#92400e; margin-bottom: 12px;">
+                            This property does not have map coordinates. The seller needs to edit the listing to add the exact location.
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Pricing Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body text-center">
+                    <h6 class="text-muted fw-bold">SELLER SUGGESTED PRICE</h6>
+                    <h2 class="text-success fw-bold mb-0">₱@Model.SuggestedPrice?.ToString("N0")</h2>
+                </div>
+            </div>
+
+            <!-- Action Card -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">Manager Actions</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Status == "PendingReview")
+                    {
+                        <form action="/manager/properties/@Model.PropertyId/mark-inspection" method="post" class="mb-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Inspection Timeframe (Days)</label>
+                                <input type="number" name="inspectionDays" class="form-control" value="3" min="1" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Notes for Inspector</label>
+                                <textarea name="notes" class="form-control" rows="2" placeholder="Optional notes..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100 fw-bold mb-2">
+                                <i class="fas fa-search me-1"></i> Mark for Inspection
+                            </button>
+                        </form>
+
+                        <hr />
+                        
+                        <form action="/manager/properties/@Model.PropertyId/reject" method="post">
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Rejection Reason</label>
+                                <textarea name="reason" class="form-control" rows="2" placeholder="Required for rejection..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-outline-danger w-100 fw-bold">
+                                <i class="fas fa-times me-1"></i> Reject Property
+                            </button>
+                        </form>
+                    }
+                    else if (Model.Status == "Inspection")
+                    {
+                        <div class="alert alert-warning mb-4">
+                            <strong><i class="fas fa-clock me-1"></i> Inspection Scheduled</strong><br />
+                            Due by: @Model.InspectionScheduledDate?.ToString("MMM dd, yyyy")
+                        </div>
+
+                        <button type="button" class="btn btn-warning w-100 fw-bold btn-lg mb-4" data-bs-toggle="modal" data-bs-target="#inspectionModal">
+                            <i class="fas fa-clipboard-check me-2"></i> Property Inspection
+                        </button>
+
+                        <hr />
+                        
+                        <form action="/manager/properties/@Model.PropertyId/reject" method="post">
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Rejection Reason</label>
+                                <textarea name="reason" class="form-control" rows="2" placeholder="Required for rejection..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-outline-danger w-100 fw-bold">
+                                <i class="fas fa-times me-1"></i> Reject Property
+                            </button>
+                        </form>
+                    }
+                    else if (Model.Status == "InspectionApproved" || Model.Status == "InspectionContactSeller" || Model.Status == "InspectionFailed")
+                    {
+                        if (Model.Status == "InspectionApproved")
+                        {
+                            <div class="alert alert-success mb-4">
+                                <strong><i class="fas fa-check-circle me-1"></i> Inspection Approved</strong><br />
+                                Property passed inspection. Ready for final approval and purchase.
+                            </div>
+                        }
+                        else if (Model.Status == "InspectionContactSeller")
+                        {
+                            <div class="alert alert-primary mb-4">
+                                <strong><i class="fas fa-phone me-1"></i> Contact Seller</strong><br />
+                                Property needs follow-up with the seller before final approval.
+                            </div>
+                        }
+                        else if (Model.Status == "InspectionFailed")
+                        {
+                            <div class="alert alert-danger mb-4">
+                                <strong><i class="fas fa-ban me-1"></i> Inspection Failed</strong><br />
+                                Property failed inspection. Proceed to reject.
+                            </div>
+                        }
+
+                        if (Model.Status != "InspectionFailed")
+                        {
+                            <button type="button" class="btn btn-success w-100 fw-bold btn-lg mb-4" data-bs-toggle="modal" data-bs-target="#dealPaymentModal">
+                                <i class="fas fa-handshake me-1"></i> Proceed to Deal & Payment
+                            </button>
+                            <hr />
+                        }
+                        
+                        <form action="/manager/properties/@Model.PropertyId/reject" method="post">
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Rejection Reason</label>
+                                <textarea name="reason" class="form-control" rows="2" placeholder="Required for rejection..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-outline-danger w-100 fw-bold">
+                                <i class="fas fa-times me-1"></i> Reject Property
+                            </button>
+                        </form>
+                    }
+                    else if (Model.IsApproved || Model.IsRejected)
+                    {
+                        <div class="text-center">
+                            <p class="mb-1 text-muted">Decision made on:</p>
+                            <p class="fw-bold">@Model.DecisionAt?.ToString("MMM dd, yyyy hh:mm tt")</p>
+                            
+                            @if (Model.IsApproved)
+                            {
+                                <div class="p-3 bg-light rounded text-success fw-bold mb-3">
+                                    Bought for ₱@Model.FinalPrice?.ToString("N2")
+                                </div>
+
+                                <!-- Set Listing Type Button - Opens Modal -->
+                                <button type="button" class="btn btn-info w-100 fw-bold mb-3 text-white" data-bs-toggle="modal" data-bs-target="#setListingTypeModal">
+                                    <i class="fas fa-tag me-2"></i> Set Listing Type
+                                </button>
+
+                                @if (!Model.IsReadyForListing)
+                                {
+                                    <button type="button" class="btn btn-success w-100 fw-bold mb-3" data-bs-toggle="modal" data-bs-target="#processSaleModal">
+                                        <i class="fas fa-handshake me-2"></i> Process Sale
+                                    </button>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-@(Model.Status == "ReadyForSale" ? "primary" : "info")">
+                                        <i class="fas fa-check-circle me-2"></i> 
+                                        @(Model.Status == "ReadyForSale" ? "Ready for Sale" : "Ready for Rent")
+                                    </div>
+                                }
+                                
+                                var assignedAgent = ViewBag.AssignedAgent as RealEstate.Models.Agent;
+                                @if (assignedAgent != null)
+                                {
+                                    <div class="assigned-agent-card mb-3">
+                                        <div class="d-flex align-items-center gap-3 p-3 bg-white rounded border shadow-sm">
+                                            <div class="agent-avatar">
+                                                @if (!string.IsNullOrEmpty(assignedAgent.ProfilePhotoPath))
+                                                {
+                                                    <img src="@assignedAgent.ProfilePhotoPath" alt="@assignedAgent.DisplayName" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover;">
+                                                }
+                                                else
+                                                {
+                                                    <div class="rounded-circle bg-gradient d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                                        <i class="fas fa-user text-white"></i>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="agent-info text-start flex-grow-1">
+                                                <div class="text-muted small">Assigned Agent</div>
+                                                <div class="fw-bold text-dark">@assignedAgent.DisplayName</div>
+                                                <div class="text-muted small">@assignedAgent.Email</div>
+                                            </div>
+                                        </div>
+                                        <a href="/manager/agents/@assignedAgent.Id" class="btn btn-outline-primary w-100 fw-bold mt-2">
+                                            <i class="fas fa-eye me-2"></i> View Agent Details
+                                        </a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-gradient-primary w-100 fw-bold" data-bs-toggle="modal" data-bs-target="#assignAgentModal" data-property-id="@Model.PropertyId" data-property-title="@Model.Title">
+                                        <i class="fas fa-user-plus me-2"></i> Assign Agent
+                                    </button>
+                                }
+                            }
+                            else
+                            {
+                                <div class="p-3 bg-light rounded text-danger mb-0 text-start">
+                                    <span class="fw-bold">Rejected:</span> @Model.RejectionReason
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Status == "Inspection")
+{
+    var inspectionItems = (List<RealEstate.Models.InspectionItem>?)ViewBag.InspectionItems ?? new List<RealEstate.Models.InspectionItem>();
+    var grouped = inspectionItems.GroupBy(i => i.Category);
+    var totalItems = inspectionItems.Count;
+
+    <!-- Inspection Modal -->
+    <div class="modal fade" id="inspectionModal" tabindex="-1" aria-labelledby="inspectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-warning bg-gradient text-dark border-0 py-3">
+                    <h5 class="modal-title fw-bold" id="inspectionModalLabel">
+                        <i class="fas fa-clipboard-check me-2"></i> Property Inspection Checklist
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <p class="text-muted mb-0">Review each item for <strong>@Model.Title</strong></p>
+                        <span class="badge bg-secondary fs-6" id="inspectionCounter">0 / @totalItems reviewed</span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress mb-4" style="height: 8px;">
+                        <div class="progress-bar bg-success" id="progressApproved" role="progressbar" style="width: 0%"></div>
+                        <div class="progress-bar bg-primary" id="progressContact" role="progressbar" style="width: 0%"></div>
+                        <div class="progress-bar bg-danger" id="progressFailed" role="progressbar" style="width: 0%"></div>
+                    </div>
+
+                    <div id="inspectionItemsList">
+                        @foreach (var group in grouped)
+                        {
+                            <h6 class="fw-bold text-uppercase text-secondary mt-3 mb-2 d-flex align-items-center">
+                                <i class="fas fa-folder-open me-2 text-warning"></i> @group.Key
+                            </h6>
+                            <div class="list-group list-group-flush mb-3">
+                                @foreach (var item in group)
+                                {
+                                    <div class="list-group-item border rounded mb-2 inspection-item" data-item-id="@item.Id">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-10" style="width: 42px; height: 42px;">
+                                                <i class="fas @item.Icon text-warning"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-semibold">@item.Name</div>
+                                                <small class="text-muted">@item.Criteria</small>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary border-0 delete-item-btn" data-item-id="@item.Id" title="Remove item">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                        <div class="btn-group w-100 mt-2" role="group">
+                                            <button type="button" class="btn btn-outline-success inspection-action-btn" data-item-id="@item.Id" data-action="Approved">
+                                                <i class="fas fa-check-circle me-1"></i> Approve
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary inspection-action-btn" data-item-id="@item.Id" data-action="ForContact">
+                                                <i class="fas fa-phone-alt me-1"></i> For Contact
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger inspection-action-btn" data-item-id="@item.Id" data-action="Failed">
+                                                <i class="fas fa-times-circle me-1"></i> Fail
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    @if (!inspectionItems.Any())
+                    {
+                        <div class="text-center text-muted py-4" id="emptyState">
+                            <i class="fas fa-info-circle fa-2x mb-2"></i>
+                            <p>No inspection items found.</p>
+                        </div>
+                    }
+
+                    <!-- Add New Item -->
+                    <div class="card border-dashed mt-3">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-3"><i class="fas fa-plus-circle me-1 text-success"></i> Add Inspection Item</h6>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <input type="text" id="newItemCategory" class="form-control form-control-sm" placeholder="Category" />
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" id="newItemName" class="form-control form-control-sm" placeholder="Item Name" />
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" id="newItemCriteria" class="form-control form-control-sm" placeholder="Criteria" />
+                                </div>
+                            </div>
+                            <button type="button" id="addItemBtn" class="btn btn-sm btn-success mt-2">
+                                <i class="fas fa-plus me-1"></i> Add Item
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 px-4 pb-4 d-flex justify-content-between" id="inspectionFooter">
+                    <div id="dynamicActionBtns">
+                        <!-- Dynamic buttons appear here based on selections -->
+                    </div>
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .card.border-dashed { border: 2px dashed #dee2e6; }
+        .inspection-item .btn-group .btn { font-size: 0.8rem; padding: 0.35rem 0.5rem; }
+        .inspection-item .btn-group .btn.active { font-weight: 600; }
+        .inspection-item { transition: background-color 0.2s; }
+        .inspection-item.item-approved { border-left: 3px solid #198754 !important; background: #f0fdf4; }
+        .inspection-item.item-contact { border-left: 3px solid #0d6efd !important; background: #eff6ff; }
+        .inspection-item.item-failed { border-left: 3px solid #dc3545 !important; background: #fef2f2; }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var totalItems = @totalItems;
+            var propertyId = @Model.PropertyId;
+
+            function updateFooterAndProgress() {
+                var items = document.querySelectorAll('.inspection-item');
+                var total = items.length;
+                var approved = 0, contact = 0, failed = 0;
+
+                items.forEach(function (item) {
+                    var activeBtn = item.querySelector('.inspection-action-btn.active');
+                    if (activeBtn) {
+                        var action = activeBtn.dataset.action;
+                        if (action === 'Approved') approved++;
+                        else if (action === 'ForContact') contact++;
+                        else if (action === 'Failed') failed++;
+                    }
+                });
+
+                var reviewed = approved + contact + failed;
+                document.getElementById('inspectionCounter').textContent = reviewed + ' / ' + total + ' reviewed';
+
+                // Progress bars
+                var pct = total > 0 ? 100 / total : 0;
+                document.getElementById('progressApproved').style.width = (approved * pct) + '%';
+                document.getElementById('progressContact').style.width = (contact * pct) + '%';
+                document.getElementById('progressFailed').style.width = (failed * pct) + '%';
+
+                // Dynamic footer buttons
+                var dynamicDiv = document.getElementById('dynamicActionBtns');
+                dynamicDiv.innerHTML = '';
+
+                if (total > 0 && reviewed === total) {
+                    if (approved === total) {
+                        dynamicDiv.innerHTML = '<form action="/manager/properties/' + propertyId + '/complete-inspection" method="POST"><input type="hidden" name="status" value="InspectionApproved" /><button type="submit" class="btn btn-success btn-lg fw-bold" id="approveInspectionBtn"><i class="fas fa-check-double me-2"></i>Approved Inspection</button></form>';
+                    } else if (contact === total) {
+                        dynamicDiv.innerHTML = '<form action="/manager/properties/' + propertyId + '/complete-inspection" method="POST"><input type="hidden" name="status" value="InspectionContactSeller" /><button type="submit" class="btn btn-primary btn-lg fw-bold" id="contactSellerBtn"><i class="fas fa-phone me-2"></i>Contact Seller</button></form>';
+                    } else if (failed === total) {
+                        dynamicDiv.innerHTML = '<form action="/manager/properties/' + propertyId + '/complete-inspection" method="POST"><input type="hidden" name="status" value="InspectionFailed" /><button type="submit" class="btn btn-danger btn-lg fw-bold" id="failInspectionBtn"><i class="fas fa-ban me-2"></i>Failed Inspection</button></form>';
+                    } else if (approved > 0 && approved >= contact && approved >= failed) {
+                        dynamicDiv.innerHTML = '<form action="/manager/properties/' + propertyId + '/complete-inspection" method="POST"><input type="hidden" name="status" value="InspectionApproved" /><button type="submit" class="btn btn-success btn-lg fw-bold" id="approveInspectionBtn"><i class="fas fa-check-double me-2"></i>Approved Inspection</button></form>';
+                    } else if (contact > 0 && contact >= approved && contact >= failed) {
+                        dynamicDiv.innerHTML = '<form action="/manager/properties/' + propertyId + '/complete-inspection" method="POST"><input type="hidden" name="status" value="InspectionContactSeller" /><button type="submit" class="btn btn-primary btn-lg fw-bold" id="contactSellerBtn"><i class="fas fa-phone me-2"></i>Contact Seller</button></form>';
+                    } else if (failed > 0) {
+                        dynamicDiv.innerHTML = '<form action="/manager/properties/' + propertyId + '/complete-inspection" method="POST"><input type="hidden" name="status" value="InspectionFailed" /><button type="submit" class="btn btn-danger btn-lg fw-bold" id="failInspectionBtn"><i class="fas fa-ban me-2"></i>Failed Inspection</button></form>';
+                    }
+                }
+            }
+
+            // Action button clicks
+            document.querySelectorAll('.inspection-action-btn').forEach(function (btn) {
+                btn.addEventListener('click', handleActionClick);
+            });
+
+            function handleActionClick() {
+                var itemRow = this.closest('.inspection-item');
+                var btnGroup = this.closest('.btn-group');
+
+                btnGroup.querySelectorAll('.inspection-action-btn').forEach(function (b) {
+                    b.classList.remove('active', 'btn-success', 'btn-primary', 'btn-danger');
+                    if (b.dataset.action === 'Approved') b.classList.add('btn-outline-success');
+                    else if (b.dataset.action === 'ForContact') b.classList.add('btn-outline-primary');
+                    else if (b.dataset.action === 'Failed') b.classList.add('btn-outline-danger');
+                });
+
+                this.classList.add('active');
+                itemRow.classList.remove('item-approved', 'item-contact', 'item-failed');
+
+                if (this.dataset.action === 'Approved') {
+                    this.classList.remove('btn-outline-success');
+                    this.classList.add('btn-success');
+                    itemRow.classList.add('item-approved');
+                } else if (this.dataset.action === 'ForContact') {
+                    this.classList.remove('btn-outline-primary');
+                    this.classList.add('btn-primary');
+                    itemRow.classList.add('item-contact');
+                } else if (this.dataset.action === 'Failed') {
+                    this.classList.remove('btn-outline-danger');
+                    this.classList.add('btn-danger');
+                    itemRow.classList.add('item-failed');
+                }
+
+                updateFooterAndProgress();
+            }
+
+            // Delete item
+            document.querySelectorAll('.delete-item-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var itemId = this.dataset.itemId;
+                    if (!confirm('Remove this inspection item?')) return;
+
+                    fetch('/manager/inspection-items/' + itemId + '/delete', { method: 'POST' })
+                        .then(function (res) { return res.json(); })
+                        .then(function (data) {
+                            if (data.success) {
+                                var el = document.querySelector('.inspection-item[data-item-id="' + itemId + '"]');
+                                if (el) el.remove();
+                                totalItems--;
+                                updateFooterAndProgress();
+                            }
+                        });
+                });
+            });
+
+            // Add item
+            document.getElementById('addItemBtn').addEventListener('click', function () {
+                var category = document.getElementById('newItemCategory').value.trim();
+                var name = document.getElementById('newItemName').value.trim();
+                var criteria = document.getElementById('newItemCriteria').value.trim();
+
+                if (!category || !name) { alert('Category and Name are required.'); return; }
+
+                fetch('/manager/inspection-items/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category: category, name: name, criteria: criteria })
+                })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (data.success) {
+                        var list = document.getElementById('inspectionItemsList');
+                        var html = '<div class="list-group-item border rounded mb-2 inspection-item" data-item-id="' + data.id + '">'
+                            + '<div class="d-flex align-items-center gap-3">'
+                            + '<div class="flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-10" style="width:42px;height:42px;">'
+                            + '<i class="fas fa-clipboard text-warning"></i></div>'
+                            + '<div class="flex-grow-1"><div class="fw-semibold">' + name + '</div>'
+                            + '<small class="text-muted">' + (criteria || 'No criteria specified') + '</small></div>'
+                            + '<button type="button" class="btn btn-sm btn-outline-secondary border-0 delete-item-btn" data-item-id="' + data.id + '" title="Remove item">'
+                            + '<i class="fas fa-trash-alt"></i></button></div>'
+                            + '<div class="btn-group w-100 mt-2" role="group">'
+                            + '<button type="button" class="btn btn-outline-success inspection-action-btn" data-item-id="' + data.id + '" data-action="Approved">'
+                            + '<i class="fas fa-check-circle me-1"></i> Approve</button>'
+                            + '<button type="button" class="btn btn-outline-primary inspection-action-btn" data-item-id="' + data.id + '" data-action="ForContact">'
+                            + '<i class="fas fa-phone-alt me-1"></i> For Contact</button>'
+                            + '<button type="button" class="btn btn-outline-danger inspection-action-btn" data-item-id="' + data.id + '" data-action="Failed">'
+                            + '<i class="fas fa-times-circle me-1"></i> Fail</button>'
+                            + '</div></div>';
+                        list.insertAdjacentHTML('beforeend', html);
+
+                        // Rebind events for new item
+                        var newEl = list.querySelector('.inspection-item[data-item-id="' + data.id + '"]');
+                        newEl.querySelectorAll('.inspection-action-btn').forEach(function (b) {
+                            b.addEventListener('click', handleActionClick);
+                        });
+                        newEl.querySelector('.delete-item-btn').addEventListener('click', function () {
+                            var id = this.dataset.itemId;
+                            if (!confirm('Remove this inspection item?')) return;
+                            fetch('/manager/inspection-items/' + id + '/delete', { method: 'POST' })
+                                .then(function (r) { return r.json(); })
+                                .then(function (d) {
+                                    if (d.success) { newEl.remove(); totalItems--; updateFooterAndProgress(); }
+                                });
+                        });
+
+                        totalItems++;
+                        document.getElementById('newItemCategory').value = '';
+                        document.getElementById('newItemName').value = '';
+                        document.getElementById('newItemCriteria').value = '';
+                        updateFooterAndProgress();
+                    }
+                });
+            });
+
+            updateFooterAndProgress();
+        });
+    </script>
+}
+
+@if (Model.Status == "InspectionApproved")
+{
+    <!-- Deal & Payment Modal -->
+    <div class="modal fade" id="dealPaymentModal" tabindex="-1" aria-labelledby="dealPaymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white border-0">
+                    <h5 class="modal-title fw-bold" id="dealPaymentModalLabel">
+                        <i class="fas fa-handshake me-2"></i> Finalize Deal & Payment
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/manager/properties/@Model.PropertyId/approve" method="post">
+                    <div class="modal-body px-4 py-4">
+                        <div class="alert alert-info mb-4">
+                            <i class="fas fa-info-circle me-2"></i> Confirm the final purchase details with the seller.
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-success fs-5">Final Buy Price (₱)</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-success text-white fw-bold">₱</span>
+                                <input type="number" name="finalPrice" class="form-control text-success fw-bold fs-4" 
+                                       value="@Model.SuggestedPrice" step="0.01" required />
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold text-uppercase text-secondary mb-3 mt-4 border-bottom pb-2">Payment Details</h6>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Payment Method</label>
+                            <select name="paymentMethod" class="form-select" required>
+                                <option value="">Select a payment method...</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                                <option value="Manager's Check">Manager's Check</option>
+                                <option value="Escrow Account">Escrow Account</option>
+                                <option value="Cash">Cash</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Account / Reference Details</label>
+                            <input type="text" name="accountDetails" class="form-control" placeholder="e.g. BDO Acct 123456789" required />
+                        </div>
+
+                        <div class="mb-3 mt-4">
+                            <label class="form-label fw-bold">Additional Notes</label>
+                            <textarea name="notes" class="form-control" rows="3" placeholder="Special terms, scheduled payout dates, etc..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light border-0 px-4 py-3">
+                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success px-5 fw-bold">
+                            <i class="fas fa-check-circle me-1"></i> Confirm & Buy
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Process Sale Modal -->
+@if (Model.IsApproved && !Model.IsReadyForListing)
+{
+    <div class="modal fade" id="processSaleModal" tabindex="-1" aria-labelledby="processSaleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white border-0">
+                    <h5 class="modal-title fw-bold" id="processSaleModalLabel">
+                        <i class="fas fa-handshake me-2"></i> Process Sale - Mark as @(Model.ListingType == PropertyListingType.Buy ? "Ready for Sale" : "Ready for Rent")
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 py-4">
+                    <div class="alert alert-@(Model.ListingType == PropertyListingType.Buy ? "primary" : "info") mb-4">
+                        <i class="fas fa-info-circle me-2"></i> 
+                        <strong>Listing Type:</strong> @(Model.ListingType == PropertyListingType.Buy ? "For Sale" : "For Rent")<br>
+                        <small class="ms-4">This will process the sale and mark the property as @(Model.ListingType == PropertyListingType.Buy ? "Ready for Sale" : "Ready for Rent").</small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-success fs-5">
+                            @(Model.ListingType == PropertyListingType.Buy ? "Final Sale Price (₱)" : "Monthly Rent (₱)")
+                        </label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-success text-white fw-bold">₱</span>
+                            <input type="number" id="salePrice" class="form-control text-success fw-bold fs-4" 
+                                   value="@Model.FinalPrice" step="0.01" required />
+                        </div>
+                    </div>
+
+                    @if (Model.ListingType == PropertyListingType.Rent)
+                    {
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-info fs-5">
+                                <i class="fas fa-calendar-alt me-2"></i>Lease Term
+                            </label>
+                            <select id="leaseTerm" class="form-select form-select-lg">
+                                <option value="1" selected>1 Year (100% of 1 month)</option>
+                                <option value="2">2 Years (150% of 1 month)</option>
+                                <option value="3">3 Years (200% of 1 month)</option>
+                                <option value="4">4 Years (250% of 1 month)</option>
+                                <option value="5">5 Years (300% of 1 month)</option>
+                            </select>
+                            <div class="form-text text-muted mt-1">
+                                <i class="fas fa-info-circle me-1"></i>
+                                1st year = 100%, each additional year = +50%
+                            </div>
+                        </div>
+                    }
+
+                    <div class="commission-preview bg-light p-3 rounded mb-3">
+                        <h6 class="fw-bold text-uppercase text-secondary mb-3">Commission Breakdown</h6>
+                        
+                        @if (Model.ListingType == PropertyListingType.Rent)
+                        {
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Monthly Rent:</span>
+                                <span class="fw-bold" id="previewSalePrice">₱@Model.FinalPrice?.ToString("N2")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Lease Term:</span>
+                                <span class="fw-bold text-info" id="previewLeaseTerm">1 Year</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Commission Pool:</span>
+                                <span class="fw-bold text-primary" id="previewCommissionPool">--</span>
+                            </div>
+                            <hr />
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Manager Earnings (60%):</span>
+                                <span class="fw-bold text-success" id="previewBrokerEarnings">--</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Agent Payout (40%):</span>
+                                <span class="fw-bold text-warning" id="previewAgentEarnings">--</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Sale Price:</span>
+                                <span class="fw-bold" id="previewSalePrice">₱@Model.FinalPrice?.ToString("N2")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Commission Pool (5%):</span>
+                                <span class="fw-bold text-primary" id="previewCommissionPool">--</span>
+                            </div>
+                            <hr />
+                            <div class="d-flex justify-content-between">
+                                <span>Manager Earnings (60%):</span>
+                                <span class="fw-bold text-success" id="previewBrokerEarnings">--</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Notes</label>
+                        <textarea id="saleNotes" class="form-control" rows="2" placeholder="Add any notes about this sale..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0 px-4 py-3">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="confirmProcessSale" class="btn btn-success px-5 fw-bold">
+                        <i class="fas fa-check-circle me-2"></i> Confirm Sale
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var salePriceInput = document.getElementById('salePrice');
+            var previewSalePrice = document.getElementById('previewSalePrice');
+            var previewCommissionPool = document.getElementById('previewCommissionPool');
+            var previewBrokerEarnings = document.getElementById('previewBrokerEarnings');
+            var previewAgentEarnings = document.getElementById('previewAgentEarnings');
+            var previewLeaseTerm = document.getElementById('previewLeaseTerm');
+            var leaseTermSelect = document.getElementById('leaseTerm');
+            var confirmBtn = document.getElementById('confirmProcessSale');
+
+            // Get listing type from model
+            var listingType = '@(Model.ListingType == PropertyListingType.Buy ? "Sale" : "Rent")';
+
+            function updatePreview() {
+                var price = parseFloat(salePriceInput.value) || 0;
+                var commissionPool = 0;
+                
+                if (listingType === 'Sale') {
+                    // Sale: 5% of price
+                    commissionPool = price * 0.05;
+                } else {
+                    // Rent: Multi-year calculation
+                    // 1 year = 100%, each additional year = +50%
+                    var leaseTerm = leaseTermSelect ? parseInt(leaseTermSelect.value) : 1;
+                    var multiplier = 1 + ((leaseTerm - 1) * 0.5); // 1, 1.5, 2, 2.5, 3
+                    commissionPool = price * multiplier;
+                    
+                    // Update lease term display
+                    if (previewLeaseTerm) {
+                        previewLeaseTerm.textContent = leaseTerm + ' Year' + (leaseTerm > 1 ? 's' : '');
+                    }
+                }
+                
+                var brokerEarnings = commissionPool * 0.60;
+                var agentEarnings = commissionPool * 0.40;
+
+                previewSalePrice.textContent = '₱' + price.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                previewCommissionPool.textContent = '₱' + commissionPool.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                previewBrokerEarnings.textContent = '₱' + brokerEarnings.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                
+                if (previewAgentEarnings) {
+                    previewAgentEarnings.textContent = '₱' + agentEarnings.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+            }
+
+            salePriceInput.addEventListener('input', updatePreview);
+            if (leaseTermSelect) {
+                leaseTermSelect.addEventListener('change', updatePreview);
+            }
+            updatePreview();
+
+            confirmBtn.addEventListener('click', function() {
+                var price = parseFloat(salePriceInput.value);
+                if (!price || price <= 0) {
+                    alert('Please enter a valid sale price.');
+                    return;
+                }
+
+                var data = {
+                    propertyId: @Model.PropertyId,
+                    finalPrice: price,
+                    notes: document.getElementById('saleNotes').value,
+                    leaseTerm: leaseTermSelect ? parseInt(leaseTermSelect.value) : 1
+                };
+
+                fetch('/manager/process-sale', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Sale processed successfully!\n\nStatus: ' + data.data.status + '\n\nCommission Pool: ₱' + data.data.commissionPool.toLocaleString('en-PH', {minimumFractionDigits: 2}) + '\nBroker: ₱' + data.data.brokerEarnings.toLocaleString('en-PH', {minimumFractionDigits: 2}));
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error processing sale:', err);
+                    alert('Failed to process sale. Please try again.');
+                });
+            });
+        });
+    </script>
+}
+
+<!-- Assign Agent Modal - Custom Pure CSS/JS -->
+<div class="custom-modal-overlay" id="assignAgentModal">
+    <div class="custom-modal">
+        <div class="custom-modal-header">
+            <div class="custom-modal-header-content">
+                <div class="custom-modal-icon-wrapper">
+                    <i class="fas fa-user-plus custom-modal-icon"></i>
+                </div>
+                <div class="custom-modal-title-group">
+                    <h5 class="custom-modal-title">Assign Agent</h5>
+                    <p class="custom-modal-subtitle">Select an agent to assign to this property</p>
+                </div>
+            </div>
+            <button type="button" class="custom-modal-close" id="closeModalBtn" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="custom-modal-body">
+            <div class="property-info-card">
+                <div class="info-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="info-content">
+                    <label class="info-label">Property</label>
+                    <input type="text" class="custom-form-control" id="modalPropertyName" readonly>
+                    <input type="hidden" id="modalPropertyId">
+                </div>
+            </div>
+
+            <div class="form-group-enhanced">
+                <label for="agentSelect" class="form-label-enhanced">
+                    <i class="fas fa-users label-icon"></i>
+                    Select Agent
+                </label>
+                <div class="select-wrapper">
+                    <select class="custom-select" id="agentSelect" required>
+                        <option value="" selected disabled>-- Choose an agent --</option>
+                    </select>
+                    <i class="fas fa-chevron-down select-arrow"></i>
+                </div>
+                <div class="form-help-text">Select an agent to assign to this property</div>
+            </div>
+
+            <div class="form-group-enhanced">
+                <label for="assignmentNotes" class="form-label-enhanced">
+                    <i class="fas fa-sticky-note label-icon"></i>
+                    Notes (Optional)
+                </label>
+                <textarea class="custom-form-control custom-textarea" id="assignmentNotes" rows="3" placeholder="Add any notes for the agent..."></textarea>
+            </div>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn custom-btn-cancel" id="cancelModalBtn">
+                <i class="fas fa-times"></i>Cancel
+            </button>
+            <button type="button" class="custom-btn custom-btn-assign" id="assignAgentBtn">
+                <i class="fas fa-check"></i>Assign Agent
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Button Gradient Styles */
+    .btn-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-gradient-primary:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        color: white;
+    }
+
+    /* Custom Modal Styles - Pure CSS/JS */
+    .custom-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        padding: 16px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .custom-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .custom-modal {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 480px;
+        max-height: 90vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transform: scale(0.95);
+        transition: transform 0.3s ease;
+        margin: auto;
+    }
+
+    .custom-modal-overlay.active .custom-modal {
+        transform: scale(1);
+    }
+
+    .custom-modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .custom-modal-header-content {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .custom-modal-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
+    }
+
+    .custom-modal-icon {
+        font-size: 22px;
+        color: white;
+    }
+
+    .custom-modal-title-group {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .custom-modal-title {
+        color: white;
+        font-weight: 700;
+        font-size: 18px;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .custom-modal-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        margin: 2px 0 0 0;
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .custom-modal-close {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .custom-modal-close:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(90deg);
+    }
+
+    .custom-modal-body {
+        padding: 24px;
+        background: #f8f9fa;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .custom-modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #e9ecef;
+        background: white;
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    /* Custom Form Controls */
+    .custom-form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: white;
+        color: #343a40;
+    }
+
+    .custom-form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .custom-form-control:read-only {
+        background: #e9ecef;
+        cursor: not-allowed;
+    }
+
+    .custom-textarea {
+        min-height: 80px;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    .custom-select {
+        width: 100%;
+        padding: 12px 40px 12px 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: white;
+        color: #343a40;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    .custom-select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Custom Buttons */
+    .custom-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 12px 24px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 15px;
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .custom-btn-cancel {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        color: #6c757d;
+    }
+
+    .custom-btn-cancel:hover {
+        background: #e9ecef;
+        color: #495057;
+        border-color: #dee2e6;
+    }
+
+    .custom-btn-assign {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .custom-btn-assign:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .custom-btn-assign:active {
+        transform: translateY(0);
+    }
+
+    /* Property Info Card */
+    .property-info-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .info-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .info-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #6c757d;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .form-group-enhanced {
+        margin-bottom: 24px;
+    }
+
+    .form-label-enhanced {
+        font-weight: 600;
+        color: #343a40;
+        font-size: 15px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .label-icon {
+        color: #667eea;
+        font-size: 16px;
+    }
+
+    .select-wrapper {
+        position: relative;
+    }
+
+    .select-arrow {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        pointer-events: none;
+        font-size: 12px;
+    }
+
+    .form-help-text {
+        font-size: 13px;
+        color: #6c757d;
+        margin-top: 8px;
+    }
+
+    /* Mobile Responsive Styles */
+    @@media (max-width: 576px) {
+        .custom-modal-overlay {
+            padding: 0;
+            align-items: flex-end;
+        }
+
+        .custom-modal {
+            border-radius: 20px 20px 0 0;
+            max-height: 85vh;
+            max-width: 100%;
+            transform: translateY(100%);
+            margin: 0;
+        }
+
+        .custom-modal-overlay.active .custom-modal {
+            transform: translateY(0);
+        }
+
+        .custom-modal-header {
+            padding: 16px 20px;
+        }
+
+        .custom-modal-icon-wrapper {
+            width: 40px;
+            height: 40px;
+        }
+
+        .custom-modal-icon {
+            font-size: 18px;
+        }
+
+        .custom-modal-title {
+            font-size: 16px;
+        }
+
+        .custom-modal-subtitle {
+            font-size: 12px;
+        }
+
+        .custom-modal-body {
+            padding: 16px;
+        }
+
+        .custom-modal-footer {
+            padding: 12px 16px;
+            flex-direction: column;
+        }
+
+        .custom-btn {
+            width: 100%;
+            padding: 14px 20px;
+        }
+
+        .property-info-card {
+            padding: 16px;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+        }
+
+        .form-group-enhanced {
+            margin-bottom: 16px;
+        }
+
+        .form-label-enhanced {
+            font-size: 14px;
+        }
+    }
+
+    @@media (max-width: 360px) {
+        .custom-modal-header {
+            padding: 14px 16px;
+        }
+
+        .custom-modal-icon-wrapper {
+            width: 36px;
+            height: 36px;
+        }
+
+        .custom-modal-title {
+            font-size: 15px;
+        }
+
+        .custom-modal-body {
+            padding: 14px;
+        }
+
+        .custom-form-control,
+        .custom-select {
+            padding: 10px 14px;
+            font-size: 14px;
+        }
+    }
+
+    /* Tablet Responsive */
+    @@media (min-width: 577px) and (max-width: 768px) {
+        .custom-modal {
+            max-width: 420px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Assign Agent Modal functionality - Custom Pure JS
+        var agents = [];
+        var modalOverlay = document.getElementById('assignAgentModal');
+        var closeModalBtn = document.getElementById('closeModalBtn');
+        var cancelModalBtn = document.getElementById('cancelModalBtn');
+        var assignAgentBtn = document.getElementById('assignAgentBtn');
+
+        // Open modal function
+        function openModal(propertyId, propertyTitle) {
+            $('#modalPropertyId').val(propertyId);
+            $('#modalPropertyName').val(propertyTitle);
+            $('#assignmentNotes').val('');
+            $('#agentSelect').val('');
+            
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Load agents
+            loadAgents();
+        }
+
+        // Close modal function
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on button clicks
+        if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+        if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
+
+        // Close modal on overlay click
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modalOverlay && modalOverlay.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // Handle "Assign Agent" button clicks
+        document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#assignAgentModal"]').forEach(function(btn) {
+            btn.addEventListener('click', function(event) {
+                event.preventDefault();
+                var propertyId = this.getAttribute('data-property-id');
+                var propertyTitle = this.getAttribute('data-property-title');
+                openModal(propertyId, propertyTitle);
+            });
+        });
+
+        // Load agents from server
+        function loadAgents() {
+            $.ajax({
+                url: '/manager/get-agents',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    agents = data;
+                    var select = $('#agentSelect');
+                    select.empty();
+                    select.append('<option value="" selected disabled>-- Choose an agent --</option>');
+                    
+                    $.each(data, function (index, agent) {
+                        select.append('<option value="' + agent.agentId + '">' + agent.fullName + '</option>');
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading agents:', error);
+                    alert('Failed to load agents. Please try again.');
+                }
+            });
+        }
+
+        // Assign agent button click
+        if (assignAgentBtn) {
+            assignAgentBtn.addEventListener('click', function () {
+                var propertyId = $('#modalPropertyId').val();
+                var agentId = $('#agentSelect').val();
+                var notes = $('#assignmentNotes').val();
+
+                if (!agentId) {
+                    alert('Please select an agent.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/manager/assign-agent',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        propertyId: propertyId,
+                        agentId: agentId,
+                        notes: notes
+                    }),
+                    success: function (response) {
+                        if (response.success) {
+                            alert('Agent assigned successfully!');
+                            closeModal();
+                            location.reload();
+                        } else {
+                            alert('Failed to assign agent: ' + response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error assigning agent:', error);
+                        alert('Failed to assign agent. Please try again.');
+                    }
+                });
+            });
+        }
+    });
+</script>
+
+<!-- Set Listing Type Modal -->
+@if (Model.IsApproved)
+{
+    <div class="modal fade" id="setListingTypeModal" tabindex="-1" aria-labelledby="setListingTypeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-info text-white border-0">
+                    <h5 class="modal-title fw-bold" id="setListingTypeModalLabel">
+                        <i class="fas fa-tag me-2"></i> Set Listing Type
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 py-4">
+                    <p class="text-muted mb-4">Select how this property should be listed:</p>
+                    
+                    <div class="d-grid gap-3">
+                        <button type="button" class="btn @(Model.ListingType == PropertyListingType.Buy ? "btn-primary" : "btn-outline-primary") btn-lg fw-bold py-3"
+                                onclick="saveListingType(@Model.PropertyId, 'Buy')" id="btnForSale">
+                            <i class="fas fa-home me-2"></i>For Sale
+                            <div class="small fw-normal mt-1">Property will be listed for buyers to purchase</div>
+                        </button>
+                        
+                        <button type="button" class="btn @(Model.ListingType == PropertyListingType.Rent ? "btn-info text-white" : "btn-outline-info") btn-lg fw-bold py-3"
+                                onclick="saveListingType(@Model.PropertyId, 'Rent')" id="btnForRent">
+                            <i class="fas fa-key me-2"></i>For Rent
+                            <div class="small fw-normal mt-1">Property will be listed for tenants to rent</div>
+                        </button>
+                    </div>
+                    
+                    <div id="listingTypeSaveMessage" class="alert alert-success mt-3 d-none">
+                        <i class="fas fa-check-circle me-2"></i>Listing type saved successfully!
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0 px-4 py-3">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function saveListingType(propertyId, listingType) {
+            fetch('/manager/set-listing-type', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ propertyId: propertyId, listingType: listingType })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    // Update button styles
+                    var btnForSale = document.getElementById('btnForSale');
+                    var btnForRent = document.getElementById('btnForRent');
+                    
+                    if (listingType === 'Buy') {
+                        btnForSale.classList.remove('btn-outline-primary');
+                        btnForSale.classList.add('btn-primary');
+                        btnForRent.classList.remove('btn-info', 'text-white');
+                        btnForRent.classList.add('btn-outline-info');
+                    } else {
+                        btnForRent.classList.remove('btn-outline-info');
+                        btnForRent.classList.add('btn-info', 'text-white');
+                        btnForSale.classList.remove('btn-primary');
+                        btnForSale.classList.add('btn-outline-primary');
+                    }
+                    
+                    // Show success message
+                    var msg = document.getElementById('listingTypeSaveMessage');
+                    msg.classList.remove('d-none');
+                    setTimeout(() => {
+                        msg.classList.add('d-none');
+                        location.reload(); // Refresh to show updated state
+                    }, 1500);
+                } else {
+                    alert('Failed to save: ' + data.message);
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert('Failed to save listing type');
+            });
+        }
+    </script>
+}
+
+@section Scripts {
+<!-- Leaflet JS for Map -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+    // Initialize map if coordinates exist
+    document.addEventListener('DOMContentLoaded', function() {
+        @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+        {
+            <text>
+            // Wait for DOM to be fully rendered before initializing map
+            setTimeout(function() {
+                const lat = @Model.Latitude.Value.ToString("F0");
+                const lng = @Model.Longitude.Value.ToString("F0");
+                const propertyTitle = @Html.Raw(Json.Serialize(Model.Title));
+                const propertyLocation = @Html.Raw(Json.Serialize(Model.Location));
+
+                // Initialize map
+                const map = L.map('propertyMap').setView([lat, lng], 16);
+
+                // Add OpenStreetMap tiles with proper attribution
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    maxZoom: 19
+                }).addTo(map);
+
+                // Add marker with popup
+                const marker = L.marker([lat, lng]).addTo(map);
+                marker.bindPopup('<strong>' + propertyTitle + '</strong><br>' + propertyLocation).openPopup();
+
+                // Force map to recalculate size and load tiles properly
+                map.invalidateSize(true);
+            }, 500);
+            </text>
+        }
+    });
+</script>
+}

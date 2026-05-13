@@ -1,0 +1,229 @@
+@model List<RealEstate.Models.PaymentTransaction>
+@{
+    Layout = null;
+    var userName = ViewData["UserName"] as string ?? "Accounting";
+    string methodFilter = ViewBag.MethodFilter as string ?? "";
+    string statusFilter = ViewBag.StatusFilter as string ?? "";
+    decimal totalGCash = ViewBag.TotalGCash ?? 0m;
+    decimal totalBank  = ViewBag.TotalBank  ?? 0m;
+    decimal totalCash  = ViewBag.TotalCash  ?? 0m;
+    int pendingCount   = ViewBag.PendingCount ?? 0;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Payment Validation | EstateFlow Accounting</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;display:flex;min-height:100vh}
+        .page-wrapper{margin-left:250px;flex:1;display:flex;flex-direction:column;padding:28px}
+        h1{font-size:22px;font-weight:800;color:#1e293b;margin-bottom:4px}
+        .sub{color:#64748b;font-size:14px;margin-bottom:24px}
+
+        /* KPI cards */
+        .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+        .kpi-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+        .kpi-label{font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+        .kpi-value{font-size:24px;font-weight:800;color:#1e293b}
+        .kpi-card.pending .kpi-value{color:#f59e0b}
+        .kpi-card.gcash  .kpi-label i{color:#1a56db}
+        .kpi-card.bank   .kpi-label i{color:#0891b2}
+        .kpi-card.cash   .kpi-label i{color:#059669}
+
+        /* Filters */
+        .filters{background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+        .filters form{display:flex;gap:10px;align-items:center;flex-wrap:wrap;width:100%}
+        .filter-select{padding:9px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;color:#374151;background:#fff;cursor:pointer}
+        .filter-select:focus{outline:none;border-color:#10b981}
+        .btn-filter{background:#10b981;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer}
+        .btn-reset{background:#f1f5f9;color:#374151;border:none;border-radius:8px;padding:9px 14px;font-size:13px;cursor:pointer;text-decoration:none}
+
+        /* Alert banner */
+        .alert-pending{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:14px;color:#92400e}
+        .alert-success{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:14px;color:#065f46}
+        .alert-error  {background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:14px;color:#991b1b}
+
+        /* Table card */
+        .table-card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+        .table-header{padding:18px 22px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between}
+        .table-header .th-title{font-size:15px;font-weight:700;color:#1e293b}
+        table{width:100%;border-collapse:collapse}
+        th{padding:12px 16px;text-align:left;font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;background:#f8fafc;border-bottom:1px solid #e2e8f0}
+        td{padding:14px 16px;font-size:13px;color:#374151;border-bottom:1px solid #f8fafc;vertical-align:middle}
+        tr:last-child td{border-bottom:none}
+        tr:hover td{background:#fafafa}
+
+        /* Status badges */
+        .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:50px;font-size:11px;font-weight:700;text-transform:uppercase}
+        .badge-success{background:#dcfce7;color:#166534}
+        .badge-pending{background:#fef3c7;color:#92400e}
+        .badge-failed {background:#fee2e2;color:#991b1b}
+
+        /* Method badge */
+        .method-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
+        .method-gcash{background:#dbeafe;color:#1d4ed8}
+        .method-bank {background:#e0f2fe;color:#0369a1}
+        .method-cash {background:#d1fae5;color:#065f46}
+        .method-card {background:#f3e8ff;color:#6d28d9}
+        .method-other{background:#f1f5f9;color:#475569}
+
+        /* Action buttons */
+        .btn-approve{background:#10b981;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer}
+        .btn-approve:hover{background:#059669}
+        .btn-reject {background:#ef4444;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer}
+        .btn-reject:hover{background:#dc2626}
+        .btn-actions{display:flex;gap:6px}
+
+        .empty{text-align:center;padding:48px;color:#94a3b8}
+        .empty i{font-size:40px;margin-bottom:12px;display:block}
+    </style>
+</head>
+<body>
+    @await Html.PartialAsync("_AccountingNav")
+
+    <div class="page-wrapper">
+        <h1><i class="fas fa-shield-check" style="color:#10b981;margin-right:8px"></i>Payment Validation</h1>
+        <p class="sub">Validate and approve buyer payments by method (GCash / Bank Transfer / Cash).</p>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert-success"><i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]</div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert-error"><i class="fas fa-times-circle"></i> @TempData["ErrorMessage"]</div>
+        }
+
+        @if (pendingCount > 0)
+        {
+            <div class="alert-pending">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>@pendingCount payment(s) awaiting validation.</strong> Please review and approve or reject each pending payment.
+            </div>
+        }
+
+        <!-- KPI row -->
+        <div class="kpi-grid">
+            <div class="kpi-card pending">
+                <div class="kpi-label"><i class="fas fa-clock"></i> Pending</div>
+                <div class="kpi-value">@pendingCount</div>
+            </div>
+            <div class="kpi-card gcash">
+                <div class="kpi-label"><i class="fab fa-google-pay"></i> GCash Validated</div>
+                <div class="kpi-value">₱@totalGCash.ToString("N0")</div>
+            </div>
+            <div class="kpi-card bank">
+                <div class="kpi-label"><i class="fas fa-university"></i> Bank Validated</div>
+                <div class="kpi-value">₱@totalBank.ToString("N0")</div>
+            </div>
+            <div class="kpi-card cash">
+                <div class="kpi-label"><i class="fas fa-money-bill-wave"></i> Cash Validated</div>
+                <div class="kpi-value">₱@totalCash.ToString("N0")</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <form method="get">
+                <select name="method" class="filter-select" onchange="this.form.submit()">
+                    <option value="">All Methods</option>
+                    @if (methodFilter == "gcash") { <option value="gcash" selected>GCash</option> } else { <option value="gcash">GCash</option> }
+                    @if (methodFilter == "bank_transfer") { <option value="bank_transfer" selected>Bank Transfer</option> } else { <option value="bank_transfer">Bank Transfer</option> }
+                    @if (methodFilter == "cash") { <option value="cash" selected>Cash</option> } else { <option value="cash">Cash</option> }
+                    @if (methodFilter == "card") { <option value="card" selected>Card</option> } else { <option value="card">Card</option> }
+                </select>
+                <select name="status" class="filter-select" onchange="this.form.submit()">
+                    <option value="">All Status</option>
+                    @if (statusFilter == "pending") { <option value="pending" selected>Pending</option> } else { <option value="pending">Pending</option> }
+                    @if (statusFilter == "succeeded") { <option value="succeeded" selected>Validated</option> } else { <option value="succeeded">Validated</option> }
+                    @if (statusFilter == "failed") { <option value="failed" selected>Failed</option> } else { <option value="failed">Failed</option> }
+                </select>
+                @if (!string.IsNullOrEmpty(methodFilter) || !string.IsNullOrEmpty(statusFilter))
+                {
+                    <a href="/accounting/payment/validate" class="btn-reset">Clear</a>
+                }
+            </form>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <span class="th-title">Payments (@Model.Count)</span>
+            </div>
+            @if (Model.Count == 0)
+            {
+                <div class="empty">
+                    <i class="fas fa-receipt"></i>
+                    No payments found for the selected filters.
+                </div>
+            }
+            else
+            {
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Description</th>
+                            <th>Method</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model)
+                        {
+                            var methodClass = t.PaymentMethod?.ToLower() switch {
+                                "gcash" => "method-gcash",
+                                "bank_transfer" => "method-bank",
+                                "cash" => "method-cash",
+                                "card" => "method-card",
+                                _ => "method-other"
+                            };
+                            var statusClass = t.Status switch {
+                                "succeeded" => "badge-success",
+                                "failed" => "badge-failed",
+                                _ => "badge-pending"
+                            };
+                            var statusLabel = t.Status switch {
+                                "succeeded" => "Validated",
+                                "failed" => "Failed",
+                                _ => "Pending"
+                            };
+                            <tr>
+                                <td>#@t.Id</td>
+                                <td>@(t.Description ?? "—")</td>
+                                <td><span class="method-badge @methodClass">@(t.PaymentMethod ?? "—")</span></td>
+                                <td><strong>₱@t.Amount.ToString("N2")</strong></td>
+                                <td><span class="badge @statusClass">@statusLabel</span></td>
+                                <td>@t.CreatedDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    @if (t.Status != "succeeded" && t.Status != "failed")
+                                    {
+                                        <div class="btn-actions">
+                                            <form method="post" action="/accounting/payment/validate/@t.Id/approve" style="display:inline">
+                                                <button type="submit" class="btn-approve"><i class="fas fa-check"></i> Approve</button>
+                                            </form>
+                                            <form method="post" action="/accounting/payment/validate/@t.Id/reject" style="display:inline" onsubmit="return confirm('Reject this payment?')">
+                                                <button type="submit" class="btn-reject"><i class="fas fa-times"></i> Reject</button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#94a3b8;font-size:12px">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</body>
+</html>

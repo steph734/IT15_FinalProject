@@ -1,0 +1,148 @@
+@model List<RealEstate.Models.CommissionRule>
+@{
+    ViewData["Title"] = "Commission Rules";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    
+    var rule = Model.FirstOrDefault() ?? new RealEstate.Models.CommissionRule
+    {
+        AgentSplitPercent = 40m,
+        CompanySplitPercent = 60m,
+        CommissionPercent = 5m,
+        MinimumDealThreshold = 50000
+    };
+}
+
+<div class="payroll-page">
+<section class="payroll-header rules-header">
+<div class="container-fluid px-lg-4">
+<div class="d-flex justify-content-between align-items-end">
+<div>
+<span class="page-badge">COMMISSION</span>
+<h1 class="page-title">Commission Rules</h1>
+<p class="page-subtitle">Configure commission splits, add-on deductions, and approval policies</p>
+</div>
+<a href="/manager/earnings-report" class="btn btn-outline-primary">
+    <i class="fas fa-chart-line me-2"></i>View Earnings Report
+</a>
+</div>
+</div>
+</section>
+<div class="container-fluid px-lg-4 py-4">
+<div class="row g-4">
+<div class="col-lg-6">
+<div class="data-card">
+<div class="data-card-header"><div class="header-left"><h5><i class="fas fa-sliders-h"></i> Split Configuration</h5></div></div>
+<div class="p-4">
+<div class="mb-4">
+<label class="form-label fw-bold">Commission Rate (%)</label>
+<div class="input-group"><input type="number" id="commissionRate" class="form-control" value="@(rule.CommissionPercent)" step="0.1" /><span class="input-group-text">%</span></div>
+<p class="text-muted small mt-1">Percentage of sale price that goes to commission pool (default: 5%)</p>
+</div>
+<div class="mb-4">
+<label class="form-label fw-bold">Agent Split (%)</label>
+<div class="input-group"><input type="number" id="agentSplit" class="form-control" value="@(rule.AgentSplitPercent)" /><span class="input-group-text">%</span></div>
+<p class="text-muted small mt-1">Percentage of commission pool paid to the agent (default: 40%)</p>
+</div>
+<div class="mb-4">
+<label class="form-label fw-bold">Company/Broker Split (%)</label>
+<div class="input-group"><input type="number" id="companySplit" class="form-control" value="@(rule.CompanySplitPercent)" /><span class="input-group-text">%</span></div>
+<p class="text-muted small mt-1">Percentage of commission pool retained by the company (default: 60%)</p>
+</div>
+<div class="mb-3">
+<label class="form-label fw-bold">Minimum Deal Threshold (₱)</label>
+<div class="input-group"><span class="input-group-text">₱</span><input type="number" id="minimumThreshold" class="form-control" value="@(rule.MinimumDealThreshold)" /></div>
+<p class="text-muted small mt-1">Minimum gross commission to qualify for payout</p>
+</div>
+</div>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="data-card">
+<div class="data-card-header"><div class="header-left"><h5><i class="fas fa-receipt"></i> Add-on Deductions</h5></div></div>
+<div class="p-4">
+<div class="deduction-item d-flex justify-content-between align-items-center p-3 mb-2 rounded" style="background:#F8FAFC">
+<div><div class="fw-bold">Marketing Fees</div><div class="text-muted small">Deducted from gross commission</div></div>
+<div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked /></div>
+</div>
+<div class="deduction-item d-flex justify-content-between align-items-center p-3 mb-2 rounded" style="background:#F8FAFC">
+<div><div class="fw-bold">Processing Fees</div><div class="text-muted small">Administrative processing costs</div></div>
+<div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked /></div>
+</div>
+<div class="deduction-item d-flex justify-content-between align-items-center p-3 mb-2 rounded" style="background:#F8FAFC">
+<div><div class="fw-bold">Brokerage Fees</div><div class="text-muted small">Broker oversight and support</div></div>
+<div class="form-check form-switch"><input class="form-check-input" type="checkbox" /></div>
+</div>
+<div class="deduction-item d-flex justify-content-between align-items-center p-3 mb-2 rounded" style="background:#F8FAFC">
+<div><div class="fw-bold">Referral Fees</div><div class="text-muted small">External agent referrals</div></div>
+<div class="form-check form-switch"><input class="form-check-input" type="checkbox" /></div>
+</div>
+</div>
+</div>
+</div>
+<div class="col-12">
+<div class="data-card">
+<div class="data-card-header"><div class="header-left"><h5><i class="fas fa-shield-alt"></i> Approval Policies</h5></div></div>
+<div class="p-4">
+<div class="row g-3">
+<div class="col-md-4">
+<div class="policy-card p-3 rounded border">
+<div class="fw-bold mb-2">Auto-Approve Threshold</div>
+<div class="input-group input-group-sm"><span class="input-group-text">₱</span><input type="number" class="form-control" value="100000" /></div>
+<p class="text-muted small mt-1">Deals below this amount auto-approve</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="policy-card p-3 rounded border">
+<div class="fw-bold mb-2">Require Documents</div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked /><label class="form-check-label">Contract required</label></div>
+<div class="form-check"><input class="form-check-input" type="checkbox" checked /><label class="form-check-label">Closing docs required</label></div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="policy-card p-3 rounded border">
+<div class="fw-bold mb-2">Payout Schedule</div>
+<select class="form-select form-select-sm"><option>Weekly</option><option selected>Bi-weekly</option><option>Monthly</option></select>
+<p class="text-muted small mt-1">Frequency of payout disbursement</p>
+</div>
+</div>
+</div>
+<div class="mt-3 text-end">
+<button id="saveRulesBtn" class="btn btn-primary" style="background:linear-gradient(135deg,#FF9500,#FF8C00);border:none;padding:10px 24px;border-radius:10px;font-weight:600"><i class="fas fa-save me-2"></i> Save Rules</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+@section Scripts {
+<script>
+    document.getElementById('saveRulesBtn').addEventListener('click', function() {
+        var data = {
+            agentSplit: parseFloat(document.getElementById('agentSplit').value),
+            companySplit: parseFloat(document.getElementById('companySplit').value),
+            commissionRate: parseFloat(document.getElementById('commissionRate').value),
+            minimumThreshold: parseFloat(document.getElementById('minimumThreshold').value)
+        };
+        
+        fetch('/manager/commission-rules/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                alert('Commission rules saved successfully!');
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(err => {
+            console.error('Error saving rules:', err);
+            alert('Failed to save rules. Please try again.');
+        });
+    });
+</script>
+}

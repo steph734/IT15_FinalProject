@@ -1,114 +1,249 @@
-<!-- Accounting Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-site-primary sticky-top shadow-sm">
-    <div class="container-fluid px-lg-4">
-        <!-- Logo -->
-        <a class="navbar-brand fw-bold" href="/accounting/dashboard">
-            <span class="brand-estate">Estate</span><span class="brand-flow">Flow</span>
-        </a>
+@{
+    var currentPath = ViewContext.HttpContext.Request.Path.Value?.ToLowerInvariant() ?? "";
+    var isDashboardGroup = currentPath.Contains("/accounting/dashboard");
+    var isPaymentGroup = currentPath.Contains("/accounting/payment");
+    var isCommissionGroup = currentPath.Contains("/accounting/commission");
+    var isBillingGroup = currentPath.Contains("/accounting/billing");
+    var isReportsGroup = currentPath.Contains("/accounting/reports");
+    var isTransactionsGroup = currentPath.Contains("/accounting/transactions");
+}
 
-        <!-- Toggle for Mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#accountingNavbar" aria-controls="accountingNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<aside class="broker-sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <div class="logo-text">
+                <span class="logo-estate">Estate</span><span class="logo-flow">Flow</span>
+            </div>
+        </div>
+    </div>
 
-        <!-- Navigation Items -->
-        <div class="collapse navbar-collapse" id="accountingNavbar">
-            <ul class="navbar-nav ms-auto gap-1">
-                <li class="nav-item">
-                    <a class="nav-link" href="/accounting/dashboard">
-                        <i class="fas fa-chart-line me-2"></i>Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/accounting/transactions">
-                        <i class="fas fa-exchange-alt me-2"></i>Transactions
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/accounting/invoices">
-                        <i class="fas fa-file-invoice me-2"></i>Invoices
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/accounting/reports">
-                        <i class="fas fa-file-csv me-2"></i>Reports
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/accounting/reconciliation">
-                        <i class="fas fa-check-double me-2"></i>Reconciliation
-                    </a>
-                </li>
+    <div class="sidebar-search">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search..." />
+        </div>
+    </div>
 
-                <!-- User Dropdown -->
-                <li class="nav-item dropdown ms-3">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle me-2"></i>
-                        <span>@(ViewData["UserName"] as string ?? "Accounting")</span>
+    <nav class="sidebar-menu">
+        <div class="menu-section">
+            <div class="menu-label">MAIN</div>
+            <ul class="menu-items">
+                <li class="menu-item">
+                    <a href="/accounting/dashboard" class="menu-link @(isDashboardGroup ? "active" : "")">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="/accounting/profile">My Profile</a></li>
-                        <li><a class="dropdown-item" href="/accounting/settings">Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form method="post" action="/accounting/logout" style="display: inline;">
-                                <button type="submit" class="dropdown-item">Logout</button>
-                            </form>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">PAYMENT PROCESSING</div>
+            <ul class="menu-items">
+                <li class="menu-item menu-item-expandable @(isPaymentGroup ? "active" : "")">
+                    <a href="#" class="menu-link menu-link-toggle @(isPaymentGroup ? "active" : "")" data-target="payment-menu">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Payments</span>
+                        <i class="fas fa-chevron-down menu-toggle-icon"></i>
+                    </a>
+                    <ul class="menu-items submenu @(isPaymentGroup ? "active" : "")" id="payment-menu">
+                        <li class="menu-item">
+                            <a href="/accounting/payment/approved-payouts" class="menu-link submenu-link @(currentPath.Contains("/accounting/payment/approved-payouts") ? "active" : "")">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Approved Payouts</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/accounting/payment/process-payments" class="menu-link submenu-link @(currentPath.Contains("/accounting/payment/process-payments") ? "active" : "")">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>Process Payments</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/accounting/payment/payment-records" class="menu-link submenu-link @(currentPath.Contains("/accounting/payment/payment-records") ? "active" : "")">
+                                <i class="fas fa-list"></i>
+                                <span>Payment Records</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/accounting/payment/validate" class="menu-link submenu-link @(currentPath.Contains("/accounting/payment/validate") ? "active" : "")">
+                                <i class="fas fa-shield-check"></i>
+                                <span>Payment Validation</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/accounting/receipts" class="menu-link submenu-link @(currentPath.Contains("/accounting/receipts") ? "active" : "")">
+                                <i class="fas fa-file-invoice"></i>
+                                <span>Receipts</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/accounting/payout-batches" class="menu-link submenu-link @(currentPath.Contains("/accounting/payout-batches") ? "active" : "")">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Payout Batches</span>
+                            </a>
                         </li>
                     </ul>
                 </li>
             </ul>
         </div>
+
+        <div class="menu-section">
+            <div class="menu-label">COMMISSION MANAGEMENT</div>
+            <ul class="menu-items">
+                <li class="menu-item menu-item-expandable @(isCommissionGroup ? "active" : "")">
+                    <a href="#" class="menu-link menu-link-toggle @(isCommissionGroup ? "active" : "")" data-target="commission-menu">
+                        <i class="fas fa-percentage"></i>
+                        <span>Commission</span>
+                        <i class="fas fa-chevron-down menu-toggle-icon"></i>
+                    </a>
+                    <ul class="menu-items submenu @(isCommissionGroup ? "active" : "")" id="commission-menu">
+                        <li class="menu-item">
+                            <a href="/accounting/commission/records" class="menu-link submenu-link @(currentPath.Contains("/accounting/commission/records") ? "active" : "")">
+                                <i class="fas fa-list"></i>
+                                <span>Commission Records</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/accounting/commission/breakdown" class="menu-link submenu-link @(currentPath.Contains("/accounting/commission/breakdown") ? "active" : "")">
+                                <i class="fas fa-chart-pie"></i>
+                                <span>Commission Breakdown</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">BILLING & INVOICES</div>
+            <ul class="menu-items">
+                <li class="menu-item menu-item-expandable @(isBillingGroup ? "active" : "")">
+                    <a href="#" class="menu-link menu-link-toggle @(isBillingGroup ? "active" : "")" data-target="billing-menu">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Billing</span>
+                        <i class="fas fa-chevron-down menu-toggle-icon"></i>
+                    </a>
+                    <ul class="menu-items submenu @(isBillingGroup ? "active" : "")" id="billing-menu">
+                        <li class="menu-item">
+                            <a href="/accounting/billing/invoices" class="menu-link submenu-link @(currentPath.Contains("/accounting/billing/invoices") ? "active" : "")">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <span>Invoices</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/accounting/billing/invoice-tracking" class="menu-link submenu-link @(currentPath.Contains("/accounting/billing/invoice-tracking") ? "active" : "")">
+                                <i class="fas fa-clock"></i>
+                                <span>Invoice Tracking</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">FINANCIAL REPORTS</div>
+            <ul class="menu-items">
+                <li class="menu-item">
+                    <a href="/accounting/reports/dashboard" class="menu-link @(isReportsGroup ? "active" : "")">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reports Dashboard</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">TRANSACTIONS</div>
+            <ul class="menu-items">
+                <li class="menu-item">
+                    <a href="/accounting/transactions/history" class="menu-link @(isTransactionsGroup ? "active" : "")">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Transaction History</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">SELLER REVENUE</div>
+            <ul class="menu-items">
+                <li class="menu-item">
+                    <a href="/accounting/seller-revenue" class="menu-link @(currentPath.Contains("/accounting/seller-revenue") ? "active" : "")">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Seller Revenue</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-label">ACCOUNT</div>
+            <ul class="menu-items">
+                <li class="menu-item"><a href="/accounting/settings" class="menu-link @(currentPath.Contains("/accounting/settings") ? "active" : "")"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <form method="post" action="/accounting/logout" class="w-100">
+            <button type="submit" class="logout-button">
+                <i class="fas fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </button>
+        </form>
     </div>
-</nav>
+</aside>
 
 <style>
-    .brand-estate {
-        color: #ff7a59;
-        font-weight: 700;
-    }
-
-    .brand-flow {
-        color: #333;
-        font-weight: 700;
-    }
-
-    .bg-site-primary {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    }
-
-    .navbar-dark .nav-link {
-        color: rgba(255, 255, 255, 0.8) !important;
-        transition: all 0.3s ease;
-        font-weight: 500;
-    }
-
-    .navbar-dark .nav-link:hover {
-        color: white !important;
-    }
-
-    .navbar-dark .dropdown-toggle::after {
-        border-top-color: rgba(255, 255, 255, 0.8);
-    }
-
-    .dropdown-menu {
-        border: none;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-radius: 8px;
-    }
-
-    .dropdown-item {
-        color: #333;
-        transition: all 0.2s ease;
-    }
-
-    .dropdown-item:hover {
-        background-color: #f5f7fa;
-        color: #10b981;
-    }
-
-    .dropdown-item.active {
-        background-color: #10b981;
-        color: white;
-    }
+    .broker-sidebar { width: 250px; background: #1a1f3a; color: #e4e6eb; display: flex; flex-direction: column; height: 100vh; position: fixed; left: 0; top: 0; overflow-y: auto; box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15); z-index: 1000; }
+    .sidebar-logo { padding: 24px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+    .logo-container { display: flex; align-items: center; gap: 12px; }
+    .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; }
+    .logo-text { font-size: 16px; font-weight: 700; }
+    .logo-estate { color: #34d399; }
+    .logo-flow { color: #e4e6eb; }
+    .sidebar-search { padding: 16px 12px; }
+    .search-wrapper { position: relative; display: flex; align-items: center; }
+    .search-wrapper i { position: absolute; left: 12px; color: #9ca3af; font-size: 14px; }
+    .search-wrapper input { width: 100%; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 10px 12px 10px 36px; color: #e4e6eb; font-size: 13px; }
+    .sidebar-menu { flex: 1; overflow-y: auto; padding: 16px 0; }
+    .menu-label { padding: 12px 20px 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #9ca3af; }
+    .menu-items { list-style: none; padding: 0; margin: 0; }
+    .menu-link { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: #e4e6eb; text-decoration: none; transition: all 0.2s ease; font-size: 14px; font-weight: 500; }
+    .menu-link i { width: 20px; text-align: center; font-size: 16px; color: #9ca3af; }
+    .menu-link:hover { background: rgba(52, 211, 153, 0.1); color: #fff; }
+    .menu-link:hover i { color: #34d399; }
+    .menu-link.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), transparent); color: #34d399; border-left: 3px solid #34d399; padding-left: 17px; }
+    .menu-link.active i { color: #34d399; }
+    .submenu { display: none; background: rgba(0, 0, 0, 0.2); }
+    .submenu.active { display: block; }
+    .submenu-link { padding-left: 48px !important; font-size: 13px; color: #b0b4ba; }
+    .submenu-link i { font-size: 14px; }
+    .menu-toggle-icon { margin-left: auto; font-size: 12px; transition: transform 0.2s ease; width: auto !important; }
+    .menu-item-expandable.active .menu-toggle-icon { transform: rotate(180deg); }
+    .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+    .logout-button { width: 100%; border: 1px solid rgba(255, 255, 255, 0.2); background: transparent; color: #e4e6eb; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+    .logout-button:hover { background: rgba(52, 211, 153, 0.1); }
+    @@media (max-width: 768px) { .broker-sidebar { width: 200px; transform: translateX(-100%); } }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleLinks = document.querySelectorAll('.menu-link-toggle');
+        toggleLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-target');
+                const targetMenu = document.getElementById(targetId);
+                const menuItem = this.closest('.menu-item-expandable');
+                targetMenu.classList.toggle('active');
+                menuItem.classList.toggle('active');
+            });
+        });
+    });
+</script>

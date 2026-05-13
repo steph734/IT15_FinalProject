@@ -32,11 +32,11 @@ public class TransactionController : Controller
         var vm = new TransactionPageViewModel
         {
             ShowSystemApproved = true,
-            PropertyId = property.Id,
+            PropertyId = property.PropertyId,
             PropertyTitle = property.Title,
             PropertyLocation = property.Location,
-            ListingType = property.ListingType,
-            ListPrice = property.Price,
+            ListingType = PropertyListingType.Buy,
+            ListPrice = property.BasePrice,
             ChargeSummaryLine = charges.SummaryLine,
             TotalDue = charges.TotalDue,
             RentAdvance = charges.RentAdvance,
@@ -44,7 +44,7 @@ public class TransactionController : Controller
             BuyEarnestMoney = charges.BuyEarnestMoney,
             Form = new TransactionFormModel
             {
-                PropertyId = property.Id,
+                PropertyId = property.PropertyId,
                 FullName = HttpContext.Session.GetString(TransactionSessionKeys.CustomerName) ?? string.Empty,
                 Email = HttpContext.Session.GetString(TransactionSessionKeys.CustomerEmail) ?? string.Empty,
                 Phone = HttpContext.Session.GetString(TransactionSessionKeys.CustomerPhone)
@@ -78,11 +78,11 @@ public class TransactionController : Controller
             var vm = new TransactionPageViewModel
             {
                 ShowSystemApproved = true,
-                PropertyId = property.Id,
+                PropertyId = property.PropertyId,
                 PropertyTitle = property.Title,
                 PropertyLocation = property.Location,
-                ListingType = property.ListingType,
-                ListPrice = property.Price,
+                ListingType = PropertyListingType.Buy,
+                ListPrice = property.BasePrice,
                 ChargeSummaryLine = chargesInvalid.SummaryLine,
                 TotalDue = chargesInvalid.TotalDue,
                 RentAdvance = chargesInvalid.RentAdvance,
